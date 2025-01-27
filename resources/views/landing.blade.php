@@ -18,8 +18,7 @@
             <ul class="navbar-menu" id="navbarMenu">
                 <li><a href="#topup">เติมเกม</a></li>
                 <li><a href="#market">ตลาดกลาง</a></li>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#contact">สมาชิก</a></li>
             </ul>
         </div>
     </nav>

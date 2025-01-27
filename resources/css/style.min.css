@@ -1,0 +1,76 @@
+/* Base Styles */
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Prompt', Arial, sans-serif; /* Using Prompt font */
+  background: #1a1f36;
+  color: #f0f0f0;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  min-height: 100vh; /* Ensures it spans the full height of the viewport */
+  padding: 0 10px;
+}
+h1 {
+  color: #4cafef;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+  font-weight: 600; /* Bolder weight for better readability */
+}
+p {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 1.2rem;
+  color: #c9d1d9;
+}
+a {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  text-decoration: none;
+  background: #4cafef;
+  color: #1a1f36;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+a:hover {
+  background: #358eca;
+  transform: scale(1.05);
+}
+.container {
+  width: 1200px; /* Fixed width for desktop */
+  max-width: 100%; /* Adjust on smaller devices */
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  background: #242b48;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+  a {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  p {
+    font-size: 1rem;
+  }
+  a {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
