@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RedPotionTH - Layout Update</title>
+    <title>Red Potion</title>
     <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
 </head>
@@ -11,40 +11,53 @@
     <!-- Navigation Menu -->
     <nav class="navbar">
         <div class="navbar-container">
-            <a href="/" class="navbar-brand"><img src="{{ asset('images/logo.png') }}" alt="RedPotion" class="navbar-logo"></a>
-            <button class="navbar-toggle" onclick="toggleMenu()">
-                ☰
-            </button>
+            <!-- Brand Logo -->
+            <a href="/" class="navbar-brand">
+                <img src="{{ asset('images/logo.png') }}" alt="RedPotion" class="navbar-logo">
+            </a>
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggle" onclick="toggleMenu()">☰</button>
             <ul class="navbar-menu" id="navbarMenu">
                 <li><a href="#topup">เติมเกม</a></li>
                 <li><a href="#market">ตลาดกลาง</a></li>
-                <li><a href="#contact">สมาชิก</a></li>
+                <li>
+                    @if(session()->has('user'))
+                        <!-- User's Name -->
+                        <a href="/dashboard" class="navbar-user">{{ session('user')->username }}</a>
+                        <!-- Logout Link -->
+                        <!-- <a href="/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a> -->
+                        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    @else
+                        <!-- Login Link -->
+                        <a href="/login">สมาชิก</a>
+                    @endif
+                </li>
             </ul>
         </div>
     </nav>
+
+
+
+
+<!-- Hidden Logout Form -->
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+
 
     <div class="main-wrapper">
         <div class="container">
 
             <!-- First Part: Red Potion Top Up -->
             <div class="section topup-section" id="topup">
-                <h1>Red Potion รับเติมเกม</h1>
-                <p class="placeholder">This section will have content added later.</p>
+                <h1>รับเติมเกม</h1>
+                <p class="placeholder">บริการเติมเกม ผ่านทางระบบ UID เติมง่าย เข้าไว มีหลายเกมให้เลือก PUBG, Arena Breakout, Free Fire, ROV และเกมอื่นๆอีกมากมาย</p>
             </div>
-            <hr class="divider"> <!-- Horizontal divider between the two sections -->
+            <hr class="divider">
             
-            <!-- Second Part: Red Potion Market -->
-            <div class="section market-section" id="market">
-                <h1>Red Potion ตลาดกลาง</h1>
-                <h2 class="subheader with-line">ตลาดกลางสำหรับ การซื้อ-ขายไอเทมและบริการในเกม</h2>
-                <p>คุณเป็นผู้ซื้อ หรือ ผู้ขาย</p>
-                <a href="/seller">ผู้ขาย</a>
-                <a href="/buyer">ผู้ซื้อ</a>
-            </div>
         </div>
-        <p class="description-text">
-            Red Potion Market ช่วยให้การซื้อขายไอเทมและบริการในเกมปลอดภัยยิ่งขึ้น โดยทำหน้าที่เป็นตัวกลางที่คุณไว้ใจได้
-        </p>
     </div>
 
     <script>

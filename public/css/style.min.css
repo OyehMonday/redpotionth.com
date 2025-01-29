@@ -20,12 +20,29 @@ body {
 
 /* Main Wrapper */
 .main-wrapper {
-  width: 100%; /* Ensure it spans the full width of the screen */
-  margin: 0 auto; /* Center it horizontally */
-  padding: 0; /* Ensure no extra padding */
-  box-sizing: border-box; /* Include padding in the width calculation */
-  overflow-x: hidden; /* Prevent horizontal overflow */
+  display: flex;
+  justify-content: center; 
+  align-items: flex-start; 
+  min-height: 100vh; 
+  padding-top: 20px;
 }
+
+.section.topup-section {
+  text-align: left; 
+}
+
+.section.topup-section h1 {
+  text-align: left; 
+  margin: 0px 10px; 
+  margin-top: 0;
+}
+
+.section.topup-section .placeholder {
+  text-align: left; 
+  margin-left: 10px;
+  margin-top: -5px;
+}
+
 
 /* Heading Styles */
 h1 {
@@ -143,6 +160,186 @@ p {
   display: block; /* Ensure it's a block-level element */
 }
 
+/* Login Page Styles */
+
+
+.login-wrapper {
+  display: flex;
+  justify-content: center; 
+  align-items: flex-start; 
+  height: 100vh; 
+  background: #1a1f36; 
+  padding-top: 50px; 
+}
+
+
+/* Adjust container to match previous layout */
+.login-container {
+  background: #242b48;
+  padding: 30px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px; /* Reduce width to match previous layout */
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Adjust title font size */
+.login-title {
+  font-size: 1.8rem; /* Reduce size to match previous layout */
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: #4cafef;
+}
+
+/* Adjust subtitle */
+.login-subtitle {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: #c9d1d9;
+}
+
+/* Form adjustments */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  text-align: left;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  display: block;
+  color: #c9d1d9;
+}
+
+.form-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #80c1ff;
+  border-radius: 5px;
+  font-size: 1rem;
+  background: #1e2a44;
+  color: #f0f0f0;
+}
+
+.btn-primary {
+  width: 100%;
+  background: #4cafef;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #358eca;
+  transform: scale(1.05);
+}
+
+/* Adjust the register link */
+.register-link {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #c9d1d9;
+}
+
+.register-link a {
+  color: #4cafef;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  display: block;
+  color: #c9d1d9;
+}
+
+.form-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #80c1ff; /* Lighter blue border */
+  border-radius: 5px;
+  font-size: 1rem;
+  background: #1e2a44; /* Dark background for text fields */
+  color: #f0f0f0; /* White text color */
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none; /* Remove the default browser outline */
+  border: 1px solid #4cafef; /* Bright blue border on focus */
+  box-shadow: 0 0 5px #4cafef; /* Subtle glow effect on focus */
+  background: #1a2945; /* Slightly darker background when focused */
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #c9d1d9;
+}
+
+.form-remember input {
+  margin-right: 5px;
+}
+
+.forgot-password {
+  color: #4cafef;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary {
+  background: #4cafef;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #358eca;
+  transform: scale(1.05);
+}
+
+.register-link {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #c9d1d9;
+}
+
+.register-link a {
+  color: #4cafef;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
 /* Navigation Bar */
 .navbar {
   background-color: #242b48;
@@ -158,11 +355,14 @@ p {
   width: 100%; /* Ensure the navbar spans the full screen width */
 }
 
-.navbar-logo {
-  height: 50px; /* Adjust the height of the logo */
-  width: auto; /* Maintain aspect ratio */
-  display: inline-block; /* Align with other navbar elements */
-  vertical-align: middle; /* Center vertically within the navbar */
+.navbar-user {
+  color: #80c1ff !important; /* Light blue color */
+  text-decoration: none; /* Remove underline */
+  font-weight: 600; /* Bold for emphasis */
+}
+
+.navbar-user:hover {
+  color: #1a73e8 !important; /* Brighter blue on hover */
 }
 
 .navbar-container {
@@ -179,6 +379,13 @@ p {
   font-weight: bold;
 }
 
+.navbar-logo {
+  height: 50px; /* Adjust the height of the logo */
+  width: auto; /* Maintain aspect ratio */
+  display: inline-block; /* Align with other navbar elements */
+  vertical-align: middle; /* Center vertically within the navbar */
+}
+
 .navbar-toggle {
   display: none;
   font-size: 1.5rem;
@@ -186,6 +393,24 @@ p {
   border: none;
   color: #fff;
   cursor: pointer;
+}
+
+.navbar-user {
+  font-weight: 600;
+  color: #80c1ff; /* Lighter blue for the username */
+  margin-right: 10px; /* Space between username and logout */
+}
+
+.navbar-menu a {
+  text-decoration: none;
+  color: #f0f0f0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar-menu a:hover {
+  color: #4cafef;
 }
 
 .navbar-menu {
@@ -200,31 +425,96 @@ p {
   margin: 0;
 }
 
-.navbar-menu a {
+/* Logo Styles */
+.login-logo {
+  margin-bottom: 20px; /* Add space below the logo */
+  text-align: center; /* Center the logo within the container */
+}
+
+.login-logo img {
+  max-width: 150px; 
+  height: auto; 
+}
+
+
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; 
+  background: #4285F4;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
   text-decoration: none;
-  color: #f0f0f0;
-  font-size: 1.2rem;
-  font-weight: 500;
-  transition: color 0.3s;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+  width: 100%; 
+  box-sizing: border-box; 
 }
 
-.navbar-menu a:hover {
-  color: #4cafef;
+.btn-google:hover {
+  background: #357ae8;
 }
 
-/* Mobile Menu */
+.google-icon {
+  height: 20px;
+  width: 20px;
+  margin-right: 10px;
+}
+
+
+/* Separator Line */
+.separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  color: #c9d1d9; /* Light gray text */
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #c9d1d9; /* Light gray line */
+  margin: 0 10px;
+}
+
+.btn, .btn-primary {
+  font-family: 'Kanit', sans-serif; 
+  font-size: 1rem; 
+  font-weight: 400; 
+  color: #fff; 
+  text-transform: none; 
+  background: #4cafef; 
+  padding: 10px 20px; 
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer; 
+  transition: background 0.3s ease, transform 0.2s ease; 
+}
+
+.btn-primary:hover {
+  background: #358eca; 
+  transform: scale(1.05); 
+}
+
+/* Mobile Navbar */
 @media (max-width: 768px) {
   .navbar-toggle {
     display: block;
   }
 
   .navbar-menu {
-    display: none;
+    display: none; /* Hide the menu by default */
     flex-direction: column;
     width: calc(100% - 20px); /* Prevent overflow */
     background-color: #242b48;
     position: absolute;
-    top: 100%;
+    top: 100%; /* Position below the navbar */
     left: 0;
     padding: 10px 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -232,21 +522,12 @@ p {
   }
 
   .navbar-menu.show {
-    display: flex;
+    display: flex; /* Show the menu when toggled */
   }
 
   .navbar-menu a {
     padding: 10px 0;
     text-align: left;
     width: 100%; /* Prevent link overflow */
-  }
-}
-
-/* Fix for Container on Mobile */
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-    margin: 15px auto; /* Prevent container from touching edges */
-    box-sizing: border-box;
   }
 }
