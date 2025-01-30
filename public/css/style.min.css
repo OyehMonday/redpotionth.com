@@ -502,6 +502,91 @@ p {
   transform: scale(1.05); 
 }
 
+/* Global Dark Theme */
+body.dark-theme {
+  background-color: #0A192F; /* Dark Navy */
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+}
+
+/* Top-Up Section */
+.topup-section {
+  text-align: center;
+  padding: 20px;
+  background: #112240; /* Slightly lighter navy */
+  border-radius: 8px;
+}
+
+/* Divider */
+.divider {
+  border: 1px solid #334E68;
+  margin: 20px 0;
+}
+
+/* Game Selection Section */
+.game-selection {
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Game Grid */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Game Card */
+.game-card {
+  background: #1B2A41; /* Dark Blue */
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  border: 2px solid #334E68; /* Darker border */
+  transition: transform 0.2s ease-in-out;
+}
+
+.game-card:hover {
+  transform: scale(1.05);
+}
+
+/* Game Cover */
+.game-cover {
+  width: 100%;
+  max-width: 150px; 
+  object-fit: cover;
+  border-radius: 5px;
+  border: 2px solid #2E4A66; 
+}
+
+/* Game Title */
+.game-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #F0F4F8; 
+}
+
+/* Top-Up Button */
+.topup-button {
+  display: block;
+  margin-top: 10px;
+  background: #007BFF;
+  color: white;
+  padding: 8px 12px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background 0.3s ease-in-out;
+}
+
+.topup-button:hover {
+  background: #0056b3;
+}
+
 /* Mobile Navbar */
 @media (max-width: 768px) {
   .navbar-toggle {

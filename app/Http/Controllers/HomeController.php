@@ -3,26 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Game;
 
-class HomeController extends Controller
+class HomeController extends Controller  // ✅ Ensure it extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth')->except(['index']); // Allow unauthenticated access to index()
+    // }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
-        return view('home');
+        $games = Game::orderBy('sort_order', 'asc')->take(10)->get(); 
+        return view('landing', compact('games'));
     }
 }

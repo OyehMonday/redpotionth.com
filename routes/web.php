@@ -8,15 +8,15 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AdminSignupController;
 use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\GameCategoryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GameTopupController;
+
+
 require __DIR__.'/auth.php';
 
-Route::get('/', function () {
-    return view('landing');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/landing', function () {
-    return view('landing');
-})->name('landing.page');
+Route::get('/games/{id}/topup', [GameTopupController::class, 'show'])->name('games.topup');
 
 Route::get('/auth/google', [CustomAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [CustomAuthController::class, 'handleGoogleCallback']);

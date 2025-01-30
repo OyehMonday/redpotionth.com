@@ -14,15 +14,27 @@
     <div class="main-wrapper">
         <div class="container">
 
-            <!-- First Part: Red Potion Top Up -->
-            <div class="section topup-section" id="topup">
-                <h1>รับเติมเกม</h1>
+            <!-- Section 1: Game Selection -->
+            <div class="section topup-section">
+                <h1>Red Potion รับเติมเกม</h1>
                 <p class="placeholder">บริการเติมเกม ผ่านทางระบบ UID เติมง่าย เข้าไว มีหลายเกมให้เลือก PUBG, Arena Breakout, Free Fire, ROV และเกมอื่นๆอีกมากมาย</p>
+                <div class="game-grid">
+                    @foreach($games as $game)
+                        <div class="game-card">
+                            <img src="{{ asset('storage/' . $game->cover_image) }}" alt="{{ $game->title }}" class="game-cover">
+                            <h3 class="game-title">{{ $game->title }}</h3>
+                            <a href="{{ route('games.topup', $game->id) }}" class="topup-button">เติมเงิน</a>
+                        </div>
+                    @endforeach
+                </div>
             </div>
             <hr class="divider">
-            
+
+            <!-- Section 2: How It Works -->
+
         </div>
     </div>
+
 
     <script>
         // Toggle menu for mobile view
