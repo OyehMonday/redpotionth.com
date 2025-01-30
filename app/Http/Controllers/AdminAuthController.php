@@ -7,32 +7,38 @@ use App\Notifications\AdminSignupVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Google_Client;
+use Google_Service_Gmail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
+    public function login(Request $request)
+    {
+        // Attempt to log in the admin using the credentials
+        if (Auth::guard('admin')->attempt($request->only('email', 'password'))) {
+            // Successful login, redirect to dashboard
+            return redirect()->route('admin.dashboard');
+        }
+    
+        // Failed login, redirect back with an error message
+        return back()->withErrors(['email' => 'Invalid credentials']);
+    }
+
     public function showLoginForm()
     {
         return view('admin.login');
     }
 
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::guard('admin')->attempt($credentials)) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return back()->withErrors(['email' => 'Invalid credentials']);
-    }
-
-    // Show the admin signup form (This method was missing)
+    // Show the admin signup form
     public function showSignupForm()
     {
-        return view('admin.signup');
+        return view('admin.signup');  // Admin signup form view
     }
 
-    // Handle the admin signup
+    // Handle the admin signup request
     public function signup(Request $request)
     {
         // Validate input data
@@ -45,7 +51,7 @@ class AdminAuthController extends Controller
         // Generate verification token
         $verificationToken = Str::random(32);
 
-        // Create the new admin
+        // Create the new admin record
         $admin = Admin::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -53,31 +59,94 @@ class AdminAuthController extends Controller
             'email_verification_token' => $verificationToken,
         ]);
 
-        // Send verification email
-        $admin->notify(new AdminSignupVerification($admin));
+        // Send verification email via Gmail API
+        $this->sendVerificationEmail($admin->email, $verificationToken);
 
         return response()->json([
             'message' => 'Admin created, please check your email for the verification link.'
         ]);
     }
 
-    public function verify($id, $token)
+    // Send the verification email via Gmail API
+    private function sendVerificationEmail($toEmail, $verificationToken)
     {
-        // Find admin and verify token
-        $admin = Admin::findOrFail($id);
+        try {
+            // Gmail API token path
+            $tokenPath = storage_path('app/google/gmail-token.json');
+            if (!file_exists($tokenPath)) {
+                throw new \Exception('Gmail token file not found.');
+            }
 
-        if ($admin->email_verification_token === $token) {
-            // Update verification status
-            $admin->is_verified = true;
-            $admin->email_verification_token = null; // Remove token
-            $admin->save();
+            $tokenData = json_decode(file_get_contents($tokenPath), true);
 
-            return redirect()->route('admin.dashboard')->with('message', 'Email verified successfully.');
+            // Initialize Google Client
+            $client = new Google_Client();
+            $client->setClientId(config('services.google.client_id'));
+            $client->setClientSecret(config('services.google.client_secret'));
+            $client->setRedirectUri(config('services.google.redirect'));
+            $client->setAccessToken($tokenData);
+
+            // Refresh the token if expired
+            if ($client->isAccessTokenExpired()) {
+                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                Storage::put('google/gmail-token.json', json_encode($client->getAccessToken()));
+            }
+
+            // Hardcoding the email to send the verification link to redpotionth@gmail.com
+            $verificationLink = url('/admin/verify/' . $verificationToken . '?email=' . urlencode($toEmail));
+
+            // Create the Gmail service
+            $gmail = new Google_Service_Gmail($client);
+
+            // Build email message
+            $subject = 'Admin Account Verification';
+            $messageText = "Click the link below to verify the admin account:\n\n$verificationLink";
+
+            $rawMessage = "From: redpotionth@gmail.com\r\n";
+            $rawMessage .= "To: redpotionth@gmail.com\r\n"; // Send to redpotionth@gmail.com
+            $rawMessage .= "Subject: $subject\r\n\r\n";
+            $rawMessage .= $messageText;
+
+            // Base64 encode the raw message and replace URL-safe characters
+            $encodedMessage = base64_encode($rawMessage);
+            $encodedMessage = str_replace(['+', '/', '='], ['-', '_', ''], $encodedMessage);
+
+            $message = new \Google_Service_Gmail_Message();
+            $message->setRaw($encodedMessage);
+
+            // Log message to confirm email content
+            \Log::info('Sending verification email to redpotionth@gmail.com.');
+
+            // Send the email
+            $gmail->users_messages->send('me', $message);
+
+            // Log success
+            \Log::info('Verification email sent successfully to redpotionth@gmail.com');
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to send verification email: ' . $e->getMessage());
         }
-
-        return redirect()->route('admin.login')->withErrors(['error' => 'Invalid verification link.']);
     }
 
+    // Verify the admin account
+    public function verify($token)
+    {
+        // Find admin by verification token
+        $admin = Admin::where('email_verification_token', $token)->first();
+    
+        if (!$admin) {
+            // If no admin found with the token, return with an error
+            return redirect()->route('admin.login')->withErrors(['error' => 'Invalid verification link.']);
+        }
+    
+        // Update verification status
+        $admin->is_verified = true;
+        $admin->email_verification_token = null; // Remove token
+        $admin->save();
+    
+        return redirect()->route('admin.login')->with('message', 'Email verified successfully.');
+    }
+    
     public function logout()
     {
         Auth::guard('admin')->logout();

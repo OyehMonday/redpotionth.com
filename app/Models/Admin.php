@@ -6,20 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable; 
 
-class Admin extends Model
-{
-    use HasFactory, Notifiable;  // Add Notifiable trait here
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-    // Add the 'name', 'email', 'password', etc., to the fillable property
+class Admin extends Authenticatable
+{
+    use HasFactory, Notifiable;
+
     protected $fillable = [
         'name',
         'email',
         'password',
         'email_verification_token',
-        'is_verified',  // Optional: add this if you want to mass-assign 'is_verified'
+        'is_verified',
     ];
 
-    // Optionally, you can also hide certain fields from the array representation
     protected $hidden = [
         'password', 'remember_token',
     ];

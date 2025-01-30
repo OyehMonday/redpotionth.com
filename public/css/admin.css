@@ -1,0 +1,8 @@
+.btn-primary {
+    max-width: 98%;
+}
+
+.section-divider {
+    border-top: 1px solid #ffffff; 
+    margin: 40px 0; /* Add space above and below */
+}

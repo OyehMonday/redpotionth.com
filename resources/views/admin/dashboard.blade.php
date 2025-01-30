@@ -4,34 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
+
+    <link href="{{ asset('css/style.min.css') }}" rel="stylesheet">
+
 </head>
 <body>
-    <div class="main-wrapper">
-        <div class="dashboard-container">
-            <div class="dashboard-header">
-                <div class="dashboard-logo">
-                    <a href="{{ url('/') }}">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-image">
-                    </a>
-                </div> 
-                <h1 class="dashboard-title">แดชบอร์ดผู้ดูแลระบบ</h1>
-                <p class="dashboard-welcome">ยินดีต้อนรับ, {{ Auth::guard('admin')->user()->name }}</p>
-            </div>
-            
-            <div class="dashboard-content">
-                <p>นี่คือแดชบอร์ดของคุณ คุณสามารถจัดการระบบหลังบ้านจากหน้านี้</p>
-                <div class="dashboard-actions">
-                    <a href="{{ url('/admin/manage-users') }}" class="btn btn-secondary">จัดการผู้ใช้งาน</a>
-                    <a href="{{ url('/admin/manage-items') }}" class="btn btn-secondary">จัดการสินค้า</a>
+    
+    @include('admin.navbar')
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="border p-5">
+                    <h2>Welcome to the Admin Dashboard</h2>
+                    <p>This is where you can manage users, view data, and perform administrative tasks.</p>
+                    <!-- You can add dynamic content here later -->
                 </div>
             </div>
-
-            <form action="{{ route('admin.logout') }}" method="POST" class="logout-form">
-                @csrf
-                <button type="submit" class="btn btn-primary">ออกจากระบบ</button>
-            </form>
         </div>
     </div>
+
 </body>
 </html>
