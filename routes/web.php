@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\GameCategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GameTopupController;
-
+use App\Http\Controllers\Admin\GamePackageController;
 
 require __DIR__.'/auth.php';
 
@@ -85,4 +85,17 @@ Route::prefix('admin')->group(function () {
         // Sorting Route for Drag & Drop Games
         Route::post('/games/sort', [GameController::class, 'sort'])->name('games.sort');        
     });
+});
+
+Route::prefix('admin')->middleware('auth:admin')->group(function () {
+    Route::resource('games', GameController::class);
+
+    Route::get('/games/{game}/packages', [GamePackageController::class, 'index'])->name('game-packages.index');
+    Route::get('/games/{game}/packages/create', [GamePackageController::class, 'create'])->name('game-packages.create');
+    Route::post('/games/{game}/packages', [GamePackageController::class, 'store'])->name('game-packages.store');
+    Route::get('/games/{game}/packages/{package}/edit', [GamePackageController::class, 'edit'])->name('game-packages.edit');
+    Route::put('/games/{game}/packages/{package}', [GamePackageController::class, 'update'])->name('game-packages.update');
+    Route::delete('/games/{game}/packages/{package}', [GamePackageController::class, 'destroy'])->name('game-packages.destroy');
+    Route::post('/games/{game}/packages/sort', [GamePackageController::class, 'sort'])->name('game-packages.sort');
+    
 });
