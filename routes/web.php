@@ -11,6 +11,24 @@ use App\Http\Controllers\Admin\GameCategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GameTopupController;
 use App\Http\Controllers\Admin\GamePackageController;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\FacebookCommentController;
+
+Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
+    $allowedFolders = ['game_covers', 'game_full_covers']; 
+
+    if (!in_array($folder, $allowedFolders)) {
+        abort(403, 'Unauthorized access');
+    }
+
+    $path = storage_path("app/public/$folder/$filename");
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path);
+});
 
 require __DIR__.'/auth.php';
 
@@ -99,3 +117,5 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::post('/games/{game}/packages/sort', [GamePackageController::class, 'sort'])->name('game-packages.sort');
     
 });
+
+Route::get('/fetch-facebook-comments', [FacebookCommentController::class, 'fetchComments'])->name('fetch.facebook.comments');

@@ -103,7 +103,7 @@ p {
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   background: #242b48;
-  padding: 20px 30px; /* Added consistent padding */
+  padding: 10px 10px; /* Added consistent padding */
   border-radius: 10px;
   display: flex;
   flex-direction: column; /* Stack sections vertically */
@@ -113,9 +113,9 @@ p {
 
 /* Section Styling */
 .section {
-  padding: 20px;
+  padding: 10px;
   border-radius: 8px;
-  background: #1e2a44; /* Slightly darker background for sections */
+  background: #1e2a44; 
 }
 
 /* Top Up Section */
@@ -532,13 +532,13 @@ body.dark-theme {
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 20px;
   justify-content: center;
-  padding: 20px;
+  padding: 10px;
 }
 
 /* Game Card */
 .game-card {
   background: #1B2A41; /* Dark Blue */
-  padding: 15px;
+  padding: 10px;
   border-radius: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   text-align: center;
@@ -584,8 +584,112 @@ body.dark-theme {
   background: #0056b3;
 }
 
+/* Facebook Review Section */
+.review-section {
+  margin-top: 0px;
+  padding: 20px;
+  background: #1c1f2b; /* Dark Theme Background */
+  border-radius: 10px;
+}
+.comment-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 15px;
+  justify-content: center;
+}
+.comment-box {
+  background: #2a2e3d; /* Dark Box Background */
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+  color: #ffffff; /* White text */
+  max-width: 300px; /* Limit comment box width */
+}
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  padding: 5px;
+}
+.comment-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.comment-user {
+  font-weight: bold;
+  color: #f1f1f1;
+}
+.comment-time {
+  font-size: 12px;
+  color: #b0b3c1; /* Light Grey */
+}
+.comment-text {
+  margin-top: 5px;
+  color: #ffffff;
+}
+.no-comments {
+  text-align: center;
+  color: #b0b3c1;
+}
+.loading-text {
+  text-align: center;
+  font-style: italic;
+  color: #b0b3c1;
+}
+
+.view-all-btn {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  padding: 10px 15px;
+  background: #007bff; /* Blue button */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.view-all-btn:hover {
+  background: #0056b3;
+}
+
 /* Mobile Navbar */
 @media (max-width: 768px) {
+  .container {
+      padding: 5px; /* Reduce left-right padding */
+  }
+
+  .topup-section {
+    padding: 10px;
+  }
+  .game-grid {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Smaller game cards */
+      gap: 10px; /* Reduce gap between game cards */
+  }
+
+  .game-card {
+      padding: 5px; /* Less padding inside game card */
+  }
+
+  .game-cover {
+      max-width: 130px; /* Smaller images on mobile */
+      height: 130px;
+  }
+
+  .topup-button {
+      padding: 6px 10px; /* Smaller button size */
+      font-size: 14px;
+  }
+
   .navbar-toggle {
     display: block;
   }
@@ -612,4 +716,31 @@ body.dark-theme {
     text-align: left;
     width: 100%; /* Prevent link overflow */
   }
+
+  .comment-container {
+    grid-template-columns: 1fr; /* 1 column on mobile */
+    gap: 10px;
+  }
+
+  .comment-box {
+      max-width: 100%; /* Full width on mobile */
+      padding: 12px; /* Adjust padding for smaller screens */
+  }
+
+  .profile-img {
+      width: 35px; /* Slightly smaller images on mobile */
+      height: 35px;
+  }
+
+  .comment-user {
+      font-size: 14px; /* Reduce font size */
+  }
+
+  .comment-time {
+      font-size: 11px;
+  }
+
+  .comment-text {
+      font-size: 14px;
+  }  
 }

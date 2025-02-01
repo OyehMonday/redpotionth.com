@@ -18,8 +18,13 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Send Requests To Front Controller...
+    # Allow access to Laravel storage files
+    RewriteCond %{REQUEST_URI} ^/storage/(.*)$ [NC]
+    RewriteRule .* - [L]
+
+    # Send other requests to the front controller
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
 </IfModule>

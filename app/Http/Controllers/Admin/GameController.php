@@ -51,8 +51,25 @@ class GameController extends Controller
             'full_cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
-        $coverPath = $request->file('cover_image') ? $request->file('cover_image')->store('game_covers', 'public') : null;
-        $fullCoverPath = $request->file('full_cover_image') ? $request->file('full_cover_image')->store('game_full_covers', 'public') : null;
+        // $coverPath = $request->file('cover_image') ? $request->file('cover_image')->store('game_covers', 'public') : null;
+        // $fullCoverPath = $request->file('full_cover_image') ? $request->file('full_cover_image')->store('game_full_covers', 'public') : null;
+
+        $coverPath = null;
+        $fullCoverPath = null;
+        
+        if ($request->hasFile('cover_image')) {
+            $coverFile = $request->file('cover_image');
+            $coverFilename = time() . '_' . $coverFile->getClientOriginalName();
+            $coverFile->move(public_path('game_covers'), $coverFilename);
+            $coverPath = 'game_covers/' . $coverFilename;
+        }
+        
+        if ($request->hasFile('full_cover_image')) {
+            $fullCoverFile = $request->file('full_cover_image');
+            $fullCoverFilename = time() . '_' . $fullCoverFile->getClientOriginalName();
+            $fullCoverFile->move(public_path('game_full_covers'), $fullCoverFilename);
+            $fullCoverPath = 'game_full_covers/' . $fullCoverFilename;
+        }
 
         Game::create([
             'title' => $request->title,

@@ -30,8 +30,55 @@
             </div>
             <hr class="divider">
 
-            <!-- Section 2: How It Works -->
+            <!-- Section 2: Review -->
+            <div class="section review-section">
+                <h2>รีวิวจากลูกค้า</h2>
+                <div id="comment-container" class="comment-container">
+                    <p class="loading-text">กำลังโหลดรีวิว...</p>
+                </div>
+                <a id="view-all-reviews" href="https://www.facebook.com/share/p/14pZYS8HrF/" target="_blank" class="view-all-btn" style="display: none;">ดูรีวิวทั้งหมด</a>                
+            </div>
 
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                $(document).ready(function() {
+                    $.ajax({
+                        url: "{{ route('fetch.facebook.comments') }}",
+                        method: "GET",
+                        success: function(response) {
+                            $("#comment-container").empty();
+
+                            if (response.comments.length > 0) {
+                                response.comments.forEach(comment => {
+                                    let commentHtml = `
+                                        <div class="comment-box">
+                                            <div class="comment-header">
+                                                <img src="${comment.profile_image}" class="profile-img" alt="User">
+                                                <div class="comment-info">
+                                                    <span class="comment-user">${comment.user_name}</span>
+                                                    <span class="comment-time">${comment.formatted_time}</span>
+                                                </div>
+                                            </div>
+                                            <p class="comment-text">${comment.message}</p>
+                                        </div>`;
+                                    $("#comment-container").append(commentHtml);
+                                });
+
+                                // Show "ดูรีวิวทั้งหมด" button after comments load
+                                $("#view-all-reviews").show();
+                            } else {
+                                $("#comment-container").html('<p class="no-comments">ยังไม่มีรีวิวจากลูกค้า</p>');
+                                $("#view-all-reviews").hide(); // Hide if no comments
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching comments:", xhr.responseText);
+                            $("#comment-container").html('<p class="no-comments">ไม่สามารถโหลดรีวิวได้</p>');
+                            $("#view-all-reviews").hide();
+                        }
+                    });
+                });
+            </script>
         </div>
     </div>
 
