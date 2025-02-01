@@ -15,4 +15,10 @@ class Game extends Model
     {
         return $this->belongsTo(GameCategory::class, 'game_category_id');
     }
+    
+    public function packages()
+    {
+        return $this->hasMany(GamePackage::class);
+    }
+    
 }

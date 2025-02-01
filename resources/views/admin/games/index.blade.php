@@ -61,6 +61,7 @@
                                     <td>{{ $game->title }}</td>
                                     <td>{{ $game->category->name ?? 'Uncategorized' }}</td>
                                     <td>
+                                        <a href="{{ route('game-packages.index', $game) }}" class="btn btn-sm btn-info">Packages</a>
                                         <a href="{{ route('games.edit', $game) }}" class="btn btn-sm btn-warning">Edit</a>
                                         <form action="{{ route('games.destroy', $game) }}" method="POST" style="display:inline-block;">
                                             @csrf
