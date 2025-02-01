@@ -48,7 +48,7 @@ body {
 h1 {
   color: #4cafef;
   text-align: center;
-  margin-bottom: 5px; /* Reduce the spacing below the h1 */
+  margin-bottom: 5px; 
   font-size: 2.5rem;
   font-weight: 700;
 }
@@ -120,7 +120,7 @@ p {
 
 /* Top Up Section */
 .topup-section h1 {
-  color: #ff6f61; /* Red-orange color for Top Up */
+  color: #ff6f61; 
   font-size: 2rem;
   margin-bottom: 10px;
 }
@@ -505,9 +505,8 @@ p {
 
 /* Global Dark Theme */
 body.dark-theme {
-  background-color: #0A192F; /* Dark Navy */
+  background-color: #0A192F; 
   color: #ffffff;
-  font-family: Arial, sans-serif;
 }
 
 /* Top-Up Section */
@@ -567,7 +566,6 @@ body.dark-theme {
   color: #F0F4F8; 
 }
 
-/* Top-Up Button */
 .topup-button {
   display: block;
   margin-top: 10px;
@@ -662,6 +660,118 @@ body.dark-theme {
   background: #0056b3;
 }
 
+/* Top-Up */
+.full-cover-image {
+  width: 100%; 
+  height: 350px; 
+  object-fit: cover; 
+  display: block;
+}
+
+.topup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.topupcard {
+  background: #1B2A41; 
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  border: 2px solid #334E68; 
+  transition: transform 0.2s ease-in-out;
+  overflow: hidden;
+  padding: 5px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  text-align: center;
+  min-height: 250px; 
+}
+
+.topupcard:hover {
+  transform: scale(1.05);
+}
+
+
+.topupcard-img {
+  width: 100px; 
+  height: 100px; 
+  object-fit: cover;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topupcard-body {
+  flex-grow: 1;
+  padding: 5px;
+}
+
+.topupcard-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff9800; 
+  margin-bottom: 0px;
+  margin-top: 0px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
+}
+
+.topupcard-text {
+  font-size: 14px;
+  color: #999 ;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  min-height: 25px;
+}
+
+.old-price {
+  color: red;
+  font-size: 16px;
+}
+
+.new-price {
+  color: #fff; 
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.text-success {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Add to Cart Button */
+.topupcard-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.cart-icon {
+  width: 20px; 
+  height: 20px;
+  margin-right: 5px; 
+  vertical-align: middle;
+  margin-top: -3px;
+}
+
+
+/* Reduce button hover effect */
+.topupcard-btn:hover {
+  background-color: #0056b3;
+}
+
+
 /* Mobile Navbar */
 @media (max-width: 768px) {
   .container {
@@ -742,5 +852,8 @@ body.dark-theme {
 
   .comment-text {
       font-size: 14px;
-  }  
+  }
+  .full-cover-image {
+    height: 250px;
+}
 }

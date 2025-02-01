@@ -95,26 +95,30 @@ class GameController extends Controller
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'full_cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
-
+    
         if ($request->file('cover_image')) {
-            Storage::disk('public')->delete($game->cover_image);
+            if ($game->cover_image) {
+                Storage::disk('public')->delete($game->cover_image);
+            }
             $game->cover_image = $request->file('cover_image')->store('game_covers', 'public');
         }
-
+    
         if ($request->file('full_cover_image')) {
-            Storage::disk('public')->delete($game->full_cover_image);
+            if ($game->full_cover_image) {
+                Storage::disk('public')->delete($game->full_cover_image);
+            }
             $game->full_cover_image = $request->file('full_cover_image')->store('game_full_covers', 'public');
         }
-
+    
         $game->update([
             'title' => $request->title,
             'game_category_id' => $request->game_category_id,
             'cover_image' => $game->cover_image,
             'full_cover_image' => $game->full_cover_image,
         ]);
-
+    
         return redirect()->route('games.index')->with('success', 'Game updated successfully.');
-    }
+    }    
 
     public function destroy(Game $game)
     {

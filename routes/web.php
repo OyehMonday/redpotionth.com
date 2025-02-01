@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\GameCategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GameTopupController;
+use App\Http\Controllers\GameCartController;
 use App\Http\Controllers\Admin\GamePackageController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\FacebookCommentController;
@@ -35,6 +36,8 @@ require __DIR__.'/auth.php';
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/games/{id}/topup', [GameTopupController::class, 'show'])->name('games.topup');
+
+Route::post('/games/cart/add', [GameCartController::class, 'addToCart'])->name('game.cart.add');
 
 Route::get('/auth/google', [CustomAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [CustomAuthController::class, 'handleGoogleCallback']);

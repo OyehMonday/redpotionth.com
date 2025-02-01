@@ -23,7 +23,7 @@
                         <div class="game-card">
                             <img src="{{ asset('storage/' . $game->cover_image) }}" alt="{{ $game->title }}" class="game-cover">
                             <h3 class="game-title">{{ $game->title }}</h3>
-                            <a href="{{ route('games.topup', $game->id) }}" class="topup-button">เติมเงิน</a>
+                            <a href="{{ route('games.topup', $game->id) }}" class="topup-button">เลือกแพ็ก</a>
                         </div>
                     @endforeach
                 </div>
@@ -90,5 +90,6 @@
             menu.classList.toggle("show");
         }
     </script>
+    @include('footer')
 </body>
 </html>
