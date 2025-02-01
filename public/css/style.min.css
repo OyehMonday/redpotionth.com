@@ -140,11 +140,12 @@ p {
 /* Horizontal Divider */
 .divider {
   border: none;
-  border-top: 1px solid #4cafef; /* Blue divider color */
-  margin: 20px 0;
-  width: 80%; /* Limit width for aesthetics */
+  border-top: 1px solid #334E68; 
+  margin: 10px 0;
+  width: 90%; 
   margin-left: auto;
   margin-right: auto;
+  display: block;
 }
 
 /* Description Text */
@@ -517,11 +518,7 @@ body.dark-theme {
   border-radius: 8px;
 }
 
-/* Divider */
-.divider {
-  border: 1px solid #334E68;
-  margin: 20px 0;
-}
+
 
 /* Game Selection Section */
 .game-selection {

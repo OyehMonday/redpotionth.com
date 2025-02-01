@@ -14,7 +14,7 @@ class HomeController extends Controller  // ✅ Ensure it extends Controller
 
     public function index()
     {
-        $games = Game::orderBy('sort_order', 'asc')->take(10)->get(); 
+        $games = Game::orderBy('sort_order', 'asc')->take(5)->get(); 
         return view('landing', compact('games'));
     }
 }
