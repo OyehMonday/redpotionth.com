@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\FacebookCommentController;
 
 Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
-    $allowedFolders = ['game_covers', 'game_full_covers']; 
+    $allowedFolders = ['game_covers', 'game_full_covers', 'package_covers']; 
 
     if (!in_array($folder, $allowedFolders)) {
         abort(403, 'Unauthorized access');
@@ -36,8 +36,13 @@ require __DIR__.'/auth.php';
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/games/{id}/topup', [GameTopupController::class, 'show'])->name('games.topup');
+Route::post('/games/cart/add', [GameCartController::class, 'addToCart'])->name('game.cart.add');
 
 Route::post('/games/cart/add', [GameCartController::class, 'addToCart'])->name('game.cart.add');
+Route::get('/games/cart', [GameCartController::class, 'viewCart'])->name('game.cart.view');
+Route::post('/games/cart/update', [GameCartController::class, 'updateCart'])->name('game.cart.update');
+Route::post('/games/cart/remove', [GameCartController::class, 'removeFromCart'])->name('game.cart.remove');
+Route::post('/games/cart/clear', [GameCartController::class, 'clearCart'])->name('game.cart.clear');
 
 Route::get('/auth/google', [CustomAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [CustomAuthController::class, 'handleGoogleCallback']);

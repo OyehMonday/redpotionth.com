@@ -42,6 +42,13 @@ class GamePackageController extends Controller
         ]);
     
         $coverImagePath = null;
+
+        // if ($request->hasFile('cover_image')) {
+        //     $coverImageFile = $request->file('cover_image');
+        //     $coverImageFilename = time() . '_' . $coverImageFile->getClientOriginalName();
+        //     $coverImageFile->move(public_path('package_covers'), $coverImageFilename);
+        //     $coverImagePath = 'package_covers/' . $coverImageFilename;
+        // }          
         if ($request->hasFile('cover_image')) {
             $coverImagePath = $request->file('cover_image')->store('package_covers', 'public');
         }

@@ -771,6 +771,77 @@ body.dark-theme {
   background-color: #0056b3;
 }
 
+/* Cart Container */
+.cart-game {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+.cart-gamecover {
+  width: 100%;
+  max-width: 100px; 
+  object-fit: cover;
+  border-radius: 5px;
+  border: 2px solid #2E4A66; 
+}
+.cart-header {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Cart Item Layout */
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Game Cover */
+.cart-cover {
+  flex: 1;
+  text-align: left;
+}
+
+/* Package Details */
+.cart-details {
+  flex: 2;
+  text-align: left;
+  padding-left: 10px;
+}
+
+/* Price Styling */
+.old-price {
+  color: red;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.new-price {
+  color: #28a745;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Player ID Input */
+.cart-actions {
+  flex: 2;
+  text-align: left;
+}
+
+.cart-actions input {
+  padding: 5px;
+  width: 150px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+/* Remove Button */
+.btn-danger {
+  font-size: 12px;
+  padding: 5px 10px;
+}
 
 /* Mobile Navbar */
 @media (max-width: 768px) {
