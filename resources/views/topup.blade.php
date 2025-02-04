@@ -14,7 +14,7 @@
             <h1 style="margin-left: 0px;">เติมเกม {{ $game->title }}</h1>
 
             <div>
-                <img src="{{ asset('storage/' . $game->full_cover_image) }}" class="full-cover-image" alt="{{ $game->name }}">
+                <img src="{{ url('storage/' . $game->full_cover_image) }}" class="full-cover-image" alt="{{ $game->name }}">
             </div>
             <h2>เลือกแพ็กเกจที่ต้องการ เติมเงิน {{ $game->title }}</h2>
 
@@ -23,7 +23,7 @@
                 @foreach($packages as $package)
                     <div class="topupcard">
                     @if(!empty($package->cover_image)) 
-                        <img src="{{ asset('storage/' . $package->cover_image) }}" class="topupcard-img" alt="{{ $package->name }}">
+                        <img src="{{ url('storage/' . $package->cover_image) }}" class="topupcard-img" alt="{{ $package->name }}">
                     @else
                         <div class="topupcard-img">
                             <span style="font-size: 12px; color: #666;">No Image</span>
