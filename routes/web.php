@@ -33,6 +33,8 @@ Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
 
 require __DIR__.'/auth.php';
 
+Route::get('/admin/verify/{token}', [AdminAuthController::class, 'verify'])->name('admin.verify');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/games/{id}/topup', [GameTopupController::class, 'show'])->name('games.topup');
