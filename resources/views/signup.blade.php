@@ -14,9 +14,17 @@
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-image">
                 </a>
             </div> 
-            <h1 class="login-title">สร้างบัญชี</h1>
-            <p class="login-subtitle">กรุณากรอกข้อมูลเพื่อสร้างบัญชีใหม่</p>
+            <h1 class="login-title">สมัครสมาชิก</h1>
+            <p class="login-subtitle">กรุณากรอกข้อมูลเพื่อสมัครสมาชิก</p>
             
+            @if ($errors->any())
+                <div class="signupalert">
+                    @foreach ($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif            
+
             <form action="{{ route('custom.signup') }}" method="POST" class="login-form">
                 @csrf
                 <div class="form-group">
@@ -31,11 +39,11 @@
                     <label for="password" class="form-label">รหัสผ่าน</label>
                     <input type="password" id="password" name="password" class="form-input" required>
                 </div>
-                <button type="submit" class="btn btn-primary">สร้างบัญชี</button>
+                <button type="submit" class="btn btn-primary">สมัครสมาชิก</button>
             </form>
 
             <div class="register-link">
-                <p>มีบัญชีอยู่แล้ว? <a href="{{ route('custom.login.form') }}">เข้าสู่ระบบ</a></p>
+                <p>มีสมาชิกอยู่แล้ว? <a href="{{ route('custom.login.form') }}">เข้าสู่ระบบ</a></p>
             </div>
         </div>
     </div>

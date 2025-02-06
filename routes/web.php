@@ -14,6 +14,7 @@ use App\Http\Controllers\GameCartController;
 use App\Http\Controllers\Admin\GamePackageController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\FacebookCommentController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
     $allowedFolders = ['game_covers', 'game_full_covers', 'package_covers', 'uidimages']; 
@@ -34,6 +35,7 @@ Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
 require __DIR__.'/auth.php';
 
 Route::get('/admin/verify/{token}', [AdminAuthController::class, 'verify'])->name('admin.verify');
+Route::get('/verify-email/{token}', [CustomAuthController::class, 'verifyEmail'])->name('verify.email');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -46,6 +48,8 @@ Route::post('/games/cart/update', [GameCartController::class, 'updateCart'])->na
 Route::get('/games/cart/remove', [GameCartController::class, 'removeFromCart'])->name('game.cart.remove');
 Route::post('/games/cart/clear', [GameCartController::class, 'clearCart'])->name('game.cart.clear');
 
+Route::get('/games/checkout', [GameCartController::class, 'checkout'])->name('game.checkout');
+Route::get('/payment/qr/{receiver}/{amount}', [PaymentController::class, 'generatePromptPayQR']);
 
 Route::get('/auth/google', [CustomAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [CustomAuthController::class, 'handleGoogleCallback']);

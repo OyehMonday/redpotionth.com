@@ -16,7 +16,6 @@ class GameCartController extends Controller
     
         $cart = session()->get('cart', []);
     
-        // Ensure game entry exists in the cart
         if (!isset($cart[$game->id])) {
             $cart[$game->id] = [
                 'game_name' => $game->title,
@@ -26,10 +25,8 @@ class GameCartController extends Controller
             ];
         }
     
-        // Generate a unique ID using timestamp
         $uniqueId = uniqid($package->id . '_', true);
     
-        // Add a new entry every time "Add to Cart" is clicked
         $cart[$game->id]['packages'][$uniqueId] = [
             'unique_id' => $uniqueId, 
             'package_id' => $package->id,
@@ -42,7 +39,7 @@ class GameCartController extends Controller
     
         session()->put('cart', $cart);
     
-        return redirect()->route('game.cart.view')->with('success', 'Item added to cart!');
+        return redirect()->route('game.cart.view')->with('success', '');
     }
     
     /**
@@ -54,23 +51,24 @@ class GameCartController extends Controller
         return view('cart', compact('cart'));
     }
 
-    /**
-     * Update Player ID for each game.
-     */
     public function updateCart(Request $request)
     {
         $cart = session()->get('cart', []);
-
-        foreach ($request->player_ids as $game_id => $player_id) {
+    
+        foreach ($request->player_ids as $game_id => $packages) {
             if (isset($cart[$game_id])) {
-                $cart[$game_id]['player_id'] = $player_id;
+                foreach ($packages as $package_id => $player_id) {
+                    if (isset($cart[$game_id]['packages'][$package_id])) {
+                        $cart[$game_id]['packages'][$package_id]['player_id'] = $player_id;
+                    }
+                }
             }
         }
-
+    
         session()->put('cart', $cart);
-
-        return redirect()->route('game.cart.view')->with('success', 'Cart updated successfully!');
-    }
+    
+        return redirect()->route('game.checkout')->with('success', '');
+    }    
 
     public function removeFromCart(Request $request)
     {
@@ -94,7 +92,7 @@ class GameCartController extends Controller
     
         session()->save();
     
-        return redirect()->route('game.cart.view')->with('success', 'นำสินค้าออกจากตะกร้าแล้ว');
+        return redirect()->route('game.cart.view')->with('success', '');
     }        
     
     public function clearCart()
@@ -102,4 +100,22 @@ class GameCartController extends Controller
         session()->forget('cart');
         return redirect()->route('game.cart.view')->with('success', 'Cart has been cleared.');
     }
+
+    public function checkout()
+    {
+        if (!Session::has('user')) {
+            session()->put('url.intended', route('game.checkout'));
+    
+            return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน');
+        }
+    
+        $cart = session()->get('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('game.cart.view')->with('error', 'ตะกร้าสินค้าของคุณว่างเปล่า');
+        }
+    
+        return view('checkout', compact('cart'));
+    }
+    
+      
 }

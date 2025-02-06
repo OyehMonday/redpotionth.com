@@ -46,8 +46,8 @@ body {
 
 /* Heading Styles */
 h1 {
-  color: #4cafef;
-  text-align: center;
+  color: #ff6f61; 
+  text-align: left;
   margin-bottom: 5px; 
   font-size: 2.5rem;
   font-weight: 700;
@@ -95,20 +95,19 @@ p {
   font-weight: 400; /* Regular weight for readability */
 }
 
-/* General Container Styles */
 .container {
-  width: 1200px; /* Fixed width for desktop */
-  max-width: calc(100% - 30px); /* Ensure the container adapts to smaller devices */
-  margin: 15px auto; /* Center horizontally */
+  width: 1200px; 
+  max-width: calc(100% - 30px); 
+  margin: 15px auto; 
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   background: #242b48;
-  padding: 10px 10px; /* Added consistent padding */
+  padding: 10px 10px;
   border-radius: 10px;
   display: flex;
-  flex-direction: column; /* Stack sections vertically */
-  gap: 30px; /* Add spacing between sections */
-  box-sizing: border-box; /* Ensure padding is included in the width */
+  flex-direction: column; 
+  gap: 30px; 
+  box-sizing: border-box; 
 }
 
 /* Section Styling */
@@ -120,7 +119,6 @@ p {
 
 /* Top Up Section */
 .topup-section h1 {
-  color: #ff6f61; 
   font-size: 2rem;
   margin-bottom: 10px;
 }
@@ -171,6 +169,10 @@ p {
   height: 100vh; 
   background: #1a1f36; 
   padding-top: 50px; 
+}
+
+.signupalert{
+  color: red;
 }
 
 
@@ -244,9 +246,7 @@ p {
   transform: scale(1.05);
 }
 
-/* Adjust the register link */
 .register-link {
-  margin-top: 15px;
   font-size: 0.9rem;
   color: #c9d1d9;
 }
@@ -270,19 +270,19 @@ p {
 .form-input {
   width: calc(100% - 20px);
   padding: 10px;
-  border: 1px solid #80c1ff; /* Lighter blue border */
+  border: 1px solid #80c1ff; 
   border-radius: 5px;
   font-size: 1rem;
-  background: #1e2a44; /* Dark background for text fields */
-  color: #f0f0f0; /* White text color */
+  background: #1e2a44; 
+  color: #f0f0f0; 
   transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-input:focus {
-  outline: none; /* Remove the default browser outline */
-  border: 1px solid #4cafef; /* Bright blue border on focus */
-  box-shadow: 0 0 5px #4cafef; /* Subtle glow effect on focus */
-  background: #1a2945; /* Slightly darker background when focused */
+  outline: none;
+  border: 1px solid #4cafef;
+  box-shadow: 0 0 5px #4cafef;
+  background: #1a2945;
 }
 
 .form-options {
@@ -326,20 +326,6 @@ p {
   transform: scale(1.05);
 }
 
-.register-link {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #c9d1d9;
-}
-
-.register-link a {
-  color: #4cafef;
-  text-decoration: none;
-}
-
-.register-link a:hover {
-  text-decoration: underline;
-}
 
 /* Navigation Bar */
 .navbar {
@@ -469,7 +455,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px 0;
+  margin: 5px 0;
   color: #c9d1d9; /* Light gray text */
   font-size: 1rem;
   font-weight: 400;
@@ -531,12 +517,12 @@ body.dark-theme {
 
 /* Game Card */
 .game-card {
-  background: #1B2A41; /* Dark Blue */
+  background: #1B2A41; 
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   text-align: center;
-  border: 2px solid #334E68; /* Darker border */
+  border: 2px solid #334E68; 
   transition: transform 0.2s ease-in-out;
 }
 
@@ -769,10 +755,11 @@ body.dark-theme {
   display: flex;
   align-items: flex-start; 
   justify-content: flex-start;
-  border: 1px solid #ddd;
+  border: 2px solid #334E68; 
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 15px 20px 15px 0;
+  margin: 10px;
   gap: 0px; 
 }
 
@@ -785,7 +772,7 @@ body.dark-theme {
   font-size: 1.2em;
 }
 
-.cart-left img {
+.cart-gamecover {
   width: 120px;
   border-radius: 8px;
 }
@@ -797,16 +784,14 @@ body.dark-theme {
   gap: 10px;
 }
 
-/* Cart Items */
 .cart-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #334E68;
   padding: 0 0 10px 0;
 }
 
-/* Text alignments */
 .cart-details {
   flex: 2;
   text-align: left;
@@ -824,6 +809,24 @@ body.dark-theme {
   text-align: right;
 }
 
+.cart-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  background: #007BFF;
+  color: white;
+  font-family: 'Kanit', sans-serif;
+}
+
+.cart-btn:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
 .remove-icon {
   width: 18px;
   height: 18px;
@@ -836,7 +839,6 @@ body.dark-theme {
   opacity: 0.7; 
 }
 
-/* Remove button styling */
 .cart-remove a {
   color: white;
   background-color: #dc3545;
@@ -861,6 +863,13 @@ body.dark-theme {
   border: none;
   text-decoration: none;
   font-size:0.8em;
+}
+
+.cart-discount {
+  text-align: right;
+  font-size: 0.9em;
+  font-weight: 100;
+  color: #ff4444; 
 }
 
 .cart-summary {
@@ -891,6 +900,83 @@ body.dark-theme {
   color: #007bff;
 }
 
+.cart-coin {
+  display: inline-flex; 
+  align-items: center; 
+  font-size: 0.9em;
+  font-weight: 100;
+  color: #ff9800; 
+  margin-bottom: 8px;
+}
+
+.coin-icon {
+  width: 20px; 
+  margin-left: 5px; 
+  vertical-align: middle; 
+}
+
+/* Lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-content {
+  max-width: 90vw !important; /* Forces image to be 90% of viewport width */
+  max-height: 90vh !important; /* Forces image to be 90% of viewport height */
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  object-fit: contain !important; /* Ensures the entire image is visible */
+}
+
+#lightbox-img {
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  object-fit: contain !important;
+}
+
+
+.lightbox.show .lightbox-content {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.lightbox-close:hover {
+  color: red;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.chout-actions {
+  flex: 2;
+  text-align: center;
+}
+
 /* Mobile Navbar */
 @media (max-width: 768px) {
   .container {
@@ -906,16 +992,16 @@ body.dark-theme {
   }
 
   .game-card {
-      padding: 5px; /* Less padding inside game card */
+      padding: 5px; 
   }
 
   .game-cover {
-      max-width: 130px; /* Smaller images on mobile */
+      max-width: 130px; 
       height: 130px;
   }
 
   .topup-button {
-      padding: 6px 10px; /* Smaller button size */
+      padding: 6px 10px; 
       font-size: 14px;
   }
 
@@ -1000,6 +1086,8 @@ body.dark-theme {
   .cart-details,
   .cart-actions,
   .cart-price,
+  .cart-summary,
+  .cart-discount,
   .cart-remove {
     width: 100%;
     text-align: center;
@@ -1010,3 +1098,13 @@ body.dark-theme {
     text-align: center;
   }  
 }
+
+
+::placeholder {
+  font-family: 'Kanit', sans-serif !important; 
+}
+
+::-webkit-input-placeholder { font-family: 'Kanit', sans-serif !important; }
+::-moz-placeholder { font-family: 'Kanit', sans-serif !important; }
+:-ms-input-placeholder { font-family: 'Kanit', sans-serif !important; }
+:-moz-placeholder { font-family: 'Kanit', sans-serif !important; }

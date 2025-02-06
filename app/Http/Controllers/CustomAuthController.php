@@ -7,81 +7,98 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash; 
 use App\Models\User;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use App\Mail\VerifyEmail;
 
 class CustomAuthController extends Controller
 {
     public function redirectToGoogle()
     {
+        if (!session()->has('url.intended')) {
+            session()->put('url.intended', url()->previous());
+        }
+    
         return Socialite::driver('google')->redirect();
     }
-
-    /**
-     * Handle the callback from Google.
-     */
+    
     public function handleGoogleCallback()
     {
         try {
-            // Get user details from Google
             $googleUser = Socialite::driver('google')->stateless()->user();
-
-            // Check if the user already exists in the database
+    
             $user = User::where('email', $googleUser->getEmail())->first();
-
+    
             if (!$user) {
-                // Create a new user if not already in the database
                 $user = User::create([
                     'username' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
-                    'password' => bcrypt(uniqid()), // Generate a random password
-                    'google_id' => $googleUser->getId(), // Store Google ID (optional)
+                    'password' => bcrypt(uniqid()), 
+                    'google_id' => $googleUser->getId(), 
                 ]);
             }
-
-            // Log the user in by saving them to the session
+    
             Session::put('user', $user);
-
-            return redirect()->route('dashboard')->with('success', 'Logged in successfully!');
+    
+            $redirectTo = session()->pull('url.intended', route('dashboard')); 
+            return redirect()->to($redirectTo);
+    
         } catch (\Exception $e) {
             return redirect()->route('custom.login.form')->with('error', 'Failed to authenticate with Google.');
         }
     }
-
-    /**
-     * Show the sign-up form.
-     */
+    
     public function showSignUpForm()
     {
         if (Session::has('user')) {
-            return redirect()->route('landing.page'); // Adjust route name as needed
+            return redirect()->route('landing.page'); 
         }        
         return view('signup');
     }
-
-    /**
-     * Handle sign-up logic.
-     */
+    
     public function signUp(Request $request)
     {
-        // Validate inputs
         $request->validate([
             'username' => 'required|unique:users,username|max:50',
             'email' => 'required|email|unique:users,email|max:100',
             'password' => 'required|min:6|max:50',
         ]);
-
-        // Create a new user with hashed password
-        User::create([
+    
+        $verificationToken = Str::random(64);
+    
+        $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Hash password
+            'password' => Hash::make($request->password),
+            'verification_token' => $verificationToken,
         ]);
 
-        return redirect()->route('custom.login.form')->with('success', 'Account created successfully! Please login.');
+        try {
+            Mail::to($user->email)->send(new VerifyEmail($user));
+        } catch (\Exception $e) {
+            return redirect()->route('custom.login.form')->with('error', 'ไม่สามารถส่งอีเมลยืนยันได้ โปรดลองอีกครั้ง');
+        }
+    
+        return redirect()->route('custom.login.form')
+            ->with('signupsuccess', "สมัครสมาชิกสำเร็จ! \nกรุณาตรวจสอบอีเมลของคุณเพื่อยืนยันบัญชี");
     }
 
-    /**
-     * Show the login form.
-     */
+    public function verifyEmail($token)
+    {
+        $user = User::where('verification_token', $token)->first();
+    
+        if (!$user) {
+            return redirect()->route('custom.login.form')->with('error', 'ลิงก์ยืนยันไม่ถูกต้องหรือหมดอายุ');
+        }
+    
+        $user->update([
+            'email_verified_at' => now(),
+            'verification_token' => null, 
+        ]);
+    
+        return redirect()->route('custom.login.form')->with('success', 'บัญชีของคุณได้รับการยืนยันแล้ว! กรุณาเข้าสู่ระบบ');
+    }    
+        
     public function showLoginForm()
     {
         if (Session::has('user')) {
@@ -90,33 +107,34 @@ class CustomAuthController extends Controller
         return view('login');
     }
 
-    /**
-     * Handle login logic.
-     */
     public function login(Request $request)
     {
-        // Validate inputs
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
-        // Find user by email
+    
         $user = User::where('email', $request->email)->first();
-
-        if ($user && Hash::check($request->password, $user->password)) { // Verify hashed password
-            // Store user in session
-            Session::put('user', $user);
-
-            return redirect()->route('dashboard');
+    
+        if (!$user) {
+            return redirect()->back()->with('error', 'บัญชีนี้ไม่มีอยู่ในระบบ');
         }
-
-        return redirect()->back()->with('error', 'Invalid email or password.');
+    
+        if (!$user->email_verified_at) {
+            return redirect()->back()->with('error', 'กรุณายืนยันอีเมลของคุณก่อนเข้าสู่ระบบ');
+        }
+    
+        if ($user && Hash::check($request->password, $user->password)) { 
+            Session::put('user', $user);
+    
+            $redirectTo = session()->pull('url.intended', route('dashboard'));
+            return redirect()->to($redirectTo);
+        }
+    
+        return redirect()->back()->with('error', 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
     }
+    
 
-    /**
-     * Show dashboard.
-     */
     public function dashboard()
     {
         if (!Session::has('user')) {
@@ -126,9 +144,6 @@ class CustomAuthController extends Controller
         return view('dashboard', ['user' => Session::get('user')]);
     }
 
-    /**
-     * Logout the user.
-     */
     public function logout()
     {
         Session::forget('user');
