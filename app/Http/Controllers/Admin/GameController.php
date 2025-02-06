@@ -48,38 +48,42 @@ class GameController extends Controller
             'title' => 'required|unique:games,title|max:255',
             'game_category_id' => 'required|exists:game_categories,id',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'full_cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'full_cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'uid_detail' => 'nullable|string|max:255',
+            'uid_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
-
-        // $coverPath = $request->file('cover_image') ? $request->file('cover_image')->store('game_covers', 'public') : null;
-        // $fullCoverPath = $request->file('full_cover_image') ? $request->file('full_cover_image')->store('game_full_covers', 'public') : null;
-
+    
         $coverPath = null;
         $fullCoverPath = null;
-        
+        $uidImagePath = null;
+    
         if ($request->hasFile('cover_image')) {
             $coverFile = $request->file('cover_image');
-            $coverFilename = time() . '_' . $coverFile->getClientOriginalName();
-            $coverFile->move(public_path('game_covers'), $coverFilename);
-            $coverPath = 'game_covers/' . $coverFilename;
+            $coverPath = $coverFile->store('game_covers', 'public');
         }
-        
+    
         if ($request->hasFile('full_cover_image')) {
             $fullCoverFile = $request->file('full_cover_image');
-            $fullCoverFilename = time() . '_' . $fullCoverFile->getClientOriginalName();
-            $fullCoverFile->move(public_path('game_full_covers'), $fullCoverFilename);
-            $fullCoverPath = 'game_full_covers/' . $fullCoverFilename;
+            $fullCoverPath = $fullCoverFile->store('game_full_covers', 'public');
         }
-
+    
+        if ($request->hasFile('uid_image')) {
+            $uidImageFile = $request->file('uid_image');
+            $uidImagePath = $uidImageFile->store('uidimages', 'public');
+        }     
+    
         Game::create([
             'title' => $request->title,
             'game_category_id' => $request->game_category_id,
+            'uid_image' => $uidImagePath,
+            'uid_detail' => $request->uid_detail,
             'cover_image' => $coverPath,
             'full_cover_image' => $fullCoverPath,
         ]);
-
+    
         return redirect()->route('games.index')->with('success', 'Game added successfully.');
     }
+    
 
     public function edit(Game $game)
     {
@@ -93,7 +97,9 @@ class GameController extends Controller
             'title' => 'required|max:255|unique:games,title,' . $game->id,
             'game_category_id' => 'required|exists:game_categories,id',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'full_cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'full_cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'uid_detail' => 'nullable|string|max:255',
+            'uid_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
     
         if ($request->file('cover_image')) {
@@ -110,9 +116,18 @@ class GameController extends Controller
             $game->full_cover_image = $request->file('full_cover_image')->store('game_full_covers', 'public');
         }
     
+        if ($request->file('uid_image')) {
+            if ($game->uid_image) {
+                Storage::disk('public')->delete($game->uid_image);
+            }
+            $game->uid_image = $request->file('uid_image')->store('uidimages', 'public');
+        }
+    
         $game->update([
             'title' => $request->title,
             'game_category_id' => $request->game_category_id,
+            'uid_image' => $game->uid_image,
+            'uid_detail' => $request->uid_detail,
             'cover_image' => $game->cover_image,
             'full_cover_image' => $game->full_cover_image,
         ]);
@@ -120,11 +135,23 @@ class GameController extends Controller
         return redirect()->route('games.index')->with('success', 'Game updated successfully.');
     }    
 
-    public function destroy(Game $game)
-    {
-        Storage::disk('public')->delete([$game->cover_image, $game->full_cover_image]);
-        $game->delete();
-
-        return redirect()->route('games.index')->with('success', 'Game deleted successfully.');
+public function destroy(Game $game)
+{
+    if ($game->cover_image) {
+        Storage::disk('public')->delete($game->cover_image);
     }
+
+    if ($game->full_cover_image) {
+        Storage::disk('public')->delete($game->full_cover_image);
+    }
+
+    if ($game->uid_image) {
+        Storage::disk('public')->delete($game->uid_image);
+    }
+
+    $game->delete();
+
+    return redirect()->route('games.index')->with('success', 'Game deleted successfully.');
+}
+
 }

@@ -55,7 +55,7 @@
                             <label for="cover_image">Cover Image</label>
                             <input type="file" name="cover_image" id="cover_image" class="form-control">
                             @if ($game->cover_image)
-                                <img src="{{ asset('storage/' . $game->cover_image) }}" width="100" class="mt-2">
+                                <img src="{{ url('storage/' . $game->cover_image) }}" width="100" class="mt-2">
                             @endif
                         </div>
 
@@ -63,9 +63,22 @@
                             <label for="full_cover_image">Full Cover Image</label>
                             <input type="file" name="full_cover_image" id="full_cover_image" class="form-control">
                             @if ($game->full_cover_image)
-                                <img src="{{ asset('storage/' . $game->full_cover_image) }}" width="100" class="mt-2">
+                                <img src="{{ url('storage/' . $game->full_cover_image) }}" width="100" class="mt-2">
                             @endif
                         </div>
+
+                        <div class="form-group">
+                            <label for="uid_detail">Player ID Placeholder</label>
+                            <input type="text" class="form-control" id="uid_detail" name="uid_detail" value="{{ $game->uid_detail }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="uid_image">Player ID Guide Image</label>
+                            <input type="file" class="form-control" id="uid_image" name="uid_image">
+                            @if($game->uid_image)
+                                <img src="{{ url('storage/' . $game->uid_image) }}" class="img-preview" width="100">
+                            @endif
+                        </div>                        
 
                         <button type="submit" class="btn btn-success mt-3">Update Game</button>
                     </form>

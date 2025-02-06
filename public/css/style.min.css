@@ -498,11 +498,6 @@ p {
   transition: background 0.3s ease, transform 0.2s ease; 
 }
 
-.btn-primary:hover {
-  background: #358eca; 
-  transform: scale(1.05); 
-}
-
 /* Global Dark Theme */
 body.dark-theme {
   background-color: #0A192F; 
@@ -552,7 +547,6 @@ body.dark-theme {
 /* Game Cover */
 .game-cover {
   width: 100%;
-  max-width: 150px; 
   object-fit: cover;
   border-radius: 5px;
   border: 2px solid #2E4A66; 
@@ -771,76 +765,130 @@ body.dark-theme {
   background-color: #0056b3;
 }
 
-/* Cart Container */
-.cart-game {
+.cart-container {
+  display: flex;
+  align-items: flex-start; 
+  justify-content: flex-start;
   border: 1px solid #ddd;
+  border-radius: 10px;
   padding: 15px;
   margin-bottom: 20px;
-  border-radius: 10px;
-}
-.cart-gamecover {
-  width: 100%;
-  max-width: 100px; 
-  object-fit: cover;
-  border-radius: 5px;
-  border: 2px solid #2E4A66; 
-}
-.cart-header {
-  font-size: 18px;
-  font-weight: bold;
+  gap: 0px; 
 }
 
-/* Cart Item Layout */
+.cart-left {
+  flex: 0.5;
+  text-align: center;
+}
+
+.cart-gametitle{
+  font-size: 1.2em;
+}
+
+.cart-left img {
+  width: 120px;
+  border-radius: 8px;
+}
+
+.cart-right {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Cart Items */
 .cart-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding: 0 0 10px 0;
 }
 
-/* Game Cover */
-.cart-cover {
-  flex: 1;
-  text-align: left;
-}
-
-/* Package Details */
+/* Text alignments */
 .cart-details {
   flex: 2;
   text-align: left;
-  padding-left: 10px;
 }
 
-/* Price Styling */
-.old-price {
-  color: red;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.new-price {
-  color: #28a745;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-/* Player ID Input */
 .cart-actions {
   flex: 2;
-  text-align: left;
+  text-align: right;
+}
+.cart-remove {
+  flex: 1;
+  text-align: right;
+}
+.cart-price{
+  text-align: right;
+}
+
+.remove-icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+  padding-top: 5px;
+}
+
+.remove-icon:hover {
+  opacity: 0.7; 
+}
+
+/* Remove button styling */
+.cart-remove a {
+  color: white;
+  background-color: #dc3545;
+  padding: 5px 10px;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.cart-remove a:hover {
+  background-color: #c82333;
 }
 
 .cart-actions input {
   padding: 5px;
-  width: 150px;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-bottom: 5px;
 }
 
-/* Remove Button */
-.btn-danger {
-  font-size: 12px;
-  padding: 5px 10px;
+.btn-info {
+  color: white;
+  border: none;
+  text-decoration: none;
+  font-size:0.8em;
+}
+
+.cart-summary {
+  text-align: right;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.cart-total {
+  font-size: 1.3em;
+}
+
+.cart-back {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.btn-back {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  font-size: 1em;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.btn-back:hover {
+  color: #007bff;
 }
 
 /* Mobile Navbar */
@@ -926,5 +974,39 @@ body.dark-theme {
   }
   .full-cover-image {
     height: 250px;
-}
+  }
+  
+  .cart-container {
+    flex-direction: column; /* Stack items on mobile */
+    align-items: center;
+    text-align: center;
+  }
+
+  .cart-left {
+    flex: 1;
+    width: 100%;
+  }
+
+  .cart-right {
+    flex: 1;
+    width: 100%;
+  }
+
+  .cart-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cart-details,
+  .cart-actions,
+  .cart-price,
+  .cart-remove {
+    width: 100%;
+    text-align: center;
+    padding: 5px 0;
+  }
+
+  .cart-remove {
+    text-align: center;
+  }  
 }

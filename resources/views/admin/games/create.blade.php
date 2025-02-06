@@ -42,6 +42,16 @@
                             <input type="file" name="full_cover_image" class="form-control">
                         </div>
 
+                        <div class="form-group">
+                            <label for="uid_detail">Player ID Placeholder</label>
+                            <input type="text" class="form-control" name="uid_detail" placeholder="ตัวอย่าง : กรอก UID ของคุณ">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="uid_image">Player ID Guide Image</label>
+                            <input type="file" class="form-control" name="uid_image">
+                        </div>
+
                         <button type="submit" class="btn btn-success">Add Game</button>
                         <a href="{{ route('games.index') }}" class="btn btn-secondary">Back</a>
                     </form>

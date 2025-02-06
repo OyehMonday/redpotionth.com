@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule .* - [R=403,L]
+</IfModule>
+
+# Block access to JSON files (like credentials)
+<FilesMatch "\.(json|env|log|php|ini|bak|sh|sql|yaml)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>

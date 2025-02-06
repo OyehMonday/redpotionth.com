@@ -21,7 +21,7 @@
                 <div class="game-grid">
                     @foreach($games as $game)
                         <div class="game-card">
-                            <img src="{{ url('storage/' . $game->cover_image) }}" alt="{{ $game->title }}" class="game-cover">
+                            <img src="{{ asset('storage/' . $game->cover_image) }}" alt="{{ $game->title }}" class="game-cover">
                             <h3 class="game-title">{{ $game->title }}</h3>
                             <a href="{{ route('games.topup', $game->id) }}" class="topup-button">เลือกแพ็ก</a>
                         </div>

@@ -31,28 +31,30 @@ class AdminAuthController extends Controller
 
     public function showLoginForm()
     {
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
         return view('admin.login');
     }
 
-    // Show the admin signup form
     public function showSignupForm()
     {
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
         return view('admin.signup'); 
     }
     
     public function signup(Request $request)
     {
-        // Validate input data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:admins',
             'password' => 'required|string|min:8|confirmed',
         ]);
     
-        // Generate verification token
         $verificationToken = Str::random(32);
     
-        // Create the new admin record
         $admin = Admin::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
