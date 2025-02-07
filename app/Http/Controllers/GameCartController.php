@@ -42,9 +42,6 @@ class GameCartController extends Controller
         return redirect()->route('game.cart.view')->with('success', '');
     }
     
-    /**
-     * Display the cart.
-     */
     public function viewCart()
     {
         $cart = session()->get('cart', []);
@@ -77,12 +74,10 @@ class GameCartController extends Controller
         if (isset($cart[$request->game_id]['packages'][$request->package_id])) {
             unset($cart[$request->game_id]['packages'][$request->package_id]);
     
-            // If no more packages exist under this game, remove the game from the cart
             if (empty($cart[$request->game_id]['packages'])) {
                 unset($cart[$request->game_id]);
             }
     
-            // If the cart is now empty, remove it completely
             if (empty($cart)) {
                 session()->forget('cart');
             } else {

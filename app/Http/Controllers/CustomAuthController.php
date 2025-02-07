@@ -88,16 +88,23 @@ class CustomAuthController extends Controller
         $user = User::where('verification_token', $token)->first();
     
         if (!$user) {
+            $alreadyVerified = User::where('email_verified_at', '!=', null)->where('verification_token', null)->first();
+            
+            if ($alreadyVerified) {
+                return redirect()->route('custom.login.form')->with('success', 'บัญชีของคุณได้รับการยืนยันแล้ว! กรุณาเข้าสู่ระบบ');
+            }
+    
             return redirect()->route('custom.login.form')->with('error', 'ลิงก์ยืนยันไม่ถูกต้องหรือหมดอายุ');
         }
     
         $user->update([
             'email_verified_at' => now(),
-            'verification_token' => null, 
+            'verification_token' => null,
         ]);
     
         return redirect()->route('custom.login.form')->with('success', 'บัญชีของคุณได้รับการยืนยันแล้ว! กรุณาเข้าสู่ระบบ');
-    }    
+    }
+     
         
     public function showLoginForm()
     {

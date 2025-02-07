@@ -19,15 +19,26 @@ class AdminAuthController extends Controller
 {
     public function login(Request $request)
     {
-        // Attempt to log in the admin using the credentials
+        // Validate the login form
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+    
         if (Auth::guard('admin')->attempt($request->only('email', 'password'))) {
-            // Successful login, redirect to dashboard
+            $admin = Auth::guard('admin')->user();
+    
+            if (!$admin->is_verified) {
+                Auth::guard('admin')->logout();
+                return redirect()->route('admin.login')->withErrors(['email' => 'Please verify your email before logging in.']);
+            }
+    
             return redirect()->route('admin.dashboard');
         }
     
-        // Failed login, redirect back with an error message
-        return back()->withErrors(['email' => 'Invalid credentials']);
+        return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
     }
+    
 
     public function showLoginForm()
     {

@@ -64,16 +64,17 @@
                 @endforeach             
             </div>
 
-            <div class="section topup-section">
+            <div class="section topup-section" style="text-align:center;">
                 @php
-                    $receiver = "0904450446"; 
-                    $amount = 150.00;
+                    $receiver = "0105566013162"; 
+                    $amount = collect($cart)->pluck('packages')->flatten(1)->sum('price');
                 @endphp
 
-                <img src="{{ url('/payment/qr/' . $receiver . '/' . $amount) }}" alt="PromptPay QR Code">
+                <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code">
                 
-                <p>Amount to Pay: <strong>{{ number_format($amount, 2) }} THB</strong></p>                
+                <p>ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} THB</strong></p>                
             </div>
+
         </div>
     </div>
 
