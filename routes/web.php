@@ -49,6 +49,8 @@ Route::get('/games/cart/remove', [GameCartController::class, 'removeFromCart'])-
 Route::post('/games/cart/clear', [GameCartController::class, 'clearCart'])->name('game.cart.clear');
 
 Route::get('/games/checkout', [GameCartController::class, 'checkout'])->name('game.checkout');
+Route::get('/game/checkout/{order_id}', [GameCartController::class, 'showCheckout'])->name('game.checkout.view');
+
 Route::get('/payment/qr/{receiver}/{amount}', [PaymentController::class, 'generatePromptPayQR']);
 
 Route::get('/auth/google', [CustomAuthController::class, 'redirectToGoogle'])->name('auth.google');

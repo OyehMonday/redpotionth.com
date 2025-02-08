@@ -977,18 +977,74 @@ body.dark-theme {
   text-align: center;
 }
 
-/* Mobile Navbar */
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px 0px 5px 0px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.nav-cart {
+  display: none;
+}
+
+.cart-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cart-icon {
+  width: 28px;
+  height: auto;
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 0px 0px;
+  border-radius: 50%;
+  min-width: 20px;
+  text-align: center;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.qrcode{
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+}
+
 @media (max-width: 768px) {
   .container {
-      padding: 5px; /* Reduce left-right padding */
+      padding: 5px; 
   }
 
   .topup-section {
     padding: 10px;
   }
   .game-grid {
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Smaller game cards */
-      gap: 10px; /* Reduce gap between game cards */
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+      gap: 10px; 
   }
 
   .game-card {
@@ -1010,12 +1066,12 @@ body.dark-theme {
   }
 
   .navbar-menu {
-    display: none; /* Hide the menu by default */
+    display: none; 
     flex-direction: column;
-    width: calc(100% - 20px); /* Prevent overflow */
+    width: calc(100% - 20px); 
     background-color: #242b48;
     position: absolute;
-    top: 100%; /* Position below the navbar */
+    top: 100%;
     left: 0;
     padding: 10px 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -1023,32 +1079,32 @@ body.dark-theme {
   }
 
   .navbar-menu.show {
-    display: flex; /* Show the menu when toggled */
+    display: flex; 
   }
 
   .navbar-menu a {
     padding: 10px 0;
     text-align: left;
-    width: 100%; /* Prevent link overflow */
+    width: 100%; 
   }
 
   .comment-container {
-    grid-template-columns: 1fr; /* 1 column on mobile */
+    grid-template-columns: 1fr; 
     gap: 10px;
   }
 
   .comment-box {
-      max-width: 100%; /* Full width on mobile */
-      padding: 12px; /* Adjust padding for smaller screens */
+      max-width: 100%; 
+      padding: 12px; 
   }
 
   .profile-img {
-      width: 35px; /* Slightly smaller images on mobile */
+      width: 35px; 
       height: 35px;
   }
 
   .comment-user {
-      font-size: 14px; /* Reduce font size */
+      font-size: 14px;
   }
 
   .comment-time {
@@ -1063,7 +1119,7 @@ body.dark-theme {
   }
   
   .cart-container {
-    flex-direction: column; /* Stack items on mobile */
+    flex-direction: column; 
     align-items: center;
     text-align: center;
   }
@@ -1097,8 +1153,50 @@ body.dark-theme {
   .cart-remove {
     text-align: center;
   }  
-}
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
 
+  .navbar-right {
+      display: flex;
+      align-items: center;
+      order: 2;
+  }
+
+  .nav-cart {
+      display: flex;
+      align-items: center;
+  }
+
+  .cart-icon {
+      width: 24px;
+      height: auto;
+      margin-top: 1px;
+  }
+
+  .cart-badge {
+      top: -3px;
+      right: -3px;
+      font-size: 10px;
+      min-width: 16px;
+      padding: 0px 0px;
+  }
+
+  .nav-cart-desktop {
+      display: none;
+  }
+
+  .navbar-toggle {
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+  }
+}
 
 ::placeholder {
   font-family: 'Kanit', sans-serif !important; 

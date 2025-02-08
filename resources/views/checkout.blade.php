@@ -12,79 +12,92 @@
     <div class="main-wrapper">
         <div class="container">
             <div class="section topup-section">
-                <h1>สรุปคำสั่งซื้อ</h1>
-                <p class="placeholder">รายละเอียดคำสั่งซื้อของคุณ</p>
-                @if(session('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
 
-                @foreach($cart as $game_id => $game)
-                    <div>
-                        <div class="cart-container">
-                            <div class="cart-left">
-                                <div class="cart-gametitle">{{ $game['game_name'] }}</div>
+                @if($order)
+                    <h1>เลขที่คำสั่งซื้อ: #{{ $order->id }}</h1>
 
-                                @php
-                                    $gameModel = \App\Models\Game::find($game_id);
-                                @endphp
+                    @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
+                    @php
+                        $cartDetails = json_decode($order->cart_details, true);
+                    @endphp
 
-                                @if($gameModel && !empty($gameModel->cover_image))
-                                    <a href="{{ url('/games/' . $game_id . '/topup') }}">
-                                        <img src="{{ asset('storage/' . $gameModel->cover_image) }}" class="cart-gamecover" alt="{{ $game['game_name'] }}">
-                                    </a>
-                                @endif
+                    @foreach($cartDetails as $game_id => $game)
+                        <div>
+                            <div class="cart-container">
+                                <div class="cart-left">
+                                    <div class="cart-gametitle">{{ $game['game_name'] }}</div>
 
-                                <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
-                                    <span class="lightbox-close" onclick="closeLightbox(event)">&times;</span>
-                                    <img id="lightbox-img" class="lightbox-content" onclick="event.stopPropagation();">
+                                    @php
+                                        $gameModel = \App\Models\Game::find($game_id);
+                                    @endphp
+
+                                    @if($gameModel && !empty($gameModel->cover_image))
+                                        <a href="{{ url('/games/' . $game_id . '/topup') }}">
+                                            <img src="{{ asset('storage/' . $gameModel->cover_image) }}" class="cart-gamecover" alt="{{ $game['game_name'] }}">
+                                        </a>
+                                    @endif
+
+                                    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+                                        <span class="lightbox-close" onclick="closeLightbox(event)">&times;</span>
+                                        <img id="lightbox-img" class="lightbox-content" onclick="event.stopPropagation();">
+                                    </div>
+
                                 </div>
 
-                            </div>
-
-                            <div class="cart-right">
-                                @foreach($game['packages'] as $uniqueId => $package)
-                                    <div class="cart-item">
-                                        <div class="cart-details">
-                                            <div class="topupcard-title">แพค : {{ $package['name'] }}</div>
-                                            <div class="topupcard-text">{{ $package['detail'] ?? '' }}</div>
-                                            <div class="cart-price">
-                                                <s class="old-price">{{ number_format($package['full_price'], 0) }} บาท</s><br>
-                                                <strong class="new-price">ราคา {{ number_format($package['price'], 0) }} บาท</strong>
+                                <div class="cart-right">
+                                    @foreach($game['packages'] as $uniqueId => $package)
+                                        <div class="cart-item">
+                                            <div class="cart-details">
+                                                <div class="topupcard-title">แพค : {{ $package['name'] }}</div>
+                                                <div class="topupcard-text">{{ $package['detail'] ?? '' }}</div>
+                                                <div class="cart-price">
+                                                    <s class="old-price">{{ number_format($package['full_price'], 0) }} บาท</s><br>
+                                                    <strong class="new-price">ราคา {{ number_format($package['price'], 0) }} บาท</strong>
+                                                </div>
                                             </div>
+
+                                            <div class="chout-actions">ID ผู้เล่น : {{ $package['player_id'] ?? 'ไม่ระบุ' }}</div>
+
+                                            <div class="cart-remove"></div>
                                         </div>
-
-                                        <div class="chout-actions">ID ผู้เล่น : {{ $package['player_id'] ?? 'ไม่ระบุ' }}</div>
-
-                                        <div class="cart-remove"></div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach             
+                    @endforeach   
+                @else
+                <p>คำสั่งซื้อนี้ไม่พบ</p>
+                @endif                              
             </div>
 
             <div class="section topup-section" style="text-align:center;">
+                กรุณาตรวจสอบ ID ผู้เล่น ให้ถูกต้อง ก่อนทำการชำระเงิน
+                <br><br>
                 @php
                     $receiver = "0105566013162"; 
-                    $amount = collect($cart)->pluck('packages')->flatten(1)->sum('price');
+                    $amount = collect($cartDetails)->pluck('packages')->flatten(1)->sum('price');
                 @endphp
 
-                <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code">
+                <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code" class="qrcode">
                 
-                <p>ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} THB</strong></p>                
+                <p>ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} บาท</strong></p>  
+                <form action="" method="POST">
+                    @csrf
+                    <button type="submit" class="cart-btn">ยืนยันคำสั่งซื้อ</button>
+                </form>              
             </div>
 
         </div>
     </div>
 
-    <div class="container">
-        <form action="" method="POST">
-            @csrf
-            <button type="submit" class="cart-btn">ยืนยันคำสั่งซื้อ</button>
-        </form>
-    </div>
-
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("navbarMenu");
+            menu.classList.toggle("show");
+        }
+    </script>
     @include('footer')
 </body>
 </html>

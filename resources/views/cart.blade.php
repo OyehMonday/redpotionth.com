@@ -35,14 +35,18 @@
         <div class="container">
             <div class="section topup-section">
                 <h1>ตะกร้าสินค้า</h1>
-                <p class="placeholder">กรุณากรอก ID ผู้เล่นของคุณให้ถูกต้อง</p>
+                @if(empty($cart) || count($cart) == 0)
+                    <p class="placeholder"></p>
+                @else
+                    <p class="placeholder">กรุณากรอก ID ผู้เล่นของคุณให้ถูกต้อง</p>
+                @endif
 
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
 
                 @if(empty($cart) || count($cart) == 0)
-                    <p>ยังไม่มีสินค้าในตะกร้า</p>
+                    <p style="padding:50px 0;">ยังไม่มีสินค้าในตะกร้า</p>
                 @else
                     <form action="{{ route('game.cart.update') }}" method="POST" onsubmit="return validateCart()">
                         @csrf
@@ -160,6 +164,10 @@
                 }
             }
             return true; 
+        }
+        function toggleMenu() {
+            const menu = document.getElementById("navbarMenu");
+            menu.classList.toggle("show");
         }
     </script>
 </body>

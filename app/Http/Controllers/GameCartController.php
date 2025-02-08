@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\GamePackage;
 use App\Models\Game;
 use Illuminate\Support\Facades\Session;
+use App\Models\Order;
+use App\Models\User;
 
 class GameCartController extends Controller
 {
@@ -96,11 +98,10 @@ class GameCartController extends Controller
         return redirect()->route('game.cart.view')->with('success', 'Cart has been cleared.');
     }
 
-    public function checkout()
+    public function checkout(Request $request)
     {
         if (!Session::has('user')) {
             session()->put('url.intended', route('game.checkout'));
-    
             return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน');
         }
     
@@ -109,8 +110,49 @@ class GameCartController extends Controller
             return redirect()->route('game.cart.view')->with('error', 'ตะกร้าสินค้าของคุณว่างเปล่า');
         }
     
-        return view('checkout', compact('cart'));
-    }
+        $totalPrice = collect($cart)->pluck('packages')->flatten(1)->sum('price');
     
-      
+        $existingOrder = Order::where('user_id', Session::get('user')->id)
+                              ->where('status', '1')
+                              ->first();
+    
+        if ($existingOrder) {
+            $existingOrder->update([
+                'cart_details' => json_encode($cart),
+                'total_price' => $totalPrice,
+            ]);
+            session()->put('order_id', $existingOrder->id); 
+        } else {
+            $order = Order::create([
+                'user_id' => Session::get('user')->id,
+                'cart_details' => json_encode($cart),
+                'total_price' => $totalPrice,
+                'status' => '1', 
+            ]);
+            session()->put('order_id', $order->id);
+        }
+    
+        return redirect()->route('game.checkout.view', ['order_id' => session('order_id')]);
+    }      
+    
+    public function showCheckout($order_id)
+    {
+        if (!Session::has('user')) {
+            return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน');
+        }
+    
+        $user = Session::get('user');
+        $order = Order::where('id', $order_id)->where('user_id', $user->id)->first();
+    
+        if (!$order) {
+            return redirect()->route('game.cart.view')->with('error', 'คุณไม่มีสิทธิ์เข้าถึงคำสั่งซื้อนี้');
+        }
+    
+        if (request()->has('confirm_checkout')) {
+            session()->forget(['cart', 'order_id']);
+        }
+    
+        return view('checkout', compact('order'));
+    }         
+    
 }

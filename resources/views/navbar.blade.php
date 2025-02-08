@@ -1,32 +1,47 @@
 <nav class="navbar">
     <div class="navbar-container">
-        <!-- Brand Logo -->
-        <a href="/" class="navbar-brand">
+        
+        <a href="{{ url('/') }}" class="navbar-brand">
             <img src="{{ asset('images/logo.png') }}" alt="RedPotion" class="navbar-logo">
         </a>
-        <!-- Mobile Toggle -->
-        <button class="navbar-toggle" onclick="toggleMenu()">☰</button>
+
+        <div class="navbar-right">
+            <div class="nav-cart">
+                <a href="{{ route('game.cart.view') }}" class="cart-link">
+                    <img src="{{ asset('images/cart.png') }}" alt="Cart" class="cart-icon">
+                    @php
+                        $cart = session('cart', []);
+                        $cartItemCount = collect($cart)->pluck('packages')->flatten(1)->count();
+                    @endphp
+                    @if($cartItemCount > 0)
+                        <span class="cart-badge">{{ $cartItemCount }}</span>
+                    @endif
+                </a>
+            </div>
+            <button class="navbar-toggle" onclick="toggleMenu()">☰</button>
+        </div>
+
         <ul class="navbar-menu" id="navbarMenu">
-            <li><a href="#topup">เติมเกม</a></li>
-            <li><a href="#market">ตลาดกลาง</a></li>
+            <li><a href="#">เติมเกม</a></li>
+            <li><a href="#">ตลาดกลาง</a></li>
+
             <li>
-                @if(session()->has('user'))
-                    <!-- User's Name -->
-                    <a href="/dashboard" class="navbar-user">{{ session('user')->username }}</a>
-                    <!-- Logout Link -->
-                    <!-- <a href="/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a> -->
-                    <form id="logout-form" action="/logout" method="POST" style="display: none;">
-                        @csrf
-                    </form>
+                @if(Session::has('user'))
+                    <a href="{{ route('dashboard') }}">{{ Session::get('user')->username }}</a>
                 @else
-                    <!-- Login Link -->
-                    <a href="/login">สมาชิก</a>
+                    <a href="{{ route('custom.login.form') }}">สมาชิก</a>
                 @endif
             </li>
+            
+            <li class="nav-cart-desktop">
+                <a href="{{ route('game.cart.view') }}" class="cart-link">
+                    <img src="{{ asset('images/cart.png') }}" alt="Cart" class="cart-icon">
+                    @if($cartItemCount > 0)
+                        <span class="cart-badge">{{ $cartItemCount }}</span>
+                    @endif
+                </a>
+            </li>
+
         </ul>
     </div>
 </nav>
-<!-- Hidden Logout Form -->
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-    @csrf
-</form>
