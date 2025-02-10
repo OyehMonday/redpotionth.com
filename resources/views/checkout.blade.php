@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ชำระเงิน</title>
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 </head>
 <body>
     @include('navbar')
@@ -38,11 +39,6 @@
                                             <img src="{{ asset('storage/' . $gameModel->cover_image) }}" class="cart-gamecover" alt="{{ $game['game_name'] }}">
                                         </a>
                                     @endif
-
-                                    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
-                                        <span class="lightbox-close" onclick="closeLightbox(event)">&times;</span>
-                                        <img id="lightbox-img" class="lightbox-content" onclick="event.stopPropagation();">
-                                    </div>
 
                                 </div>
 
@@ -82,11 +78,20 @@
 
                 <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code" class="qrcode">
                 
-                <p>ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} บาท</strong></p>  
+                <p style="color:red;">ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} บาท</strong></p>  
                 <form action="" method="POST">
                     @csrf
-                    <button type="submit" class="cart-btn">ยืนยันคำสั่งซื้อ</button>
-                </form>              
+                    <button type="submit" class="cart-btn">แนบสลิปการชำระเงิน</button>
+                </form>
+                <a href="#" class="conmobile">คลิกที่นี่ หากต้องการ ดำเนินการแนบสลิปต่อ ในมือถือ</a>
+
+                <div id="qrCodeModal" class="qr-code-modal">
+                    <span class="close">&times;</span>
+                    <div class="qr-code-modal-content">
+                        <div id="qrCodeContainer"></div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -96,6 +101,39 @@
         function toggleMenu() {
             const menu = document.getElementById("navbarMenu");
             menu.classList.toggle("show");
+        }
+                  
+        var modal = document.getElementById("qrCodeModal");
+        var closeButton = document.getElementsByClassName("close")[0];
+        var qrLink = document.querySelector(".conmobile");
+
+        qrLink.addEventListener('click', function(e) {
+            e.preventDefault(); 
+
+            modal.classList.add("show");
+
+            document.getElementById("qrCodeContainer").innerHTML = "";
+
+            var currentPageURL = window.location.href; 
+
+            var qrCode = new QRCode(document.getElementById("qrCodeContainer"), {
+            text: currentPageURL,
+            width: 300,
+            height: 300,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+            });
+        });
+
+        closeButton.onclick = function() {
+            modal.classList.remove("show");
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+            modal.classList.remove("show");
+            }
         }
     </script>
     @include('footer')
