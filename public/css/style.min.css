@@ -929,14 +929,14 @@ body.dark-theme {
 }
 
 .lightbox-content {
-  max-width: 90vw !important; /* Forces image to be 90% of viewport width */
-  max-height: 90vh !important; /* Forces image to be 90% of viewport height */
+  max-width: 90vw !important; 
+  max-height: 90vh !important; 
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  object-fit: contain !important; /* Ensures the entire image is visible */
+  object-fit: contain !important; 
 }
 
 #lightbox-img {
@@ -1120,6 +1120,50 @@ body.dark-theme {
   margin: 0 auto;
   padding: 0; 
 }
+
+.file-input-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  gap: 5px; 
+  font-size: 14px;
+  padding: 10px;
+}
+
+input[type="file"] {
+  position: absolute;
+  left: -9999px;
+}
+
+.file-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-button:hover {
+  background: #358eca;
+  transition: background 0.3s ease;
+}
+
+#file-name {
+  color: #555;
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px; 
+}
+
 
 @media (max-width: 768px) {
   .container {

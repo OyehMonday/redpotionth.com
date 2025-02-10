@@ -45,6 +45,19 @@
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
 
+                @php
+                    $cart = session('cart', []);
+
+                    if (Session::has('user')) {
+                        $user = Session::get('user');
+                        $existingOrder = \App\Models\Order::where('user_id', $user->id)->where('status', '1')->first();
+                        if ($existingOrder) {
+                            $cart = json_decode($existingOrder->cart_details, true);
+                            session()->put('cart', $cart);
+                        }
+                    }
+                @endphp
+
                 @if(empty($cart) || count($cart) == 0)
                     <p style="padding:50px 0;">ยังไม่มีสินค้าในตะกร้า</p>
                 @else

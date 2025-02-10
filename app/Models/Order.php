@@ -13,14 +13,14 @@ class Order extends Model
         'user_id',
         'cart_details',
         'total_price',
+        'payment_slip',
         'status',
     ];
 
     protected $casts = [
-        'cart_details' => 'array', // Automatically decode JSON data
+        'cart_details' => 'array', 
     ];
 
-    // Relationship with User (if needed)
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -8,14 +8,22 @@
         <div class="navbar-right">
             <div class="nav-cart">
                 <a href="{{ route('game.cart.view') }}" class="cart-link">
-                    <img src="{{ asset('images/cart.png') }}" alt="Cart" class="cart-icon">
-                    @php
-                        $cart = session('cart', []);
-                        $cartItemCount = collect($cart)->pluck('packages')->flatten(1)->count();
-                    @endphp
-                    @if($cartItemCount > 0)
-                        <span class="cart-badge">{{ $cartItemCount }}</span>
-                    @endif
+                <img src="{{ asset('images/cart.png') }}" alt="Cart" class="cart-icon">
+                @php
+                    $cart = session('cart', []);
+                    if (empty($cart) && Session::has('user')) {
+                        $user = Session::get('user');
+                        $existingOrder = \App\Models\Order::where('user_id', $user->id)->where('status', '1')->latest()->first();
+                        if ($existingOrder) {
+                            $cart = json_decode($existingOrder->cart_details, true);
+                            session()->put('cart', $cart);
+                        }
+                    }
+                    $cartItemCount = collect($cart)->pluck('packages')->flatten(1)->count();
+                @endphp
+                @if($cartItemCount > 0)
+                    <span class="cart-badge">{{ $cartItemCount }}</span>
+                @endif
                 </a>
             </div>
             <button class="navbar-toggle" onclick="toggleMenu()">☰</button>

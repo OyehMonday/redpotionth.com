@@ -74,16 +74,32 @@
                 @php
                     $receiver = "0105566013162"; 
                     $amount = collect($cartDetails)->pluck('packages')->flatten(1)->sum('price');
+
+                    $checkoutUrl = route('game.checkout.view', ['order_id' => $order->id]);
+                    if (!Session::has('user')) {
+                        $checkoutUrl = route('custom.login.form') . '?redirect_to=' . urlencode($checkoutUrl);
+                    }
+
                 @endphp
 
                 <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code" class="qrcode">
                 
                 <p style="color:red;">ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} บาท</strong></p>  
-                <form action="" method="POST">
-                    @csrf
-                    <button type="submit" class="cart-btn">แนบสลิปการชำระเงิน</button>
-                </form>
-                <a href="#" class="conmobile">คลิกที่นี่ หากต้องการ ดำเนินการแนบสลิปต่อ ในมือถือ</a>
+                <form action="{{ route('game.payment.upload', ['order_id' => $order->id]) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <label for="payment_slip" class="file-label"></label>
+                <div class="file-input-container">
+                    <input type="file" name="payment_slip" id="payment_slip" accept="image/jpeg, image/png, application/pdf" required>
+                    <div><label for="payment_slip" class="cart-btn">แนบสลิปการชำระเงิน</label></div>
+                    <div><span id="file-name">&nbsp;</span></div>
+                </div>
+
+                <button type="submit" class="cart-btn">ดำเนินการต่อ</button>
+            </form>
+
+
+                <a href="{{ $checkoutUrl }}" class="conmobile">คลิกที่นี่ หากต้องการ ดำเนินการแนบสลิปต่อ ในมือถือ</a>
 
                 <div id="qrCodeModal" class="qr-code-modal">
                     <span class="close">&times;</span>
@@ -135,6 +151,12 @@
             modal.classList.remove("show");
             }
         }
+
+        document.getElementById("payment_slip").addEventListener("change", function() {
+            var fileName = this.files[0] ? this.files[0].name : "ยังไม่ได้เลือกไฟล์";
+            document.getElementById("file-name").textContent = fileName;
+        });
+
     </script>
     @include('footer')
 </body>
