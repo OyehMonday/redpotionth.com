@@ -1046,6 +1046,24 @@ body.dark-theme {
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
+.paymentslip-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  background: #7f7f7f;
+  color: white;
+  font-family: 'Kanit', sans-serif;
+}
+
+.paymentslip-btn:hover {
+  background: #4e4e4e;
+  transform: scale(1.05);
+}
+
 .qr-code-modal {
   display: none; 
   position: fixed;
@@ -1163,6 +1181,56 @@ input[type="file"] {
   text-overflow: ellipsis;
   max-width: 200px; 
 }
+
+/* ✅ Orders Container */
+.orders-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* ✅ Order Card */
+.order-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  border-left: 5px solid #007bff;
+}
+
+/* ✅ Order Header */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+/* ✅ Order Body */
+.order-body p {
+  margin: 5px 0;
+}
+
+/* ✅ Order Footer */
+.order-footer {
+  margin-top: 10px;
+  text-align: right;
+}
+
+/* ✅ Order Status Badges */
+.status {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+/* ✅ Status Colors */
+.status.pending { background: #ffc107; }       /* รอดำเนินการ */
+.status.review { background: #17a2b8; }        /* รอตรวจสอบการชำระเงิน */
+.status.completed { background: #28a745; }     /* ชำระเงินสำเร็จ */
+.status.cancelled { background: #dc3545; }     /* ยกเลิก */
 
 
 @media (max-width: 768px) {

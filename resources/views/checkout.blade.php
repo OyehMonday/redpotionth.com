@@ -85,21 +85,22 @@
                 <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code" class="qrcode">
                 
                 <p style="color:red;">ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} บาท</strong></p>  
-                <form action="{{ route('game.payment.upload', ['order_id' => $order->id]) }}" method="POST" enctype="multipart/form-data">
-                @csrf
+                <form action="{{ route('game.payment.confirm', ['order_id' => $order->id]) }}" method="POST" enctype="multipart/form-data" id="payment-form">
+                    @csrf
 
-                <label for="payment_slip" class="file-label"></label>
-                <div class="file-input-container">
-                    <input type="file" name="payment_slip" id="payment_slip" accept="image/jpeg, image/png, application/pdf" required>
-                    <div><label for="payment_slip" class="cart-btn">แนบสลิปการชำระเงิน</label></div>
-                    <div><span id="file-name">&nbsp;</span></div>
-                </div>
+                    <div class="file-input-container">
+                        <label for="payment_slip" class="paymentslip-btn">แนบสลิปการชำระเงิน</label>
+                        <input type="file" name="payment_slip" id="payment_slip" accept="image/jpeg, image/png, application/pdf">
+                        <span id="file-name">ยังไม่ได้เลือกไฟล์</span>
+                    </div>
 
-                <button type="submit" class="cart-btn">ดำเนินการต่อ</button>
-            </form>
+                    <p id="file-error" style="color: red; display: none;">กรุณาแนบสลิป ก่อนดำเนินการต่อ</p>
 
 
-                <a href="{{ $checkoutUrl }}" class="conmobile">คลิกที่นี่ หากต้องการ ดำเนินการแนบสลิปต่อ ในมือถือ</a>
+                    <button type="submit" class="cart-btn" id="submit-button">ดำเนินการต่อ</button>
+                </form>
+
+                <a href="{{ $checkoutUrl }}" class="conmobile">คลิกที่นี่ หากต้องการแนบสลิปจากมือถือ</a>
 
                 <div id="qrCodeModal" class="qr-code-modal">
                     <span class="close">&times;</span>
@@ -153,8 +154,27 @@
         }
 
         document.getElementById("payment_slip").addEventListener("change", function() {
-            var fileName = this.files[0] ? this.files[0].name : "ยังไม่ได้เลือกไฟล์";
-            document.getElementById("file-name").textContent = fileName;
+            var fileInput = this.files[0];
+            var fileNameDisplay = document.getElementById("file-name");
+            var errorMessage = document.getElementById("file-error");
+
+            if (fileInput) {
+                fileNameDisplay.textContent = fileInput.name;
+                errorMessage.style.display = "none"; 
+            } else {
+                fileNameDisplay.textContent = "ยังไม่ได้เลือกไฟล์";
+                errorMessage.style.display = "block"; 
+            }
+        });
+
+        document.getElementById("payment-form").addEventListener("submit", function(event) {
+            var fileInput = document.getElementById("payment_slip").files[0];
+            var errorMessage = document.getElementById("file-error");
+
+            if (!fileInput) {
+                errorMessage.style.display = "block"; 
+                event.preventDefault();
+            }
         });
 
     </script>

@@ -8,6 +8,7 @@ use App\Models\Game;
 use Illuminate\Support\Facades\Session;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Support\Facades\Log; 
 
 class GameCartController extends Controller
 {
@@ -292,7 +293,7 @@ class GameCartController extends Controller
         return view('checkout', compact('order'));
     }     
     
-    public function uploadPaymentSlip(Request $request, $order_id)
+    public function confirmPayment(Request $request, $order_id)
     {
         if (!Session::has('user')) {
             return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนแนบสลิปการชำระเงิน');
@@ -312,12 +313,11 @@ class GameCartController extends Controller
     
         $order->update([
             'payment_slip' => $filePath,
-            'status' => '2', 
+            'status' => '2',
         ]);
     
-        return redirect()->route('game.checkout.view', ['order_id' => $order->id])
-                         ->with('success', 'แนบสลิปการชำระเงินสำเร็จ! กรุณารอการตรวจสอบ');
+        return redirect()->route('dashboard')->with('success', 'ได้รับคำสั่งซื้อแล้ว.');
     }
-        
+    
     
 }

@@ -50,7 +50,7 @@ Route::post('/games/cart/clear', [GameCartController::class, 'clearCart'])->name
 
 Route::get('/games/checkout', [GameCartController::class, 'checkout'])->name('game.checkout');
 Route::get('/game/checkout/{order_id}', [GameCartController::class, 'showCheckout'])->name('game.checkout.view');
-Route::post('/game/payment/upload/{order_id}', [GameCartController::class, 'uploadPaymentSlip'])->name('game.payment.upload');
+Route::post('/game/payment/confirm/{order_id}', [GameCartController::class, 'confirmPayment'])->name('game.payment.confirm');
 
 Route::get('/payment/qr/{receiver}/{amount}', [PaymentController::class, 'generatePromptPayQR']);
 

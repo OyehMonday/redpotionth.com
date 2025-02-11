@@ -10,6 +10,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\VerifyEmail;
+use App\Models\Order;
 
 class CustomAuthController extends Controller
 {
@@ -145,11 +146,14 @@ class CustomAuthController extends Controller
     public function dashboard()
     {
         if (!Session::has('user')) {
-            return redirect()->route('custom.login.form');
+            return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบ');
         }
-
-        return view('dashboard', ['user' => Session::get('user')]);
-    }
+    
+        $user = Session::get('user');
+        $orders = Order::where('user_id', $user->id)->latest()->get();
+    
+        return view('dashboard', compact('orders'));
+    }    
 
     public function logout()
     {
