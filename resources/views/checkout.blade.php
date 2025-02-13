@@ -15,7 +15,7 @@
             <div class="section topup-section">
 
                 @if($order)
-                    <h1>เลขที่คำสั่งซื้อ: #{{ $order->id }}</h1>
+                    <h1>หมายเลขคำสั่งซื้อ: #{{ $order->id }}</h1>
 
                     @if(session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
@@ -67,49 +67,51 @@
                 <p>คำสั่งซื้อนี้ไม่พบ</p>
                 @endif                              
             </div>
+            <!-- qr section -->
+            @if($order->status == "2") 
+                <div class="section topup-section" style="text-align:center;">
+                    กรุณาตรวจสอบ ID ผู้เล่น ให้ถูกต้อง ก่อนทำการชำระเงิน
+                    <br><br>
+                    @php
+                        $receiver = "0105566013162"; 
+                        $amount = collect($cartDetails)->pluck('packages')->flatten(1)->sum('price');
 
-            <div class="section topup-section" style="text-align:center;">
-                กรุณาตรวจสอบ ID ผู้เล่น ให้ถูกต้อง ก่อนทำการชำระเงิน
-                <br><br>
-                @php
-                    $receiver = "0105566013162"; 
-                    $amount = collect($cartDetails)->pluck('packages')->flatten(1)->sum('price');
+                        $checkoutUrl = route('game.checkout.view', ['order_id' => $order->id]);
+                        if (!Session::has('user')) {
+                            $checkoutUrl = route('custom.login.form') . '?redirect_to=' . urlencode($checkoutUrl);
+                        }
 
-                    $checkoutUrl = route('game.checkout.view', ['order_id' => $order->id]);
-                    if (!Session::has('user')) {
-                        $checkoutUrl = route('custom.login.form') . '?redirect_to=' . urlencode($checkoutUrl);
-                    }
+                    @endphp
 
-                @endphp
+                    <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code" class="qrcode">
+                    
+                    <p style="color:red;">ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} บาท</strong></p>  
+                    <form action="{{ route('game.payment.confirm', ['order_id' => $order->id]) }}" method="POST" enctype="multipart/form-data" id="payment-form">
+                        @csrf
 
-                <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code" class="qrcode">
-                
-                <p style="color:red;">ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} บาท</strong></p>  
-                <form action="{{ route('game.payment.confirm', ['order_id' => $order->id]) }}" method="POST" enctype="multipart/form-data" id="payment-form">
-                    @csrf
+                        <div class="file-input-container">
+                            <label for="payment_slip" class="paymentslip-btn">แนบสลิปการชำระเงิน</label>
+                            <input type="file" name="payment_slip" id="payment_slip" accept="image/jpeg, image/png, application/pdf">
+                            <span id="file-name">ยังไม่ได้เลือกไฟล์</span>
+                        </div>
 
-                    <div class="file-input-container">
-                        <label for="payment_slip" class="paymentslip-btn">แนบสลิปการชำระเงิน</label>
-                        <input type="file" name="payment_slip" id="payment_slip" accept="image/jpeg, image/png, application/pdf">
-                        <span id="file-name">ยังไม่ได้เลือกไฟล์</span>
-                    </div>
-
-                    <p id="file-error" style="color: red; display: none;">กรุณาแนบสลิป ก่อนดำเนินการต่อ</p>
+                        <p id="file-error" style="color: red; display: none;">กรุณาแนบสลิป ก่อนดำเนินการต่อ</p>
 
 
-                    <button type="submit" class="cart-btn" id="submit-button">ดำเนินการต่อ</button>
-                </form>
+                        <button type="submit" class="cart-btn" id="submit-button">ดำเนินการต่อ</button>
+                    </form>
 
-                <a href="{{ $checkoutUrl }}" class="conmobile">คลิกที่นี่ หากต้องการแนบสลิปจากมือถือ</a>
+                    <a href="{{ $checkoutUrl }}" class="conmobile">คลิกที่นี่ หากต้องการแนบสลิปจากมือถือ</a>
 
-                <div id="qrCodeModal" class="qr-code-modal">
-                    <span class="close">&times;</span>
-                    <div class="qr-code-modal-content">
-                        <div id="qrCodeContainer"></div>
+                    <div id="qrCodeModal" class="qr-code-modal">
+                        <span class="close">&times;</span>
+                        <div class="qr-code-modal-content">
+                            <div id="qrCodeContainer"></div>
+                        </div>
                     </div>
                 </div>
-
-            </div>
+            @endif   
+            <!-- qr section -->
 
         </div>
     </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password</title>
+    <title>รีเซ็ตรหัสผ่าน</title>
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
 </head>
 <body>
@@ -14,8 +14,8 @@
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-image">
                 </a>
             </div>          
-            <h1 class="login-title">Reset Password</h1>
-            <p class="login-subtitle">Enter a new password for your account.</p>
+            <h1 class="login-title">รีเซ็ตรหัสผ่าน</h1>
+            <p class="login-subtitle">กรุณากรอกรหัสผ่านใหม่</p>
 
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -32,18 +32,18 @@
                 <input type="hidden" name="token" value="{{ $token }}">
 
                 <div class="form-group">
-                    <label for="email">Email:</label>
+                    <label for="email">อีเมล</label>
                     <input type="email" id="email" name="email" class="form-input" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">New Password:</label>
+                    <label for="password">รหัสผ่าน</label>
                     <input type="password" id="password" name="password" class="form-input" required>
                 </div>
                 <div class="form-group">
-                    <label for="password_confirmation">Confirm Password:</label>
+                    <label for="password_confirmation">ยืนยัน รหัสผ่าน</label>
                     <input type="password" id="password_confirmation" name="password_confirmation" class="form-input" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Reset Password</button>
+                <button type="submit" class="btn btn-primary">รีเซ็ตรหัสผ่าน</button>
             </form>
         </div>
     </div>

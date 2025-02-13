@@ -1,24 +1,21 @@
-/* Import Kanit Font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
 
-/* Global Styles */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-  box-sizing: border-box; /* Apply border-box globally */
+  overflow-x: hidden; 
+  box-sizing: border-box; 
 }
 
 body {
   font-family: 'Kanit', sans-serif;
   background: #1a1f36;
   color: #f0f0f0;
-  text-align: center; /* Center all text horizontally */
-  padding: 0; /* Remove unnecessary body padding */
+  text-align: center; 
+  padding: 0;
 }
 
-/* Main Wrapper */
 .main-wrapper {
   display: flex;
   justify-content: center; 
@@ -44,7 +41,6 @@ body {
 }
 
 
-/* Heading Styles */
 h1 {
   color: #ff6f61; 
   text-align: left;
@@ -54,23 +50,23 @@ h1 {
 }
 
 h2.subheader {
-  color: #f0f0f0; /* White font for the subheader */
+  color: #f0f0f0; 
   text-align: center;
-  margin: 0 0 20px 0; /* Minimal margin on top, standard margin on bottom */
+  margin: 0 0 20px 0; 
   font-size: 1.2rem;
-  font-weight: 400; /* Regular weight for a subtle look */
+  font-weight: 400; 
   line-height: 1.4;
 }
 
 h2.with-line {
-  color: #f0f0f0; /* White font for the subheader */
+  color: #f0f0f0; 
   text-align: center;
-  margin: 0 auto 50px auto; /* Space below the subheader */
+  margin: 0 auto 50px auto; 
   font-size: 1.2rem;
-  font-weight: 400; /* Regular weight for readability */
+  font-weight: 400; 
   line-height: 1.4;
-  position: relative; /* For the line placement */
-  padding-bottom: 50px; /* Add space above the line */
+  position: relative;
+  padding-bottom: 50px; 
 }
 
 h2.with-line::after {
@@ -325,8 +321,6 @@ p {
   transform: scale(1.05);
 }
 
-
-/* Navigation Bar */
 .navbar {
   background-color: #242b48;
   padding: 10px 20px;
@@ -337,18 +331,18 @@ p {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box; /* Prevent padding from affecting width */
-  width: 100%; /* Ensure the navbar spans the full screen width */
+  box-sizing: border-box; 
+  width: 100%;
 }
 
 .navbar-user {
-  color: #80c1ff !important; /* Light blue color */
-  text-decoration: none; /* Remove underline */
-  font-weight: 600; /* Bold for emphasis */
+  color: #80c1ff !important; 
+  text-decoration: none; 
+  font-weight: 600; 
 }
 
 .navbar-user:hover {
-  color: #1a73e8 !important; /* Brighter blue on hover */
+  color: #1a73e8 !important; 
 }
 
 .navbar-container {
@@ -539,10 +533,19 @@ body.dark-theme {
 
 /* Game Title */
 .game-title {
-  font-size: 16px;
+  font-size: 1.2em;
+  margin: 0px;
+  color: #F0F4F8;
+  padding: 3px 0;
+}
+
+.topup-card {
+  display: block;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
   font-weight: bold;
-  margin-top: 10px;
-  color: #F0F4F8; 
+  transition: background 0.3s ease-in-out;
 }
 
 .topup-button {
@@ -557,7 +560,7 @@ body.dark-theme {
   transition: background 0.3s ease-in-out;
 }
 
-.topup-button:hover {
+.topup-card:hover .topup-button {
   background: #0056b3;
 }
 
@@ -885,6 +888,7 @@ body.dark-theme {
 .cart-back {
   margin-bottom: 10px;
   text-align: left;
+  padding-left: 10px;
 }
 
 .btn-back {
@@ -914,7 +918,6 @@ body.dark-theme {
   vertical-align: middle; 
 }
 
-/* Lightbox */
 .lightbox {
   display: none;
   position: fixed;
@@ -1182,43 +1185,45 @@ input[type="file"] {
   max-width: 200px; 
 }
 
-/* ✅ Orders Container */
+
 .orders-container {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-top: 20px;
+  gap: 25px;
+  padding: 10px;
 }
 
-/* ✅ Order Card */
 .order-card {
-  background: #fff;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  border-left: 5px solid #007bff;
+  border: 1px solid #334E68; 
+  border-right: 7px solid #007bff;
+  border-left: 7px solid #007bff;
+  padding-top: 0px;
 }
 
-/* ✅ Order Header */
 .order-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-weight: bold;
+  padding: 10px;
 }
 
-/* ✅ Order Body */
-.order-body p {
-  margin: 5px 0;
+.order-title{
+  font-size: 1.5em;
+  font-weight: 600;
 }
 
-/* ✅ Order Footer */
+.order-subheader{
+  font-size: 0.9em;
+  color: #ccc;
+}
+
 .order-footer {
-  margin-top: 10px;
-  text-align: right;
+  text-align: center;  
 }
 
-/* ✅ Order Status Badges */
 .status {
   padding: 5px 10px;
   border-radius: 5px;
@@ -1226,11 +1231,10 @@ input[type="file"] {
   color: #fff;
 }
 
-/* ✅ Status Colors */
-.status.pending { background: #ffc107; }       /* รอดำเนินการ */
-.status.review { background: #17a2b8; }        /* รอตรวจสอบการชำระเงิน */
-.status.completed { background: #28a745; }     /* ชำระเงินสำเร็จ */
-.status.cancelled { background: #dc3545; }     /* ยกเลิก */
+.status.pending { background: #ffc107; }
+.status.review { background: #17a2b8; }
+.status.completed { background: #28a745; }
+.status.cancelled { background: #dc3545; } 
 
 
 @media (max-width: 768px) {
@@ -1398,6 +1402,21 @@ input[type="file"] {
 
   .conmobile {
     display: none;
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-title {
+      margin-bottom: 5px; 
+  }
+
+  .order-status {
+      width: 100%;
+      text-align: right; 
+      margin-top: 5px;
   }
 
 }

@@ -42,7 +42,7 @@
                 @endif
 
                 @if(session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
+                    <div class="alert alert-success" style="text-align: center;">{{ session('success') }}</div>
                 @endif
 
                 @php
@@ -183,5 +183,6 @@
             menu.classList.toggle("show");
         }
     </script>
+    
 </body>
 </html>

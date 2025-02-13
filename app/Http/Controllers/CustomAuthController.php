@@ -41,7 +41,7 @@ class CustomAuthController extends Controller
     
             Session::put('user', $user);
     
-            $redirectTo = session()->pull('url.intended', route('dashboard')); 
+            $redirectTo = session()->pull('url.intended', route('home')); 
             return redirect()->to($redirectTo);
     
         } catch (\Exception $e) {
@@ -150,7 +150,16 @@ class CustomAuthController extends Controller
         }
     
         $user = Session::get('user');
-        $orders = Order::where('user_id', $user->id)->latest()->get();
+        $orders = Order::where('user_id', $user->id)
+        ->where(function ($query) {
+            $query->where('status', '>', 1) 
+                  ->where(function ($query) {
+                      $query->where('status', '!=', 2) 
+                            ->orWhere('created_at', '>=', now()->subHours(24)); 
+                  });
+        })
+        ->latest()
+        ->get();
     
         return view('dashboard', compact('orders'));
     }    

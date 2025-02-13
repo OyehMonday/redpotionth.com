@@ -112,12 +112,37 @@ class GameCartController extends Controller
     
         return redirect()->route('game.cart.view')->with('success', '');
     }
-    
+
     public function viewCart()
     {
+        if (!Session::has('user')) {
+            return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน');
+        }
+    
+        $user = Session::get('user');
+    
+        // ✅ Check if the order has reached status 3 (payment pending or completed)
+        $order = Order::where('user_id', $user->id)
+                      ->where('status', '>=', 3)
+                      ->first();
+    
+        if ($order) {
+            session()->forget(['cart', 'order_id']);
+    
+            // ✅ Instead of redirecting immediately, return a view showing "Cart is empty"
+            return view('cart', ['cart' => []])->with('error', 'ไม่มีสินค้าในตะกร้า');
+        }
+    
         $cart = session()->get('cart', []);
         return view('cart', compact('cart'));
     }
+    
+
+    // public function viewCart()
+    // {
+    //     $cart = session()->get('cart', []);
+    //     return view('cart', compact('cart'));
+    // }
 
     public function updateCart(Request $request)
     {
@@ -152,9 +177,12 @@ class GameCartController extends Controller
                     unset($cart[$game_id]);
                 }
     
-                session()->put('cart', $cart);
+                if (empty($cart)) {
+                    session()->forget('cart'); 
+                } else {
+                    session()->put('cart', $cart);
+                }
             }
-    
             return redirect()->route('game.cart.view')->with('success', 'ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
         }
     
@@ -185,15 +213,78 @@ class GameCartController extends Controller
                     unset($existingCart[$game_id]);
                 }
     
-                $existingOrder->update([
-                    'cart_details' => json_encode($existingCart),
-                    'total_price' => collect($existingCart)->pluck('packages')->flatten(1)->sum('price'),
-                ]);
+                if (empty($existingCart)) {
+                    $existingOrder->delete();
+                    session()->forget('cart'); 
+                    return redirect()->route('game.cart.view')->with('success', 'คำสั่งซื้อถูกลบเนื่องจากไม่มีสินค้าในตะกร้า');
+                } else {
+                    $existingOrder->update([
+                        'cart_details' => json_encode($existingCart),
+                        'total_price' => collect($existingCart)->pluck('packages')->flatten(1)->sum('price'),
+                    ]);
+                }
             }
         }
     
         return redirect()->route('game.cart.view')->with('success', 'ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
     }    
+
+    // public function removeFromCart(Request $request)
+    // {
+    //     $game_id = $request->game_id;
+    //     $package_id = $request->package_id;
+    
+    //     if (!Session::has('user')) {
+    //         $cart = session()->get('cart', []);
+    //         if (isset($cart[$game_id]['packages'][$package_id])) {
+    //             unset($cart[$game_id]['packages'][$package_id]);
+    
+    //             if (empty($cart[$game_id]['packages'])) {
+    //                 unset($cart[$game_id]);
+    //             }
+    
+    //             session()->put('cart', $cart);
+    //         }
+    
+    //         return redirect()->route('game.cart.view')->with('success', 'ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
+    //     }
+    
+    //     $user = Session::get('user');
+    //     $cart = session()->get('cart', []);
+    
+    //     if (isset($cart[$game_id]['packages'][$package_id])) {
+    //         unset($cart[$game_id]['packages'][$package_id]);
+    
+    //         if (empty($cart[$game_id]['packages'])) {
+    //             unset($cart[$game_id]);
+    //         }
+    
+    //         session()->put('cart', $cart);
+    //     }
+    
+    //     $existingOrder = Order::where('user_id', $user->id)
+    //                           ->where('status', '1')
+    //                           ->first();
+    
+    //     if ($existingOrder) {
+    //         $existingCart = json_decode($existingOrder->cart_details, true);
+    
+    //         if (isset($existingCart[$game_id]['packages'][$package_id])) {
+    //             unset($existingCart[$game_id]['packages'][$package_id]);
+    
+    //             if (empty($existingCart[$game_id]['packages'])) {
+    //                 unset($existingCart[$game_id]);
+    //             }
+    
+    //             $existingOrder->update([
+    //                 'cart_details' => json_encode($existingCart),
+    //                 'total_price' => collect($existingCart)->pluck('packages')->flatten(1)->sum('price'),
+    //             ]);
+    //         }
+    //     }
+    
+    //     return redirect()->route('game.cart.view')->with('success', 'ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
+    // }    
     
     public function clearCart()
     {
@@ -247,7 +338,7 @@ class GameCartController extends Controller
             'user_id' => Session::get('user')->id,
             'cart_details' => json_encode($updatedCart),
             'total_price' => $totalPrice,
-            'status' => '1', 
+            'status' => '2', 
         ]);
         session()->put('order_id', $order->id);
     
@@ -303,7 +394,10 @@ class GameCartController extends Controller
             'payment_slip' => 'required|mimes:jpeg,png,pdf|max:2048',
         ]);
     
-        $order = Order::where('id', $order_id)->where('user_id', Session::get('user')->id)->first();
+        $order = Order::where('id', $order_id)
+                      ->where('user_id', Session::get('user')->id)
+                      ->where('status', '2') 
+                      ->first();
     
         if (!$order) {
             return redirect()->route('game.cart.view')->with('error', 'ไม่พบคำสั่งซื้อนี้');
@@ -313,11 +407,12 @@ class GameCartController extends Controller
     
         $order->update([
             'payment_slip' => $filePath,
-            'status' => '2',
+            'status' => '3', 
         ]);
+    
+        session()->forget(['cart', 'order_id']);
     
         return redirect()->route('dashboard')->with('success', 'ได้รับคำสั่งซื้อแล้ว.');
     }
-    
     
 }

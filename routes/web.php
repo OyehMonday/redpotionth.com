@@ -17,7 +17,7 @@ use App\Http\Controllers\FacebookCommentController;
 use App\Http\Controllers\PaymentController;
 
 Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
-    $allowedFolders = ['game_covers', 'game_full_covers', 'package_covers', 'uidimages']; 
+    $allowedFolders = ['game_covers', 'game_full_covers', 'package_covers', 'uidimages', 'payments']; 
 
     if (!in_array($folder, $allowedFolders)) {
         abort(403, 'Unauthorized access');
