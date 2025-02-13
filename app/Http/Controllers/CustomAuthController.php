@@ -110,7 +110,7 @@ class CustomAuthController extends Controller
     public function showLoginForm()
     {
         if (Session::has('user')) {
-            return redirect()->route('landing.page'); // Adjust route name as needed
+            return redirect()->route('landing.page'); 
         }
         return view('login');
     }

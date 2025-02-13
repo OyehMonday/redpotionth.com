@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ชำระเงิน</title>
+    <title>สมาชิก</title>
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
 </head>
 <body>
@@ -93,16 +93,30 @@
                                     <p>คำสั่งซื้อนี้ไม่พบ</p>
                                 @endif              
                                 </div>
+                                
+                                <div class="order-coins">
+                                    <div class="coin-section">
+                                        <div class="coin-item">
+                                            ใช้ไป {{ number_format($order->used_coins ?? 0) }}<img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon">
+                                        </div>
+                                        <div class="coin-item">
+                                            ได้รับ {{ number_format($order->coin_earned ?? 0) }}<img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon">
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="order-footer">
+                                @php
+                                    $finalAmount = max(0, $order->total_price - ($order->used_coins ?? 0));
+                                @endphp
                                 @if($order->status == '2')
                                     <div class="order-body">
-                                        <p><strong>ยอดที่ต้องชำระ:</strong> {{ number_format($order->total_price, 2) }} บาท</p>
+                                        <p class="payamount">ยอดที่ต้องชำระ {{ number_format($finalAmount, 2) }} บาท</p>
                                     </div>
                                     <span><a href="{{ route('game.checkout.view', ['order_id' => $order->id]) }}" class="cart-btn" style="text-decoration: none;">ดำเนินการชำระเงิน</a></span>
                                 @else
                                     <div class="order-body">
-                                        <p><strong>ยอดชำระ:</strong> {{ number_format($order->total_price, 2) }} บาท</p>
+                                        <p class="payamount">ยอดชำระ {{ number_format($finalAmount, 2) }} บาท</p>
                                     </div>
                                 @endif                                    
                                 </div>

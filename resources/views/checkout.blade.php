@@ -15,14 +15,24 @@
             <div class="section topup-section">
 
                 @if($order)
+                    @php
+                        $cartDetails = json_decode($order->cart_details, true);
+                        $totalAmount = 0;
+                        $usedCoins = $order->used_coins ?? 0;
+
+                        foreach ($cartDetails as $game) {
+                            foreach ($game['packages'] as $package) {
+                                $totalAmount += $package['price']; 
+                            }
+                        }
+
+                        $finalAmount = $totalAmount - $usedCoins; 
+                    @endphp                
                     <h1>หมายเลขคำสั่งซื้อ: #{{ $order->id }}</h1>
 
                     @if(session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
-                    @php
-                        $cartDetails = json_decode($order->cart_details, true);
-                    @endphp
 
                     @foreach($cartDetails as $game_id => $game)
                         <div>
@@ -83,9 +93,15 @@
 
                     @endphp
 
-                    <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($amount, 0, '', '')) }}" alt="PromptPay QR Code" class="qrcode">
-                    
-                    <p style="color:red;">ยอดที่ต้องชำระ : <strong>{{ number_format($amount, 2) }} บาท</strong></p>  
+                    <img src="{{ url('/payment/qr/' . $receiver . '/' . number_format($finalAmount, 0, '', '')) }}" alt="PromptPay QR Code" class="qrcode">
+
+                    @if($usedCoins > 0)
+                        <p class="cart-coin">ใช้คอยน์ <strong>{{ $usedCoins }}</strong><img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon"></p>
+                    @endif
+                    <p class="payamount">ยอดที่ต้องชำระ {{ number_format($finalAmount, 2) }} บาท</p>  
+                    @if($order->coin_earned > 0)
+                        <p class="cart-coin">คุณจะได้รับ <strong>{{ $order->coin_earned }}</strong> <img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon"></p>
+                    @endif
                     <form action="{{ route('game.payment.confirm', ['order_id' => $order->id]) }}" method="POST" enctype="multipart/form-data" id="payment-form">
                         @csrf
 

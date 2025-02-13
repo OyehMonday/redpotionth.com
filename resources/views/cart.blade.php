@@ -50,8 +50,10 @@
 
                     if (Session::has('user')) {
                         $user = Session::get('user');
-                        $existingOrder = \App\Models\Order::where('user_id', $user->id)->where('status', '1')->first();
-                        if ($existingOrder) {
+                        $existingOrder = \App\Models\Order::where('user_id', $user->id)
+                                                        ->whereIn('status', ['1', '2']) 
+                                                        ->first();
+                        if ($existingOrder && empty($cart)) {
                             $cart = json_decode($existingOrder->cart_details, true);
                             session()->put('cart', $cart);
                         }
@@ -62,6 +64,7 @@
                     <p style="padding:50px 0;">ยังไม่มีสินค้าในตะกร้า</p>
                 @else
                     <form action="{{ route('game.cart.update') }}" method="POST" onsubmit="return validateCart()">
+                        <input type="hidden" name="use_coins" id="use-coins-input" value="0">
                         @csrf
 
                         @foreach($cart as $game_id => $game)
@@ -145,18 +148,42 @@
                                 <div class="cart-discount">
                                     ประหยัดไป <strong>{{ number_format($totalDiscount, 0) }}</strong> บาท
                                 </div>
-                            @endif                    
-                            <div>
-                                <strong>ยอดที่ต้องชำระ : </strong>
-                                <span class="cart-total">{{ number_format(collect($cart)->pluck('packages')->flatten(1)->sum('price'), 0) }} </span>
-                                <strong>บาท</strong>
-                            </div>
+                            @endif   
+
                             @php
+                                $coinsAvailable = $user ? \App\Models\User::where('id', $user['id'])->value('coins') : 0;
+
                                 $totalAmount = collect($cart)->pluck('packages')->flatten(1)->sum('price');
-                                $coinsEarned = floor($totalAmount / 100);
-                            @endphp                    
-                            <div class="cart-coin">คุณจะได้รับ {{ $coinsEarned }} <img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon"></div>
-                            <div><button type="submit" class="cart-btn">ชำระเงิน</button></div>
+                                $maxDiscount = floor($totalAmount * (env('COIN_DISCOUNT_LIMIT') / 100)); 
+                                $coinsToUse = min($coinsAvailable, $maxDiscount);
+
+                                $coinConversionRate = env('COIN_CONVERSION_RATE', 100); 
+                                $earnedCoins = floor(($totalAmount - $coinsToUse) / $coinConversionRate); 
+                            @endphp
+
+                            <div>
+                                ยอดรวม {{ number_format($totalAmount, 2) }} บาท<br>
+
+                                @if(Session::has('user')) 
+                                    คุณมี <span id="coin-balance">{{ $coinsAvailable }}</span><img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon">
+                                    
+                                    @if($coinsAvailable > 0)
+                                        <div class="coin-toggle">
+                                            <label class="switch">
+                                                <input type="checkbox" id="use-coins-toggle">
+                                                <span class="slider round"></span>
+                                            </label>
+                                            <label for="use-coins-toggle">
+                                                ใช้ <span id="coins-used">{{ $coinsToUse }}</span><img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon">
+                                            </label>
+                                        </div>
+                                    @endif
+                                @endif
+                                <div class="cart-divider"></div>
+                                <p class="payamount">ยอดที่ต้องชำระ <span id="final-amount">{{ number_format($totalAmount - $coinsToUse, 2) }}</span> บาท<br></p>
+                                <p class="cart-coin">คุณจะได้รับ <span id="earned-coins">{{ $earnedCoins }}</span><img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon"></p>
+                                <p><button type="submit" class="cart-btn">ชำระเงิน</button></p>
+                            </div>
                         </div>
                     </form>
                 @endif
@@ -182,6 +209,50 @@
             const menu = document.getElementById("navbarMenu");
             menu.classList.toggle("show");
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const toggle = document.getElementById("use-coins-toggle");
+            const useCoinsInput = document.getElementById("use-coins-input");
+            const coinsUsedEl = document.getElementById("coins-used");
+            const finalAmountEl = document.getElementById("final-amount");
+            const earnedCoinsEl = document.getElementById("earned-coins");
+
+            const totalAmount = {{ $totalAmount }};
+            const maxCoins = {{ $coinsToUse }};
+            const coinConversionRate = {{ env('COIN_CONVERSION_RATE', 100) }}; 
+
+            let usedCoins = maxCoins; 
+
+            function updateCoinsUsage() {
+                useCoinsInput.value = toggle.checked ? 1 : 0;
+            }
+
+            function updateAmount() {
+                let newTotal = totalAmount;
+                if (toggle.checked) {
+                    newTotal -= usedCoins;
+                }
+
+                let earnedCoins = Math.floor(newTotal / coinConversionRate);
+
+                finalAmountEl.textContent = newTotal.toFixed(2);
+                earnedCoinsEl.textContent = earnedCoins;
+            }
+
+            document.querySelector("form").addEventListener("submit", function() {
+                updateCoinsUsage();
+            });
+
+            toggle.addEventListener("change", function() {
+                updateCoinsUsage();
+                updateAmount();
+            });
+
+            updateCoinsUsage();
+            updateAmount();
+        });
+
+
     </script>
     
 </body>

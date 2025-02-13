@@ -157,11 +157,13 @@ class GameCartController extends Controller
                 }
             }
         }
-    
+        
+        session()->put('use_coins', $request->input('use_coins', 0));
         session()->put('cart', $cart);
     
         return redirect()->route('game.checkout')->with('success', '');
-    }    
+    }
+     
 
     public function removeFromCart(Request $request)
     {
@@ -314,36 +316,94 @@ class GameCartController extends Controller
             return redirect()->route('game.cart.view')->with('error', 'ตะกร้าสินค้าของคุณว่างเปล่า');
         }
     
-        $updatedCart = [];
-        foreach ($cart as $game_id => $game) {
-            foreach ($game['packages'] as $package_id => $package) {
-                $gamePackage = GamePackage::find($package_id);
-                if ($gamePackage) {
-                    $updatedCart[$game_id]['game_name'] = $game['game_name'];
-                    $updatedCart[$game_id]['packages'][$package_id] = [
-                        'name' => $gamePackage->name,
-                        'full_price' => $gamePackage->full_price ?? null, 
-                        'price' => $gamePackage->selling_price,
-                        'player_id' => $package['player_id'],
-                    ];
-                }
-            }
-        }
-    
-        session()->put('cart', $updatedCart);
-    
-        $totalPrice = collect($updatedCart)->pluck('packages')->flatten(1)->sum('price');
+        $user = Session::get('user');
+
+        Order::where('user_id', $user->id)
+        ->where('status', '2')
+        ->delete();        
+
+        $totalPrice = collect($cart)->pluck('packages')->flatten(1)->sum('price');    
+        $useCoins = session()->get('use_coins', 0);    
+        $coinsAvailable = \App\Models\User::where('id', $user->id)->value('coins') ?? 0;    
+        $maxDiscount = floor($totalPrice * (env('COIN_DISCOUNT_LIMIT', 50) / 100));    
+        $coinsToUse = $useCoins ? min($coinsAvailable, $maxDiscount) : 0;    
+        $finalAmount = max(0, $totalPrice - $coinsToUse);
+        
+        $coinConversionRate = env('COIN_CONVERSION_RATE', 100);
+        $coinEarned = floor($finalAmount / $coinConversionRate);        
     
         $order = Order::create([
-            'user_id' => Session::get('user')->id,
-            'cart_details' => json_encode($updatedCart),
+            'user_id' => $user->id,
+            'cart_details' => json_encode($cart),
             'total_price' => $totalPrice,
-            'status' => '2', 
+            'used_coins' => $coinsToUse, 
+            'coin_earned' => $coinEarned,
+            'status' => '2',
         ]);
+    
         session()->put('order_id', $order->id);
     
         return redirect()->route('game.checkout.view', ['order_id' => session('order_id')]);
     }
+    
+
+    // public function checkout(Request $request)
+    // {
+    //     if (!Session::has('user')) {
+    //         session()->put('url.intended', route('game.checkout'));
+    //         return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน');
+    //     }
+    
+    //     $cart = session()->get('cart', []);
+    
+    //     if (!empty($cart)) {
+    //         Order::where('user_id', Session::get('user')->id)
+    //             ->where('status', '1') 
+    //             ->delete();
+    //     } else {
+    //         $this->loadCartFromDatabase();
+    //         $cart = session()->get('cart', []);
+    //     }
+    
+    //     if (empty($cart)) {
+    //         return redirect()->route('game.cart.view')->with('error', 'ตะกร้าสินค้าของคุณว่างเปล่า');
+    //     }
+    
+    //     $updatedCart = [];
+    //     foreach ($cart as $game_id => $game) {
+    //         foreach ($game['packages'] as $package_id => $package) {
+    //             $gamePackage = GamePackage::find($package_id);
+    //             if ($gamePackage) {
+    //                 $updatedCart[$game_id]['game_name'] = $game['game_name'];
+    //                 $updatedCart[$game_id]['packages'][$package_id] = [
+    //                     'name' => $gamePackage->name,
+    //                     'full_price' => $gamePackage->full_price ?? null, 
+    //                     'price' => $gamePackage->selling_price,
+    //                     'player_id' => $package['player_id'],
+    //                 ];
+    //             }
+    //         }
+    //     }
+    
+    //     session()->put('cart', $updatedCart);
+    //     $user = Session::get('user');
+    //     $totalPrice = collect($updatedCart)->pluck('packages')->flatten(1)->sum('price');
+    //     $useCoins = session()->get('use_coins', 0);
+    
+    //     $coinsToUse = $request->has('use_coins') && $request->input('use_coins') == 1 ? min($coinsAvailable, $maxDiscount) : 0;
+    //     $finalAmount = $totalPrice - $coinsToUse;
+
+    //     $order = Order::create([
+    //         'user_id' => Session::get('user')->id,
+    //         'cart_details' => json_encode($updatedCart),
+    //         'total_price' => $totalPrice,
+    //         'used_coins' => $coinsToUse,
+    //         'status' => '2', 
+    //     ]);
+    //     session()->put('order_id', $order->id);
+    
+    //     return redirect()->route('game.checkout.view', ['order_id' => session('order_id')]);
+    // }
 
     public function loadCartFromDatabase()
     {
@@ -377,11 +437,20 @@ class GameCartController extends Controller
             return redirect()->route('game.cart.view')->with('error', 'คุณไม่มีสิทธิ์เข้าถึงคำสั่งซื้อนี้');
         }
     
-        if (request()->has('confirm_checkout')) {
-            session()->forget(['cart', 'order_id']);
-        }
+        $cartDetails = json_decode($order->cart_details, true);
+        $totalAmount = collect($cartDetails)->pluck('packages')->flatten(1)->sum('price');
+
+        $usedCoins = $order->used_coins ?? 0;
+
+        $finalAmount = $totalAmount - $usedCoins;
+
+        return view('checkout', compact('order', 'totalAmount', 'usedCoins', 'finalAmount'));
+
+        // if (request()->has('confirm_checkout')) {
+        //     session()->forget(['cart', 'order_id']);
+        // }
     
-        return view('checkout', compact('order'));
+        // return view('checkout', compact('order'));
     }     
     
     public function confirmPayment(Request $request, $order_id)
@@ -402,6 +471,10 @@ class GameCartController extends Controller
         if (!$order) {
             return redirect()->route('game.cart.view')->with('error', 'ไม่พบคำสั่งซื้อนี้');
         }
+
+        if ($order->used_coins > 0) {
+            \App\Models\User::where('id', Session::get('user')->id)->decrement('coins', $order->used_coins);
+        }        
     
         $filePath = $request->file('payment_slip')->store('payments', 'public');
     
