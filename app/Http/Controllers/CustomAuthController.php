@@ -167,6 +167,6 @@ class CustomAuthController extends Controller
     public function logout()
     {
         Session::forget('user');
-        return redirect()->route('custom.login.form');
+        return redirect()->route('home');
     }
 }

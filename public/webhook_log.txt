@@ -1,0 +1,167 @@
+2025-02-14 09:31:24 - Webhook Received: 
+2025-02-14 09:34:10 - Webhook Received
+Headers:
+Array
+(
+    [User-Agent] => LineBotWebhook/2.0
+    [Content-Type] => application/json; charset=utf-8
+    [X-Line-Signature] => NH0mfhmI7kT4zqh0YVUa9BsrrOJIVQslXrzKN32DXN0=
+    [Content-Length] => 558
+    [Connection] => close
+    [X-Forwarded-For] => 147.92.149.165
+    [Host] => redpotionth.com
+    [X-Accel-Internal] => /nginx_static_files
+)
+
+Raw Data:
+{"destination":"U48fa0b0964bdcfd67e7691fda1cefb28","events":[{"type":"message","message":{"type":"text","id":"548102160329212386","quoteToken":"T7jk8IRTkJ_fpBdr_yEXEnSTwR8HXPbr6XA3pWoxtE3Ake4yhx8XqDHSDPAHS8gk5gGdCX_8X6intNQyCaUsd4CkIjNLbVZZ15QpgtfbaQGlRW0ysMEnRg6UWYVXf7WGYCj9PZgMPPA4foiahYn4Ug","text":".."},"webhookEventId":"01JM1WXXDH49YQMGY1JD4MFN8Y","deliveryContext":{"isRedelivery":false},"timestamp":1739525649691,"source":{"type":"user","userId":"U06fd28ef78603353901d77f908ce4ccb"},"replyToken":"155022ebcd6c45798f18f28536e7d4d5","mode":"active"}]}
+JSON Decoded:
+Array
+(
+    [destination] => U48fa0b0964bdcfd67e7691fda1cefb28
+    [events] => Array
+        (
+            [0] => Array
+                (
+                    [type] => message
+                    [message] => Array
+                        (
+                            [type] => text
+                            [id] => 548102160329212386
+                            [quoteToken] => T7jk8IRTkJ_fpBdr_yEXEnSTwR8HXPbr6XA3pWoxtE3Ake4yhx8XqDHSDPAHS8gk5gGdCX_8X6intNQyCaUsd4CkIjNLbVZZ15QpgtfbaQGlRW0ysMEnRg6UWYVXf7WGYCj9PZgMPPA4foiahYn4Ug
+                            [text] => ..
+                        )
+
+                    [webhookEventId] => 01JM1WXXDH49YQMGY1JD4MFN8Y
+                    [deliveryContext] => Array
+                        (
+                            [isRedelivery] => 
+                        )
+
+                    [timestamp] => 1739525649691
+                    [source] => Array
+                        (
+                            [type] => user
+                            [userId] => U06fd28ef78603353901d77f908ce4ccb
+                        )
+
+                    [replyToken] => 155022ebcd6c45798f18f28536e7d4d5
+                    [mode] => active
+                )
+
+        )
+
+)
+
+-------------------------
+2025-02-14 09:34:46 - Webhook Received
+Headers:
+Array
+(
+    [User-Agent] => LineBotWebhook/2.0
+    [Content-Type] => application/json; charset=utf-8
+    [X-Line-Signature] => H7XzLUbt6pwcX39S+/BUeAlJWQomPPc3qrD38Nz250Y=
+    [Content-Length] => 572
+    [Connection] => close
+    [X-Forwarded-For] => 147.92.149.165
+    [Host] => redpotionth.com
+    [X-Accel-Internal] => /nginx_static_files
+)
+
+Raw Data:
+{"destination":"U48fa0b0964bdcfd67e7691fda1cefb28","events":[{"type":"message","message":{"type":"text","id":"548102219972214977","quoteToken":"NgB4lQZOqVGLcYf5IBaO9aE8v7TJXe78idYW9RQ5AppcROQKi3NadfKdswkc21B85ojeKScvn0OhdH_i9SjkLcGns4ySTkqvm7mHfG8IN34-SNMXZ445in08Ne_Yvcw5wSDo0qzKDak5HlCvrtrQUQ","text":"web hook success"},"webhookEventId":"01JM1WZ0FBBZC562DFDMPCB2HW","deliveryContext":{"isRedelivery":false},"timestamp":1739525685233,"source":{"type":"user","userId":"U06fd28ef78603353901d77f908ce4ccb"},"replyToken":"8fee2ea79ee8486e996cc85ebedf78df","mode":"active"}]}
+JSON Decoded:
+Array
+(
+    [destination] => U48fa0b0964bdcfd67e7691fda1cefb28
+    [events] => Array
+        (
+            [0] => Array
+                (
+                    [type] => message
+                    [message] => Array
+                        (
+                            [type] => text
+                            [id] => 548102219972214977
+                            [quoteToken] => NgB4lQZOqVGLcYf5IBaO9aE8v7TJXe78idYW9RQ5AppcROQKi3NadfKdswkc21B85ojeKScvn0OhdH_i9SjkLcGns4ySTkqvm7mHfG8IN34-SNMXZ445in08Ne_Yvcw5wSDo0qzKDak5HlCvrtrQUQ
+                            [text] => web hook success
+                        )
+
+                    [webhookEventId] => 01JM1WZ0FBBZC562DFDMPCB2HW
+                    [deliveryContext] => Array
+                        (
+                            [isRedelivery] => 
+                        )
+
+                    [timestamp] => 1739525685233
+                    [source] => Array
+                        (
+                            [type] => user
+                            [userId] => U06fd28ef78603353901d77f908ce4ccb
+                        )
+
+                    [replyToken] => 8fee2ea79ee8486e996cc85ebedf78df
+                    [mode] => active
+                )
+
+        )
+
+)
+
+-------------------------
+2025-02-14 09:37:10 - Webhook Received
+Headers:
+Array
+(
+    [User-Agent] => LineBotWebhook/2.0
+    [Content-Type] => application/json; charset=utf-8
+    [X-Line-Signature] => rsxxQjAoptCLZm8egY+2JuMjjLTu7gZE8O5J+UhsdHc=
+    [Content-Length] => 607
+    [Connection] => close
+    [X-Forwarded-For] => 147.92.150.195
+    [Host] => redpotionth.com
+    [X-Accel-Internal] => /nginx_static_files
+)
+
+Raw Data:
+{"destination":"U48fa0b0964bdcfd67e7691fda1cefb28","events":[{"type":"message","message":{"type":"text","id":"548102461698343043","quoteToken":"I11f5pXYC37U3-SOHE_9pTcBfs1JKKPTym_7uwlKOnjFPdi_2henXizSWHImqgY03eJc4O6RsZxFJ68W8XxorC109bdw4eQRRCE2d7nvmocvy_ZS231e4_jOu_xtim3nAx6AXlG2WgNqHG_ykzdocA","text":"wwww"},"webhookEventId":"01JM1X3D8BRK9WFX75VRQ0P77G","deliveryContext":{"isRedelivery":false},"timestamp":1739525829395,"source":{"type":"group","groupId":"C295065f7b9f89b468bd1dd40cf6e7946","userId":"U06fd28ef78603353901d77f908ce4ccb"},"replyToken":"0ec7e45771714c35a63a5fc9ab1a9419","mode":"active"}]}
+JSON Decoded:
+Array
+(
+    [destination] => U48fa0b0964bdcfd67e7691fda1cefb28
+    [events] => Array
+        (
+            [0] => Array
+                (
+                    [type] => message
+                    [message] => Array
+                        (
+                            [type] => text
+                            [id] => 548102461698343043
+                            [quoteToken] => I11f5pXYC37U3-SOHE_9pTcBfs1JKKPTym_7uwlKOnjFPdi_2henXizSWHImqgY03eJc4O6RsZxFJ68W8XxorC109bdw4eQRRCE2d7nvmocvy_ZS231e4_jOu_xtim3nAx6AXlG2WgNqHG_ykzdocA
+                            [text] => wwww
+                        )
+
+                    [webhookEventId] => 01JM1X3D8BRK9WFX75VRQ0P77G
+                    [deliveryContext] => Array
+                        (
+                            [isRedelivery] => 
+                        )
+
+                    [timestamp] => 1739525829395
+                    [source] => Array
+                        (
+                            [type] => group
+                            [groupId] => C295065f7b9f89b468bd1dd40cf6e7946
+                            [userId] => U06fd28ef78603353901d77f908ce4ccb
+                        )
+
+                    [replyToken] => 0ec7e45771714c35a63a5fc9ab1a9419
+                    [mode] => active
+                )
+
+        )
+
+)
+
+-------------------------

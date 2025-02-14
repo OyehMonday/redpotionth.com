@@ -15,6 +15,9 @@ use App\Http\Controllers\Admin\GamePackageController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\FacebookCommentController;
 use App\Http\Controllers\PaymentController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Services\LineNotificationService;
 
 Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
     $allowedFolders = ['game_covers', 'game_full_covers', 'package_covers', 'uidimages', 'payments']; 
@@ -137,3 +140,11 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
 });
 
 Route::get('/fetch-facebook-comments', [FacebookCommentController::class, 'fetchComments'])->name('fetch.facebook.comments');
+
+
+Route::post('/webhook', function (Request $request) {
+    // Log the entire request body
+    Log::info('LINE Webhook Received:', ['data' => $request->all()]);
+
+    return response()->json(['status' => 'Webhook received successfully!']);
+});

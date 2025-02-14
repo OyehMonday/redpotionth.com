@@ -54,7 +54,7 @@
 
                                     <div class="order-summary">
                                         @foreach($cartDetails as $game_id => $game)
-                                            <div class="cart-container">
+                                            <div class="dash-container">
                                                 <div class="cart-left">
                                                     <div class="cart-gametitle">{{ $game['game_name'] }}</div>
 

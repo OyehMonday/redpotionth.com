@@ -30,7 +30,6 @@ body {
 
 .section.topup-section h1 {
   text-align: left; 
-  margin: 0px 10px; 
   margin-top: 0;
 }
 
@@ -133,7 +132,7 @@ p {
 .divider {
   border: none;
   border-top: 1px solid #334E68; 
-  margin: 10px 0;
+  margin: -10px 0;
   width: 90%; 
   margin-left: auto;
   margin-right: auto;
@@ -486,23 +485,18 @@ p {
   transition: background 0.3s ease, transform 0.2s ease; 
 }
 
-/* Global Dark Theme */
 body.dark-theme {
   background-color: #0A192F; 
   color: #ffffff;
 }
 
-/* Top-Up Section */
 .topup-section {
   text-align: center;
   padding: 20px;
-  background: #112240; /* Slightly lighter navy */
+  background: #112240; 
   border-radius: 8px;
 }
 
-
-
-/* Game Selection Section */
 .game-selection {
   text-align: center;
   padding: 20px 0;
@@ -520,7 +514,7 @@ body.dark-theme {
 /* Game Card */
 .game-card {
   background: #1B2A41; 
-  padding: 10px;
+  padding: 10px 12px 10px 10px;
   border-radius: 8px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   text-align: center;
@@ -766,12 +760,27 @@ body.dark-theme {
   display: flex;
   align-items: flex-start; 
   justify-content: flex-start;
-  border: 2px solid #334E68; 
+  border: 1px solid #334E68; 
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  border-right: 7px solid #007bff;
+  border-left: 7px solid #007bff;
+  border-radius: 10px;
+  padding: 10px 20px 15px 0;
+  gap: 0px; 
+  margin-bottom: 20px;
+  background-color: #242b48;
+}
+
+.dash-container {
+  display: flex;
+  align-items: flex-start; 
+  justify-content: flex-start;
+  border: 1px solid #334E68; 
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  padding: 15px 20px 15px 0;
-  margin: 10px;
+  padding: 10px 20px 15px 0;
   gap: 0px; 
+  margin-bottom: 20px;
 }
 
 .cart-left {
@@ -781,11 +790,13 @@ body.dark-theme {
 
 .cart-gametitle{
   font-size: 1.2em;
+  margin-left: 0px;
 }
 
 .cart-gamecover {
-  width: 120px;
+  width: 170px;
   border-radius: 8px;
+  margin-left: 0px;
 }
 
 .cart-right {
@@ -839,8 +850,8 @@ body.dark-theme {
 }
 
 .remove-icon {
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
   padding-top: 5px;
@@ -880,7 +891,7 @@ body.dark-theme {
   text-align: right;
   font-size: 0.9em;
   font-weight: 100;
-  color: #ff4444; 
+  color: #ff4444;
 }
 
 .cart-summary {
@@ -896,7 +907,6 @@ body.dark-theme {
 .cart-back {
   margin-bottom: 10px;
   text-align: left;
-  padding-left: 10px;
 }
 
 .btn-back {
@@ -1201,7 +1211,6 @@ input[type="file"] {
   display: flex;
   flex-direction: column;
   gap: 25px;
-  padding: 10px;
 }
 
 .order-card {
@@ -1219,7 +1228,7 @@ input[type="file"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 10px 0;
 }
 
 .order-title{
@@ -1322,7 +1331,7 @@ input:checked + .slider:before {
 .coin-item {
   flex: 1;
   text-align: center;
-  padding: 10px;
+  padding: 0px;
 }
 
 .coin-icon {
@@ -1345,13 +1354,8 @@ input:checked + .slider:before {
       gap: 10px; 
   }
 
-  .game-card {
-      padding: 5px; 
-  }
-
   .game-cover {
-      max-width: 130px; 
-      height: 130px;
+    width: 100%;
   }
 
   .topup-button {
@@ -1421,6 +1425,12 @@ input:checked + .slider:before {
     align-items: center;
     text-align: center;
   }
+  
+  .dash-container {
+    flex-direction: column; 
+    align-items: center;
+    text-align: center;
+  }
 
   .cart-left {
     flex: 1;
@@ -1435,6 +1445,7 @@ input:checked + .slider:before {
   .cart-item {
     flex-direction: column;
     text-align: center;
+    margin-left: 20px;
   }
 
   .cart-details,
@@ -1507,6 +1518,7 @@ input:checked + .slider:before {
   .order-header {
     flex-direction: column;
     align-items: flex-start;
+    margin-bottom: 10px;
   }
 
   .order-title {
@@ -1522,12 +1534,20 @@ input:checked + .slider:before {
   .order-coins {
     flex-direction: column;
   }
-  .coin-section {
-      flex-direction: column;
+  .remove-icon {
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    transition: opacity 0.2s ease-in-out;
+    padding-top: 0px;
   }
-  .coin-item {
-      width: 100%;
-  }  
+  .cart-gametitle{
+    margin-left: 20px;
+  }
+  
+  .cart-gamecover {
+    margin-left: 20px;
+  }
 
 }
 

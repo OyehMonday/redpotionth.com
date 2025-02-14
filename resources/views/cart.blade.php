@@ -47,6 +47,7 @@
 
                 @php
                     $cart = session('cart', []);
+                    $user = null; 
 
                     if (Session::has('user')) {
                         $user = Session::get('user');
@@ -84,7 +85,7 @@
                                         @endif
 
                                         @if($gameModel && !empty($gameModel->uid_image))
-                                            <p>
+                                            <p style="margin-top:0px; padding-left:20px;">
                                                 <a href="javascript:void(0);" onclick="openLightbox('{{ asset('storage/' . $gameModel->uid_image) }}')" class="btn-info">
                                                     วิธีดู UID
                                                 </a>
@@ -152,11 +153,9 @@
 
                             @php
                                 $coinsAvailable = $user ? \App\Models\User::where('id', $user['id'])->value('coins') : 0;
-
                                 $totalAmount = collect($cart)->pluck('packages')->flatten(1)->sum('price');
-                                $maxDiscount = floor($totalAmount * (env('COIN_DISCOUNT_LIMIT') / 100)); 
+                                $maxDiscount = floor($totalAmount * (env('COIN_DISCOUNT_LIMIT', 50) / 100)); 
                                 $coinsToUse = min($coinsAvailable, $maxDiscount);
-
                                 $coinConversionRate = env('COIN_CONVERSION_RATE', 100); 
                                 $earnedCoins = floor(($totalAmount - $coinsToUse) / $coinConversionRate); 
                             @endphp
@@ -217,9 +216,9 @@
             const finalAmountEl = document.getElementById("final-amount");
             const earnedCoinsEl = document.getElementById("earned-coins");
 
-            const totalAmount = {{ $totalAmount }};
-            const maxCoins = {{ $coinsToUse }};
-            const coinConversionRate = {{ env('COIN_CONVERSION_RATE', 100) }}; 
+            const totalAmount = {{ $totalAmount ?? 0 }};
+            const maxCoins = {{ $coinsToUse ?? 0 }};
+            const coinConversionRate = {{ env('COIN_CONVERSION_RATE', 100) }};
 
             let usedCoins = maxCoins; 
 

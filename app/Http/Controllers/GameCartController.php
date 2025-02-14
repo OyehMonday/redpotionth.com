@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Log; 
+use App\Services\LineNotificationService;
 
 class GameCartController extends Controller
 {
@@ -116,26 +117,54 @@ class GameCartController extends Controller
     public function viewCart()
     {
         if (!Session::has('user')) {
-            return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน');
+            $cart = session()->get('cart', []);
+            return view('cart', compact('cart'));
         }
     
         $user = Session::get('user');
     
-        // ✅ Check if the order has reached status 3 (payment pending or completed)
         $order = Order::where('user_id', $user->id)
                       ->where('status', '>=', 3)
                       ->first();
     
         if ($order) {
             session()->forget(['cart', 'order_id']);
-    
-            // ✅ Instead of redirecting immediately, return a view showing "Cart is empty"
             return view('cart', ['cart' => []])->with('error', 'ไม่มีสินค้าในตะกร้า');
         }
     
         $cart = session()->get('cart', []);
+    
+        if (empty($cart)) {
+            $this->loadCartFromDatabase();
+            $cart = session()->get('cart', []);
+        }
+    
         return view('cart', compact('cart'));
     }
+    
+
+    // public function viewCart()
+    // {
+    //     if (!Session::has('user')) {
+    //         return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน');
+    //     }
+    
+    //     $user = Session::get('user');
+    
+    //     $order = Order::where('user_id', $user->id)
+    //                   ->where('status', '>=', 3)
+    //                   ->first();
+    
+    //     if ($order) {
+    //         session()->forget(['cart', 'order_id']);
+    
+    //         // ✅ Instead of redirecting immediately, return a view showing "Cart is empty"
+    //         return view('cart', ['cart' => []])->with('error', 'ไม่มีสินค้าในตะกร้า');
+    //     }
+    
+    //     $cart = session()->get('cart', []);
+    //     return view('cart', compact('cart'));
+    // }
     
 
     // public function viewCart()
@@ -164,7 +193,6 @@ class GameCartController extends Controller
         return redirect()->route('game.checkout')->with('success', '');
     }
      
-
     public function removeFromCart(Request $request)
     {
         $game_id = $request->game_id;
@@ -172,6 +200,7 @@ class GameCartController extends Controller
     
         if (!Session::has('user')) {
             $cart = session()->get('cart', []);
+    
             if (isset($cart[$game_id]['packages'][$package_id])) {
                 unset($cart[$game_id]['packages'][$package_id]);
     
@@ -180,11 +209,13 @@ class GameCartController extends Controller
                 }
     
                 if (empty($cart)) {
-                    session()->forget('cart'); 
+                    session()->forget('cart');
+                    return redirect()->route('game.cart.view')->with('success', 'ตะกร้าสินค้าถูกลบทั้งหมด');
                 } else {
                     session()->put('cart', $cart);
                 }
             }
+    
             return redirect()->route('game.cart.view')->with('success', 'ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
         }
     
@@ -202,7 +233,7 @@ class GameCartController extends Controller
         }
     
         $existingOrder = Order::where('user_id', $user->id)
-                              ->where('status', '1')
+                              ->whereIn('status', ['1', '2']) 
                               ->first();
     
         if ($existingOrder) {
@@ -217,7 +248,7 @@ class GameCartController extends Controller
     
                 if (empty($existingCart)) {
                     $existingOrder->delete();
-                    session()->forget('cart'); 
+                    session()->forget('cart');
                     return redirect()->route('game.cart.view')->with('success', 'คำสั่งซื้อถูกลบเนื่องจากไม่มีสินค้าในตะกร้า');
                 } else {
                     $existingOrder->update([
@@ -487,5 +518,6 @@ class GameCartController extends Controller
     
         return redirect()->route('dashboard')->with('success', 'ได้รับคำสั่งซื้อแล้ว.');
     }
+    
     
 }
