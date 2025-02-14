@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Log; 
 use App\Services\LineNotificationService;
+use Illuminate\Support\Facades\Storage;
 
 class GameCartController extends Controller
 {
@@ -502,10 +503,10 @@ class GameCartController extends Controller
         if (!$order) {
             return redirect()->route('game.cart.view')->with('error', 'ไม่พบคำสั่งซื้อนี้');
         }
-
+    
         if ($order->used_coins > 0) {
-            \App\Models\User::where('id', Session::get('user')->id)->decrement('coins', $order->used_coins);
-        }        
+            User::where('id', Session::get('user')->id)->decrement('coins', $order->used_coins);
+        }
     
         $filePath = $request->file('payment_slip')->store('payments', 'public');
     
@@ -513,6 +514,17 @@ class GameCartController extends Controller
             'payment_slip' => $filePath,
             'status' => '3', 
         ]);
+    
+        $lineService = new LineNotificationService();
+        $slipUrl = url("storage/$filePath");
+    
+        $message = "มี Order ใหม่ !!\n\n".
+                   "🛒 หมายเลขคำสั่งซื้อ: {$order->id}\n".
+                   "👤 ผู้ซื้อ: " . Session::get('user')->username . "\n".
+                   "💰 ยอดโอน: {$order->total_price} บาท\n".
+                   "📸 สลิป: $slipUrl";
+    
+        $lineService->sendMessage($message);
     
         session()->forget(['cart', 'order_id']);
     

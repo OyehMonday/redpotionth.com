@@ -7,19 +7,21 @@ use Illuminate\Support\Facades\Http;
 class LineNotificationService
 {
     protected $accessToken;
+    protected $groupId;
 
     public function __construct()
     {
         $this->accessToken = env('LINE_ACCESS_TOKEN');
+        $this->groupId = env('LINE_GROUP_ID');
     }
 
-    public function sendMessage($to, $message)
+    public function sendMessage($message)
     {
-        $response = Http::withHeaders([
+        return Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->accessToken,
             'Content-Type'  => 'application/json',
         ])->post('https://api.line.me/v2/bot/message/push', [
-            'to' => $to,
+            'to' => $this->groupId,
             'messages' => [
                 [
                     'type' => 'text',
@@ -27,7 +29,26 @@ class LineNotificationService
                 ],
             ],
         ]);
+    }
 
-        return $response->json();
+    public function sendMessageWithImage($message, $imageUrl)
+    {
+        return Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->accessToken,
+            'Content-Type'  => 'application/json',
+        ])->post('https://api.line.me/v2/bot/message/push', [
+            'to' => $this->groupId,
+            'messages' => [
+                [
+                    'type' => 'text',
+                    'text' => $message,
+                ],
+                [
+                    'type' => 'image',
+                    'originalContentUrl' => $imageUrl,
+                    'previewImageUrl' => $imageUrl,
+                ],
+            ],
+        ]);
     }
 }

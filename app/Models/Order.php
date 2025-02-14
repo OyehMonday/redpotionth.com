@@ -21,10 +21,16 @@ class Order extends Model
 
     protected $casts = [
         'cart_details' => 'array', 
+        'payment_approved_at' => 'datetime',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(Admin::class, 'approved_by');
+    }       
 }

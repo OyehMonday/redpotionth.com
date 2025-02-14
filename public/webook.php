@@ -1,20 +1,16 @@
 <?php
 
-// Get raw request body
 $rawData = file_get_contents('php://input');
 $jsonData = json_decode($rawData, true);
 
-// Log the webhook request
 file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Webhook Data:\n" . print_r($jsonData, true) . "\n", FILE_APPEND);
 
-// Extract necessary data
 $replyToken = $jsonData['events'][0]['replyToken'] ?? null;
 $sourceType = $jsonData['events'][0]['source']['type'] ?? null;
 $groupId = $jsonData['events'][0]['source']['groupId'] ?? null;
 $messageType = $jsonData['events'][0]['message']['type'] ?? null;
 
-// Define the allowed group ID
-$allowedGroupId = "C295065f7b9f89b468bd1dd40cf6e7946"; // Replace with your actual group ID
+$allowedGroupId = "C295065f7b9f89b468bd1dd40cf6e7946"; 
 
 // LINE API Credentials
 $channelAccessToken = "j6tQ/l00yeVPCtJ73y5ydJj+OM2y51mbO8zGjlA+QMXsQNEX6bRyo+veIaqsQe8TyJB9W2tbCdmofRIQEr2tu/QR+MS+bNT8C9VPEVUwNRwBSVTQpH1FJVcmql9KqnYLiSqR/VmURiqzzzDDNpDFMo9PbdgDzCFqoOLOYbqAITQ="; // Replace with your actual token

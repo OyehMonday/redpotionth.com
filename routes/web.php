@@ -18,6 +18,7 @@ use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Services\LineNotificationService;
+use App\Http\Controllers\AdminOrderController;
 
 Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
     $allowedFolders = ['game_covers', 'game_full_covers', 'package_covers', 'uidimages', 'payments']; 
@@ -75,38 +76,7 @@ Route::post('/login', [CustomAuthController::class, 'login'])->name('custom.logi
 Route::get('/dashboard', [CustomAuthController::class, 'dashboard'])->name('dashboard');
 Route::get('/logout', [CustomAuthController::class, 'logout'])->name('logout');
 
-// Route::prefix('admin')->group(function () {
-//     // Admin login route
-//     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-//     Route::post('/login', [AdminAuthController::class, 'login']);
-    
-//     // Admin signup route (if you want a signup form)
-//     Route::get('/signup', [AdminAuthController::class, 'showSignupForm'])->name('admin.signup');
-//     Route::post('/signup', [AdminAuthController::class, 'signup']);
-
-//     Route::middleware('auth:admin')->group(function () {
-//         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-//         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-//     });
-// });
-
-// Route::get('/admin/verify/{token}', [AdminAuthController::class, 'verify'])->name('admin.verify');
-
-// Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-// Route::post('/admin/login', [AdminAuthController::class, 'login']);
-// Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-
-// Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
-//     Route::resource('game-categories', \App\Http\Controllers\Admin\GameCategoryController::class);
-// });
-
-// Route::prefix('admin')->middleware('auth:admin')->group(function () {
-//     Route::resource('game-categories', \App\Http\Controllers\Admin\GameCategoryController::class);
-//     Route::resource('games', \App\Http\Controllers\Admin\GameController::class);
-// });
-
 Route::prefix('admin')->group(function () {
-    // Admin authentication routes
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'login']);
     Route::get('/signup', [AdminAuthController::class, 'showSignupForm'])->name('admin.signup');
@@ -116,19 +86,14 @@ Route::prefix('admin')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-
-        // Game Management Routes
         Route::resource('game-categories', GameCategoryController::class);
         Route::resource('games', GameController::class);
-        
-        // Sorting Route for Drag & Drop Games
         Route::post('/games/sort', [GameController::class, 'sort'])->name('games.sort');        
     });
 });
 
 Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::resource('games', GameController::class);
-
     Route::get('/games/{game}/packages', [GamePackageController::class, 'index'])->name('game-packages.index');
     Route::get('/games/{game}/packages/create', [GamePackageController::class, 'create'])->name('game-packages.create');
     Route::post('/games/{game}/packages', [GamePackageController::class, 'store'])->name('game-packages.store');
@@ -139,11 +104,12 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     
 });
 
+Route::get('admin/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+Route::post('admin/orders/approve/{orderId}', [AdminOrderController::class, 'approvePayment'])->name('admin.orders.approve');
+
 Route::get('/fetch-facebook-comments', [FacebookCommentController::class, 'fetchComments'])->name('fetch.facebook.comments');
 
-
 Route::post('/webhook', function (Request $request) {
-    // Log the entire request body
     Log::info('LINE Webhook Received:', ['data' => $request->all()]);
 
     return response()->json(['status' => 'Webhook received successfully!']);

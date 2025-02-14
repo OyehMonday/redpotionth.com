@@ -19,7 +19,6 @@ class AdminAuthController extends Controller
 {
     public function login(Request $request)
     {
-        // Validate the login form
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
@@ -33,7 +32,7 @@ class AdminAuthController extends Controller
                 return redirect()->route('admin.login')->withErrors(['email' => 'Please verify your email before logging in.']);
             }
     
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.orders.index');
         }
     
         return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
