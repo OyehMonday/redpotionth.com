@@ -1257,6 +1257,27 @@ input[type="file"] {
 .status.completed { background: #28a745; }
 .status.cancelled { background: #dc3545; } 
 
+.inprocess {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #fff;
+  background: #28a745;
+  transition: transform 0.3s ease-in-out;
+}
+
+.inprocess:hover {
+  transform: scale(1.05);
+}
+
+.inprocessed {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #fff;
+  background: #545454;
+}
+
 .coin-toggle {
   display: flex;
   align-items: center;

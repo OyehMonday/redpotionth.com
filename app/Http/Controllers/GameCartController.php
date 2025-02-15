@@ -528,7 +528,7 @@ class GameCartController extends Controller
     
         session()->forget(['cart', 'order_id']);
     
-        return redirect()->route('dashboard')->with('success', 'ได้รับคำสั่งซื้อแล้ว.');
+        return redirect()->route('dashboard')->with('success', 'ได้รับคำสั่งซื้อแล้ว');
     }
     
     

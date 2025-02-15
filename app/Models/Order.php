@@ -17,6 +17,7 @@ class Order extends Model
         'coin_earned',
         'payment_slip',
         'status',
+        'in_process_by',
     ];
 
     protected $casts = [
@@ -33,4 +34,10 @@ class Order extends Model
     {
         return $this->belongsTo(Admin::class, 'approved_by');
     }       
+    
+    public function inProcessBy()
+    {
+        return $this->belongsTo(Admin::class, 'in_process_by');
+    }
+
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+    <title>ตะกร้าสินค้า - Shopping Cart</title>
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
     <script>
         function openLightbox(imageSrc) {
@@ -85,7 +85,7 @@
                                         @endif
 
                                         @if($gameModel && !empty($gameModel->uid_image))
-                                            <p style="margin-top:0px; padding-left:20px;">
+                                            <p style="margin-top:0px;">
                                                 <a href="javascript:void(0);" onclick="openLightbox('{{ asset('storage/' . $gameModel->uid_image) }}')" class="btn-info">
                                                     วิธีดู UID
                                                 </a>

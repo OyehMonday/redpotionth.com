@@ -35,9 +35,13 @@
                                         @elseif($order->status == '2')
                                             <span class="status review">รอชำระเงิน</span>
                                         @elseif($order->status == '3')
+                                            <span class="status review">รอตรวจสอบการชำระเงิน</span>
+                                        @elseif($order->status == '4')
+                                            <span class="status completed">ทำรายการสำเร็จ</span>
+                                        @elseif($order->status == '11')
                                             <span class="status completed">รอตรวจสอบการชำระเงิน</span>
                                         @else
-                                            <span class="status cancelled">ยกเลิก</span>
+                                            <span class="status cancelled">ระหว่างตรวจสอบ</span>
                                         @endif
                                     </div>
                                 </div>

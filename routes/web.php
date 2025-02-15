@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Services\LineNotificationService;
 use App\Http\Controllers\AdminOrderController;
+use App\Models\Order;
 
 Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
     $allowedFolders = ['game_covers', 'game_full_covers', 'package_covers', 'uidimages', 'payments']; 
@@ -106,11 +107,17 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
 
 Route::get('admin/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
 Route::post('admin/orders/approve/{orderId}', [AdminOrderController::class, 'approvePayment'])->name('admin.orders.approve');
+Route::post('/admin/orders/{order}/mark-in-process', [AdminOrderController::class, 'markInProcess'])->name('admin.orders.markInProcess');
+Route::post('/admin/orders/{order}/markCompleted', [AdminOrderController::class, 'markCompleted'])->name('admin.orders.markCompleted');
+
+
 
 Route::get('/fetch-facebook-comments', [FacebookCommentController::class, 'fetchComments'])->name('fetch.facebook.comments');
 
-Route::post('/webhook', function (Request $request) {
-    Log::info('LINE Webhook Received:', ['data' => $request->all()]);
+Route::get('/admin/orders/new', [AdminOrderController::class, 'getNewOrders']);
 
-    return response()->json(['status' => 'Webhook received successfully!']);
+
+Route::get('/admin/test-orders', function () {
+    $orders = Order::orderBy('created_at', 'desc')->limit(5)->get();
+    return view('admin.orders.test-orders', compact('orders'));
 });
