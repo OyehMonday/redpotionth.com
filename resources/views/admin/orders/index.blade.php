@@ -6,7 +6,6 @@
     <title>Manage Orders - Admin Panel</title>
     <link href="{{ asset('css/style.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
-    <script src="{{ asset('js/app.js') }}"></script>
 
     <script>
         function openLightbox(imageSrc) {
@@ -28,39 +27,9 @@
                 }, 300);
             }
         }
-
-        let lastOrderId = 0;  // Initially set to 0 to fetch the first batch of orders
-
-// Function to fetch new orders
-function fetchNewOrders() {
-    fetch(`/admin/orders/new?last_order_id=${lastOrderId}`)  // Pass the last order ID to the backend
-        .then(response => response.json())
-        .then(orders => {
-            if (orders.length) {
-                orders.forEach(order => {
-                    // Dynamically add each new order to the order list
-                    const orderList = document.querySelector('#order-list'); // Make sure this element exists in your HTML
-                    const orderElement = document.createElement('div');
-                    orderElement.classList.add('order-card');
-                    orderElement.innerHTML = `
-                        <div class="order-header">
-                            <span class="order-title">หมายเลขคำสั่งซื้อ: #${order.id}</span><br>
-                        </div>
-                    `;
-                    orderList.appendChild(orderElement);  // Add the new order to the list
-
-                    // Update lastOrderId to the latest order ID
-                    lastOrderId = order.id;  // Update last fetched order ID
-                });
-            }
-        })
-        .catch(error => console.error('Error fetching new orders:', error));
-}
-
-// Poll every 5 seconds for new orders
-setInterval(fetchNewOrders, 5000);  // Adjust polling interval as needed (e.g., 5000ms = 5 seconds)
         
-
+        window.Laravel = { csrfToken: '{{ csrf_token() }}' };
+      
     </script>
 </head>
 <body>
@@ -77,12 +46,9 @@ setInterval(fetchNewOrders, 5000);  // Adjust polling interval as needed (e.g., 
                     <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
 
-                <div class="orders-container">
-                <div id="order-list">
-    <!-- New orders will be dynamically added here -->
-</div>
+                <div class="orders-container" id="order-list">
                     @foreach($orders as $order)
-                        <div class="order-card">
+                        <div class="order-card" id="order-{{ $order->id }}">
                             <div class="order-header">
                                 <div>
                                     <span class="order-title">หมายเลขคำสั่งซื้อ: #{{ $order->id }}</span><br>
@@ -271,6 +237,116 @@ setInterval(fetchNewOrders, 5000);  // Adjust polling interval as needed (e.g., 
             </div>
         </div>
     </div>
+    <script>
+let lastOrderId = 0;  // Initially set to 0 to fetch the first batch of orders
+
+// Function to fetch the latest orders
+function fetchNewOrders() {
+    fetch(`/admin/orders/new?last_order_id=${lastOrderId}`)  // Send the last order ID to the backend
+        .then(response => response.json())  // Parse the response as JSON
+        .then(orders => {
+            if (orders.length) {
+                const orderList = document.querySelector('#order-list');
+                
+                // Clear the current order list to reload new orders
+                orderList.innerHTML = '';
+
+                // Loop through each order and dynamically add it to the list
+                orders.forEach(order => {
+                    const orderElement = document.createElement('div');
+                    orderElement.classList.add('order-card');
+
+                    // Replace the innerHTML with the full order structure
+                    orderElement.innerHTML = `
+                        <div class="order-header">
+                            <div>
+                                <span class="order-title">หมายเลขคำสั่งซื้อ: #${order.id}</span><br>
+                                <span class="order-subheader">วันที่สั่งซื้อ: ${new Date(order.created_at).toLocaleString()}</span><br>
+                                <span class="order-subheader">โดย ${order.user ? order.user.username : 'N/A'} อีเมล ${order.user ? order.user.email : 'N/A'}</span>
+                            </div>
+                            <div class="order-status">
+                                ${getOrderStatus(order)}  <!-- Dynamically set order status -->
+                                ${getAdminAction(order)}  <!-- Dynamically handle admin actions -->
+                            </div>
+                        </div>
+                    `;
+
+                    // Append the new order to the list
+                    orderList.appendChild(orderElement);
+
+                    // Update lastOrderId to the latest order ID
+                    lastOrderId = order.id;
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching new orders:', error));  // Log any errors
+}
+
+// Poll every 5 seconds for new orders and reload the list
+setInterval(fetchNewOrders, 5000);  // Adjust polling interval as needed (e.g., 5000ms = 5 seconds)
+
+// Fetch the latest orders on initial page load
+window.onload = fetchNewOrders;
+
+// Function to handle order status display logic
+function getOrderStatus(order) {
+    let statusHtml = '';
+    
+    switch (order.status) {
+        case '1':
+            statusHtml = '<span class="status pending">รอชำระเงิน</span>';
+            break;
+        case '2':
+            statusHtml = '<span class="status review">รอชำระเงิน</span>';
+            break;
+        case '3':
+            statusHtml = '<span class="status pending">แนบสลิปแล้ว</span>';
+            break;
+        case '4':
+            statusHtml = '<span class="status inprocessed">ทำรายการสำเร็จ</span>';
+            break;
+        case '11':
+            statusHtml = '<span class="status in-process">กำลังดำเนินการ</span>';
+            break;
+        default:
+            statusHtml = '<span class="status cancelled">ยกเลิก</span>';
+            break;
+    }
+
+    return statusHtml;
+}
+
+var orders = @json($orders);
+    console.log(orders);
+// Function to handle admin actions for orders
+function getAdminAction(order) {
+    let actionHtml = '';
+
+    // If order is being processed, show admin name
+    if (order.in_process_by) {
+        actionHtml = `<span class="inprocessed">รับออเดอร์โดย ${order.in_process_by}</span>`;
+        if (order.status == '4') {
+            actionHtml += `<span class="inprocessed">เติมโดย ${order.approved_by} </span>`;
+        }
+    } else {
+        console.log('No Admin Processing This Order');
+        if (order.status == '3' || order.status == '2') {
+            // Show form to mark order as "In Process"
+            actionHtml = `
+                <form action="/admin/orders/${order.id}/mark-in-process" method="POST" style="display:inline;">
+                    <input type="hidden" name="_token" value="${window.Laravel.csrfToken}">
+                    <button type="submit" class="btn btn-warning" onclick="setTimeout(function(){ location.reload(); }, 500);">รับออเดอร์</button>
+                </form>
+            `;
+        } else {
+            actionHtml = '<span>IN PROCESS</span>';
+        }
+    }
+
+    return actionHtml;
+}
+
+</script>
 
 </body>
 </html>

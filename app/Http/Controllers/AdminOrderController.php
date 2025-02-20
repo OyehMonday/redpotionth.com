@@ -5,17 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\CoinTransaction;
+use App\Models\Admin;
 
 class AdminOrderController extends Controller
 {
+
     public function index()
     {
-        $orders = Order::whereIn('status', [2, 3, 4, 11])
-                        ->orderBy('created_at', 'desc') 
+        $orders = Order::with('inProcessBy') 
+                        ->whereIn('status', [2, 3, 4, 11])
+                        ->orderBy('created_at', 'desc')
                         ->get();
-        
+    
         return view('admin.orders.index', compact('orders'));
     }
+    
+
+    // public function index()
+    // {
+    //     $orders = Order::whereIn('status', [2, 3, 4, 11])
+    //                     ->orderBy('created_at', 'desc') 
+    //                     ->get();
+        
+    //     return view('admin.orders.index', compact('orders'));
+    // }
 
     // public function approvePayment($orderId)
     // {
@@ -112,9 +125,13 @@ class AdminOrderController extends Controller
     
     public function getNewOrders(Request $request)
     {
+        
+        $lastOrderId = $request->input('last_order_id', 0);  // Default to 0 if no ID is provided
         // Get the latest 5 orders, always
-        $orders = Order::orderBy('created_at', 'desc')
-                       ->limit(5)
+        $orders = Order::with('user')
+                       ->whereIn('status', [2, 3, 4, 11])
+                       ->orderBy('created_at', 'desc')
+                       ->limit(10)
                        ->get();
         
         // Return the orders as JSON

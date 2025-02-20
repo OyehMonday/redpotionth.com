@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use App\Services\LineNotificationService;
 use App\Http\Controllers\AdminOrderController;
 use App\Models\Order;
+use App\Models\Admin;
 
 Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
     $allowedFolders = ['game_covers', 'game_full_covers', 'package_covers', 'uidimages', 'payments']; 
@@ -110,12 +111,9 @@ Route::post('admin/orders/approve/{orderId}', [AdminOrderController::class, 'app
 Route::post('/admin/orders/{order}/mark-in-process', [AdminOrderController::class, 'markInProcess'])->name('admin.orders.markInProcess');
 Route::post('/admin/orders/{order}/markCompleted', [AdminOrderController::class, 'markCompleted'])->name('admin.orders.markCompleted');
 
-
-
 Route::get('/fetch-facebook-comments', [FacebookCommentController::class, 'fetchComments'])->name('fetch.facebook.comments');
 
 Route::get('/admin/orders/new', [AdminOrderController::class, 'getNewOrders']);
-
 
 Route::get('/admin/test-orders', function () {
     $orders = Order::orderBy('created_at', 'desc')->limit(5)->get();
