@@ -28,37 +28,33 @@
     <div class="main-wrapper">
         <div class="container">
             <div class="section topup-section">
-                <h2 id="unfinishedOrders" class="order-title" style="cursor: pointer; text-decoration: none; margin:0px;">
-                    มีคำสั่งซื้อรอดำเนินการ 0 ออเดอร์
-                </h2>
+            @foreach ($orders as $order)
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <span class="order-title">หมายเลขคำสั่งซื้อ: #{{ $order->id }}</span><br>
+                        <span class="order-subheader">วันที่สั่งซื้อ: {{ $order->created_at->format('Y-m-d H:i:s') }}</span><br>
+                        <span class="order-subheader">โดย {{ $order->user->username ?? 'N/A' }} อีเมล {{ $order->user->email ?? 'N/A' }}</span>
+                    </div>
+                    <div class="order-status">
+                        {!! getOrderStatus($order) !!} 
+                        {!! getAdminAction($order) !!} 
+                    </div>
+                </div>
+
+                <div class="order-summary">
+                    {!! getCartDetails($order) !!}
+                </div>   
+
+                <div class="order-coins">
+                    {!! getCoins($order) !!}
+                </div>  
+
+                <div class="order-footer">
+                    {!! getPaymentSlip($order) !!}
+                </div>          
             </div>
-            <div class="section topup-section">
-                <h1>คำสั่งซื้อ</h1>
-                
-                @if(session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @elseif(session('error'))
-                    <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
-
-                <div class="orders-container" id="order-list">
-                    <!-- Orders will be dynamically loaded here -->
-                </div>
-
-                <div class="pagination-controls">
-                    <button id="prevBtn" class="btn" disabled>ก่อนหน้า</button>
-                    
-                    <span id="page-info">
-                        หน้า <span id="currentPage">1</span> จาก <span id="totalPages">?</span>
-                    </span>
-
-                    <button id="nextBtn" class="btn" disabled>ถัดไป</button>
-
-                </div>
-                <div class="pagination-controls" style="margin-top:5px;">
-                    <input type="number" id="gotoPageInput" class="goto-input" min="1" placeholder="ไปหน้า">
-                    <button id="gotoPageBtn" class="btn">ไป</button>
-                </div>
+        @endforeach
 
             </div>
         </div>
@@ -67,27 +63,20 @@
     <script>
         let currentPage = localStorage.getItem('currentPage') ? parseInt(localStorage.getItem('currentPage')) : 1;
         let totalPages = 1;
-        let showUnfinishedOnly = false; 
 
         function fetchOrders(page = 1) {
-            let url = `/admin/orders/new?page=${page}`;
-            if (showUnfinishedOnly) {
-                url += `&unfinished_only=true`; 
+            if (page < 1 || page > totalPages) {
+                alert("หมายเลขหน้านี้ไม่มีอยู่ กำลังนำคุณกลับไปที่หน้า 1");
+                page = 1; 
             }
 
-            fetch(url)
+            fetch(`/admin/orders/new?page=${page}`)
             .then(response => response.json())
             .then(data => {
                 const orderList = document.querySelector('#order-list');
                 orderList.innerHTML = '';
-
-                const unfinishedOrdersText = document.getElementById("unfinishedOrders");
-                unfinishedOrdersText.innerHTML = `มีคำสั่งซื้อรอดำเนินการ ${data.unfinished_orders} ออเดอร์`;
-
-                unfinishedOrdersText.onclick = () => {
-                    showUnfinishedOnly = !showUnfinishedOnly;
-                    fetchOrders(1); 
-                };
+                
+                document.getElementById("unfinishedOrders").innerHTML = `มีคำสั่งซื้อรอดำเนินการ ${data.unfinished_orders} ออเดอร์`;
 
                 if (data.orders.length === 0 && page > 1) {
                     alert("ไม่มีข้อมูลในหน้านี้ กำลังนำคุณกลับไปที่หน้า 1");
@@ -130,11 +119,17 @@
 
                 currentPage = data.current_page; 
                 totalPages = data.total_pages;
+
                 localStorage.setItem('currentPage', currentPage);
-                updatePaginationControls();
+
+                updatePaginationControls();  
             })
-            .catch(error => console.error('Error fetching orders:', error));
+            .catch(error => {
+                alert("เกิดข้อผิดพลาดในการโหลดข้อมูล กำลังนำคุณกลับไปที่หน้า 1");
+                fetchOrders(1);
+            });
         }
+
 
         function updatePaginationControls() {
             document.getElementById("prevBtn").disabled = (currentPage === 1);
@@ -174,6 +169,7 @@
             fetchOrders(currentPage);
         }, 5000);
 
+
         function getOrderStatus(order) {
             let statusHtml = '';
             
@@ -193,11 +189,8 @@
                 case '11':
                     statusHtml = '<span class="status">กำลังดำเนินการ</span>';
                     break;
-                case '99':
-                    statusHtml = '<span class="inprocessed">ยกเลิกแล้ว</span>';
-                    break;
                 default:
-                    statusHtml = '<span class="status cancelled">กรุณาติดต่อแอดมิน</span>';
+                    statusHtml = '<span class="status cancelled">ยกเลิก</span>';
                     break;
             }
 
@@ -210,23 +203,19 @@
             if (order.in_process_by) {
                 actionHtml = `<span class="inprocessed">รับออเดอร์โดย ${order.admin_name}</span>`;
                 if (order.status == '4') {
-                    actionHtml += ` <span class="inprocessed">เติมโดย ${order.approved_by_name} </span>
-                        <button class="btn bcancel" onclick="cancelOrder(${order.id}, this)">ยกเลิก</button>
-                    `;
+                    actionHtml += ` <span class="inprocessed">เติมโดย ${order.approved_by_name} </span>`;
                 } else {
                     actionHtml += `
                         <button class="btn inprocess" onclick="markOrderCompleted(${order.id}, this)">เติมแล้ว</button>
-                        <button class="btn bcancel" onclick="cancelOrder(${order.id}, this)">ยกเลิก</button>
                     `;
                 }
             } else {
                 if (order.status == '3' || order.status == '2') {
                     actionHtml = `
                         <button class="btn inprocess" onclick="markOrderInProcess(${order.id}, this)">รับออเดอร์</button>
-                        <button class="btn bcancel" onclick="cancelOrder(${order.id}, this)">ยกเลิก</button>
                     `;
                 } else {
-                    actionHtml = '<span>กำลังดำเนินการ</span>';
+                    actionHtml = '<span>IN PROCESS</span>';
                 }
             }
 
@@ -268,10 +257,10 @@
             return `
                 <div class="coin-section">
                     <div class="coin-item">
-                        ใช้ไป ${new Intl.NumberFormat().format(order.used_coins || 0)}<img src="../../images/coin.png" alt="Coin" class="coin-icon">
+                        ใช้ไป ${new Intl.NumberFormat().format(order.used_coins || 0)}<img src="../images/coin.png" alt="Coin" class="coin-icon">
                     </div>
                     <div class="coin-item">
-                        ได้รับ ${new Intl.NumberFormat().format(order.coin_earned || 0)}<img src="../../images/coin.png" alt="Coin" class="coin-icon">
+                        ได้รับ ${new Intl.NumberFormat().format(order.coin_earned || 0)}<img src="../images/coin.png" alt="Coin" class="coin-icon">
                     </div>
                 </div>
             `;

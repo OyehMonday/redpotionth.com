@@ -63,18 +63,30 @@ class AdminOrderController extends Controller
     //     return redirect()->route('admin.orders.index')->with('error', 'Invalid order or order not ready for approval.');
     // }
 
-
-    public function markInProcess($orderId)
+    public function markInProcess(Order $order)
     {
-        $order = Order::findOrFail($orderId);
-        $order->in_process_by = auth()->guard('admin')->id(); // Get the ID of the logged-in admin
-        $order->save();
+        try {
+            $order->in_process_by = auth()->guard('admin')->id();
+            $order->status = 11; 
+            $order->save();
     
-        $order->status = 11; // 11 means "In Process"
-        $order->save();
+            return response()->json(['success' => true, 'message' => 'Order is now in process.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // public function markInProcess($orderId)
+    // {
+    //     $order = Order::findOrFail($orderId);
+    //     $order->in_process_by = auth()->guard('admin')->id(); // Get the ID of the logged-in admin
+    //     $order->save();
     
-        return redirect()->route('admin.orders.index')->with('success', '');
-    }    
+    //     $order->status = 11; // 11 means "In Process"
+    //     $order->save();
+    
+    //     return redirect()->route('admin.orders.index')->with('success', '');
+    // }    
 
     // public function markCompleted($orderId)
     // {
@@ -93,50 +105,101 @@ class AdminOrderController extends Controller
 
     public function markCompleted($orderId)
     {
-        $order = Order::find($orderId);
+        try {
+            $order = Order::find($orderId);
     
-        if ($order) {
+            if (!$order) {
+                return response()->json(['success' => false, 'message' => 'Order not found.'], 404);
+            }
+    
             if (in_array($order->status, [2, 3, 11])) {
                 $user = $order->user;
+                $coinsUsed = $order->used_coins ?? 0;
+                $coinsEarned = $order->coin_earned ?? 0;
     
-                $coinsUsed = $order->used_coins;
-                $coinsEarned = $order->coin_earned;
+                if ($user) {
+                    $user->coins += $coinsEarned;
+                    $user->save();
     
-                $user->coins = $user->coins + $coinsEarned;
-                $user->save();
-    
-                CoinTransaction::create([
-                    'user_id' => $user->id,
-                    'coins_used' => $coinsUsed,
-                    'coin_earned' => $coinsEarned,
-                    'order_id' => $order->id,
-                ]);
+                    CoinTransaction::create([
+                        'user_id' => $user->id,
+                        'coins_used' => $coinsUsed,
+                        'coin_earned' => $coinsEarned,
+                        'order_id' => $order->id,
+                    ]);
+                }
             }
     
             $order->status = 4; 
             $order->approved_by = auth()->guard('admin')->id();
             $order->payment_approved_at = now();  
-            $order->coin_earned = $coinsEarned ?? 0; 
             $order->save();
-        }
     
-        return redirect()->route('admin.orders.index')->with('success', 'Order marked as completed, payment approved, and coins updated!');
+            return response()->json([
+                'success' => true,
+                'message' => 'ออเดอร์สำเร็จ ตรวจสลิปแล้ว',
+                'order_id' => $order->id,
+                'new_status' => 4, 
+            ]);
+    
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
     
+
+    // public function markCompleted($orderId)
+    // {
+    //     $order = Order::find($orderId);
+    
+    //     if ($order) {
+    //         if (in_array($order->status, [2, 3, 11])) {
+    //             $user = $order->user;
+    
+    //             $coinsUsed = $order->used_coins;
+    //             $coinsEarned = $order->coin_earned;
+    
+    //             $user->coins = $user->coins + $coinsEarned;
+    //             $user->save();
+    
+    //             CoinTransaction::create([
+    //                 'user_id' => $user->id,
+    //                 'coins_used' => $coinsUsed,
+    //                 'coin_earned' => $coinsEarned,
+    //                 'order_id' => $order->id,
+    //             ]);
+    //         }
+    
+    //         $order->status = 4; 
+    //         $order->approved_by = auth()->guard('admin')->id();
+    //         $order->payment_approved_at = now();  
+    //         $order->coin_earned = $coinsEarned ?? 0; 
+    //         $order->save();
+    //     }
+    
+    //     return redirect()->route('admin.orders.index')->with('success', 'Order marked as completed, payment approved, and coins updated!');
+    // }
+
     public function getNewOrders(Request $request)
     {
-        $perPage = 10; 
-        $page = $request->input('page', 1); 
-        $offset = ($page - 1) * $perPage; 
-        $unfinishedOrdersCount = Order::whereIn('status', [2, 3, 11])->count();
-        $totalOrders = Order::whereIn('status', [2, 3, 4, 11])->count();
+        $perPage = 10;
+        $page = $request->input('page', 1);
+        $offset = ($page - 1) * $perPage;
+        $unfinishedOnly = $request->input('unfinished_only', false); 
     
-        $orders = Order::with('user')
-                       ->whereIn('status', [2, 3, 4, 11])
-                       ->orderBy('created_at', 'desc')
-                       ->offset($offset)
-                       ->limit($perPage)
-                       ->get();
+        $query = Order::with('user')->whereIn('status', [2, 3, 4, 11]);
+    
+        if ($unfinishedOnly) {
+            $query->where('status', '!=', 4);
+        }
+    
+        $unfinishedOrdersCount = Order::whereIn('status', [2, 3, 11])->count();
+        $totalOrders = $query->count(); 
+    
+        $orders = $query->orderBy('created_at', 'desc')
+                        ->offset($offset)
+                        ->limit($perPage)
+                        ->get();
     
         foreach ($orders as $order) {
             $order->admin_name = $order->in_process_by 
@@ -152,40 +215,45 @@ class AdminOrderController extends Controller
             'orders' => $orders,
             'current_page' => $page,
             'per_page' => $perPage,
-            'total_orders' => $totalOrders,
-            'total_pages' => ceil($totalOrders / $perPage),
-            'unfinished_orders' => $unfinishedOrdersCount,
+            'total_orders' => $totalOrders, 
+            'total_pages' => ceil($totalOrders / $perPage), 
+            'unfinished_orders' => $unfinishedOrdersCount, 
         ]);
-    }   
+    }        
 
     // public function getNewOrders(Request $request)
     // {
-    //     $lastOrderId = $request->input('last_order_id', 0);  
+    //     $perPage = 10; 
+    //     $page = $request->input('page', 1); 
+    //     $offset = ($page - 1) * $perPage; 
+    //     $unfinishedOrdersCount = Order::whereIn('status', [2, 3, 11])->count();
+    //     $totalOrders = Order::whereIn('status', [2, 3, 4, 11])->count();
     
     //     $orders = Order::with('user')
     //                    ->whereIn('status', [2, 3, 4, 11])
     //                    ->orderBy('created_at', 'desc')
-    //                    ->limit(5)
+    //                    ->offset($offset)
+    //                    ->limit($perPage)
     //                    ->get();
-
+    
     //     foreach ($orders as $order) {
-    //         if ($order->in_process_by) {
-    //             $admin = Admin::find($order->in_process_by);
-    //             $order->admin_name = $admin ? $admin->name : null;  
-    //         } else {
-    //             $order->admin_name = null; 
-    //         }
-
-    //         if ($order->approved_by) {
-    //             $approvedAdmin = Admin::find($order->approved_by);
-    //             $order->approved_by_name = $approvedAdmin ? $approvedAdmin->name : null;  
-    //         } else {
-    //             $order->approved_by_name = null; 
-    //         }            
-    //     }                       
-
-    //     return response()->json($orders);
-    // }
+    //         $order->admin_name = $order->in_process_by 
+    //             ? optional(Admin::find($order->in_process_by))->name 
+    //             : null;
     
+    //         $order->approved_by_name = $order->approved_by 
+    //             ? optional(Admin::find($order->approved_by))->name 
+    //             : null;
+    //     }
     
+    //     return response()->json([
+    //         'orders' => $orders,
+    //         'current_page' => $page,
+    //         'per_page' => $perPage,
+    //         'total_orders' => $totalOrders,
+    //         'total_pages' => ceil($totalOrders / $perPage),
+    //         'unfinished_orders' => $unfinishedOrdersCount,
+    //     ]);
+    // }   
+
 }

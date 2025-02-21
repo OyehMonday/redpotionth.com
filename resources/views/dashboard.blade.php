@@ -11,6 +11,9 @@
 
     <div class="main-wrapper">
         <div class="container">
+            <div class="section topup-section" style="text-align: center;">
+                <span class="order-title">คุณมี {{ number_format($user->coins ?? 0) }}<img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon"></span>
+            </div>
             <div class="section topup-section">
                 <h1>คำสั่งซื้อของคุณ</h1>
 

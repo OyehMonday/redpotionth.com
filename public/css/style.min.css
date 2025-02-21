@@ -1278,6 +1278,19 @@ input[type="file"] {
   background: #545454;
 }
 
+.bcancel {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #fff;
+  background: #dc3545;
+  transition: transform 0.3s ease-in-out;
+}
+
+.bcancel:hover {
+  transform: scale(1.05);
+}
+
 .coin-toggle {
   display: flex;
   align-items: center;

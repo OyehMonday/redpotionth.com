@@ -115,7 +115,6 @@ Route::get('/fetch-facebook-comments', [FacebookCommentController::class, 'fetch
 
 Route::get('/admin/orders/new', [AdminOrderController::class, 'getNewOrders']);
 
-Route::get('/admin/test-orders', function () {
-    $orders = Order::orderBy('created_at', 'desc')->limit(5)->get();
-    return view('admin.orders.test-orders', compact('orders'));
-});
+Route::post('/admin/orders/{order}/mark-in-process', [AdminOrderController::class, 'markInProcess']);
+Route::post('/admin/orders/{order}/markCompleted', [AdminOrderController::class, 'markCompleted']);
+Route::get('/admin/orders/unfinished', [AdminOrderController::class, 'showUnfinishedOrders'])->name('admin.orders.unfinished');
