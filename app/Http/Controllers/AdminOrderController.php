@@ -6,6 +6,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\CoinTransaction;
 use App\Models\Admin;
+use Illuminate\Support\Facades\Storage;
 
 class AdminOrderController extends Controller
 {
@@ -72,7 +73,7 @@ class AdminOrderController extends Controller
         $order->status = 11; // 11 means "In Process"
         $order->save();
     
-        return redirect()->route('admin.orders.index')->with('success', 'Order is now in process.');
+        return redirect()->route('admin.orders.index')->with('success', '');
     }    
 
     // public function markCompleted($orderId)
@@ -125,18 +126,69 @@ class AdminOrderController extends Controller
     
     public function getNewOrders(Request $request)
     {
-        
-        $lastOrderId = $request->input('last_order_id', 0);  // Default to 0 if no ID is provided
-        // Get the latest 5 orders, always
+        $perPage = 5; // Number of orders per page
+        $page = $request->input('page', 1); // Get the requested page number, default to 1
+        $offset = ($page - 1) * $perPage; // Calculate offset for pagination
+    
+        // Fetch total order count for pagination metadata
+        $totalOrders = Order::whereIn('status', [2, 3, 4, 11])->count();
+    
+        // Fetch paginated orders
         $orders = Order::with('user')
                        ->whereIn('status', [2, 3, 4, 11])
                        ->orderBy('created_at', 'desc')
-                       ->limit(10)
+                       ->offset($offset)
+                       ->limit($perPage)
                        ->get();
-        
-        // Return the orders as JSON
-        return response()->json($orders);
-    }
+    
+        // Fetch admin details
+        foreach ($orders as $order) {
+            $order->admin_name = $order->in_process_by 
+                ? optional(Admin::find($order->in_process_by))->name 
+                : null;
+    
+            $order->approved_by_name = $order->approved_by 
+                ? optional(Admin::find($order->approved_by))->name 
+                : null;
+        }
+    
+        return response()->json([
+            'orders' => $orders,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total_orders' => $totalOrders,
+            'total_pages' => ceil($totalOrders / $perPage),
+        ]);
+    }   
+
+    // public function getNewOrders(Request $request)
+    // {
+    //     $lastOrderId = $request->input('last_order_id', 0);  
+    
+    //     $orders = Order::with('user')
+    //                    ->whereIn('status', [2, 3, 4, 11])
+    //                    ->orderBy('created_at', 'desc')
+    //                    ->limit(5)
+    //                    ->get();
+
+    //     foreach ($orders as $order) {
+    //         if ($order->in_process_by) {
+    //             $admin = Admin::find($order->in_process_by);
+    //             $order->admin_name = $admin ? $admin->name : null;  
+    //         } else {
+    //             $order->admin_name = null; 
+    //         }
+
+    //         if ($order->approved_by) {
+    //             $approvedAdmin = Admin::find($order->approved_by);
+    //             $order->approved_by_name = $approvedAdmin ? $approvedAdmin->name : null;  
+    //         } else {
+    //             $order->approved_by_name = null; 
+    //         }            
+    //     }                       
+
+    //     return response()->json($orders);
+    // }
     
     
 }

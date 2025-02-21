@@ -1362,6 +1362,28 @@ input:checked + .slider:before {
   vertical-align: middle;
 }
 
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.goto-input {
+  width: 50px;
+  text-align: center;
+  padding: 13px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#gotoPageBtn {
+  padding: 10px 10px;
+  cursor: pointer;
+}
+
+
 @media (max-width: 768px) {
   .container {
       padding: 5px; 
