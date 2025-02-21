@@ -8,29 +8,8 @@
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
 
     <script>
-        function openLightbox(imageSrc) {
-            let lightbox = document.getElementById("lightbox");
-            document.getElementById("lightbox-img").src = imageSrc;
-            lightbox.style.display = "flex";
-            setTimeout(() => {
-                lightbox.classList.add("show");
-            }, 10);
-        }
-
-        function closeLightbox(event) {
-            let lightbox = document.getElementById("lightbox");
-
-            if (event.target === lightbox || event.target.classList.contains("lightbox-close")) {
-                lightbox.classList.remove("show");
-                setTimeout(() => {
-                    lightbox.style.display = "none";
-                }, 300);
-            }
-        }
-        
         window.Laravel = { csrfToken: '{{ csrf_token() }}' };
       
-
         document.getElementById("gotoPageBtn").addEventListener("click", () => {
             let requestedPage = parseInt(document.getElementById("gotoPageInput").value);
             if (!isNaN(requestedPage) && requestedPage >= 1 && requestedPage <= totalPages) {
@@ -48,6 +27,9 @@
   
     <div class="main-wrapper">
         <div class="container">
+            <div class="section topup-section">
+                <span id="unfinishedOrders" class="order-title">มีคำสั่งซื้อรอดำเนินการ 0 ออเดอร์</span>
+            </div>
             <div class="section topup-section">
                 <h1>คำสั่งซื้อ</h1>
                 
@@ -95,6 +77,8 @@
             .then(data => {
                 const orderList = document.querySelector('#order-list');
                 orderList.innerHTML = '';
+                
+                document.getElementById("unfinishedOrders").innerHTML = `มีคำสั่งซื้อรอดำเนินการ ${data.unfinished_orders} ออเดอร์`;
 
                 if (data.orders.length === 0 && page > 1) {
                     alert("ไม่มีข้อมูลในหน้านี้ กำลังนำคุณกลับไปที่หน้า 1");
@@ -157,7 +141,6 @@
             document.getElementById("totalPages").innerText = totalPages;
         }
 
-        // ✅ Handle Next and Previous Buttons
         document.getElementById("prevBtn").addEventListener("click", () => {
             if (currentPage > 1) {
                 fetchOrders(--currentPage);
@@ -170,7 +153,6 @@
             }
         });
 
-        // ✅ Handle Go to Page Input
         document.getElementById("gotoPageBtn").addEventListener("click", () => {
             let requestedPage = parseInt(document.getElementById("gotoPageInput").value);
             if (!isNaN(requestedPage) && requestedPage >= 1 && requestedPage <= totalPages) {
@@ -180,13 +162,11 @@
             }
         });
 
-        // ✅ Load the last visited page on window load
         window.onload = () => {
             const savedPage = localStorage.getItem('currentPage');
             fetchOrders(savedPage ? parseInt(savedPage) : 1);
         };
 
-        // ✅ Auto-refresh every 5 seconds (updates the current page)
         setInterval(() => {
             fetchOrders(currentPage);
         }, 5000);
@@ -299,7 +279,7 @@
             return `
                 <div class="order-body">
                     <p class="payamount">ยอดโอน ${new Intl.NumberFormat().format(finalAmount)} บาท</p>
-                    ${order.payment_slip ? `<a href="javascript:void(0);" onclick="openLightbox('../storage/${order.payment_slip}')" class="btn-info">ดูสลิป</a>` : '-'}
+                    ${order.payment_slip ? `<a href="../storage/${order.payment_slip}" target="_blank" class="btn-info">ดูสลิป</a>` : '-'}
                 </div>
             `;
         }

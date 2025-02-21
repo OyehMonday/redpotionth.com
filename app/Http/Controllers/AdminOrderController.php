@@ -102,7 +102,6 @@ class AdminOrderController extends Controller
                 $coinsUsed = $order->used_coins;
                 $coinsEarned = $order->coin_earned;
     
-                // $user->coins = $user->coins - $coinsUsed + $coinsEarned;
                 $user->coins = $user->coins + $coinsEarned;
                 $user->save();
     
@@ -126,14 +125,12 @@ class AdminOrderController extends Controller
     
     public function getNewOrders(Request $request)
     {
-        $perPage = 5; // Number of orders per page
-        $page = $request->input('page', 1); // Get the requested page number, default to 1
-        $offset = ($page - 1) * $perPage; // Calculate offset for pagination
-    
-        // Fetch total order count for pagination metadata
+        $perPage = 10; 
+        $page = $request->input('page', 1); 
+        $offset = ($page - 1) * $perPage; 
+        $unfinishedOrdersCount = Order::whereIn('status', [2, 3, 11])->count();
         $totalOrders = Order::whereIn('status', [2, 3, 4, 11])->count();
     
-        // Fetch paginated orders
         $orders = Order::with('user')
                        ->whereIn('status', [2, 3, 4, 11])
                        ->orderBy('created_at', 'desc')
@@ -141,7 +138,6 @@ class AdminOrderController extends Controller
                        ->limit($perPage)
                        ->get();
     
-        // Fetch admin details
         foreach ($orders as $order) {
             $order->admin_name = $order->in_process_by 
                 ? optional(Admin::find($order->in_process_by))->name 
@@ -158,6 +154,7 @@ class AdminOrderController extends Controller
             'per_page' => $perPage,
             'total_orders' => $totalOrders,
             'total_pages' => ceil($totalOrders / $perPage),
+            'unfinished_orders' => $unfinishedOrdersCount,
         ]);
     }   
 
