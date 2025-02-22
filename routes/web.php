@@ -40,6 +40,52 @@ Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
 
 require __DIR__.'/auth.php';
 
+Route::get('/load-more-orders', function (Request $request) {
+    if (!Session::has('user')) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $sessionUser = Session::get('user');
+    $user = \App\Models\User::find($sessionUser->id);
+
+    $offset = $request->input('offset', 0);
+
+    $orders = Order::where('user_id', $user->id)
+        ->latest()
+        ->offset($offset)
+        ->limit(5)
+        ->get()
+        ->map(function ($order) {
+            $cartDetails = json_decode($order->cart_details, true) ?? [];
+
+            $restructuredCart = [];
+            foreach ($cartDetails as $gameId => $game) {
+                $gameModel = \App\Models\Game::find($gameId);
+                
+                $restructuredCart[] = [
+                    'game_id' => $gameId,
+                    'game_name' => $game['game_name'] ?? ($gameModel->name ?? 'ไม่ระบุ'),
+                    'cover_image' => str_replace('\\', '/', $game['cover_image'] ?? ($gameModel->cover_image ?? 'default.jpg')),
+                    'player_id' => $game['player_id'] ?? 'ไม่ระบุ',
+                    'packages' => array_values($game['packages'] ?? []), 
+                ];
+            }
+
+            return [
+                'id' => $order->id,
+                'created_at' => $order->created_at->toDateTimeString(),
+                'status' => $order->status,
+                'used_coins' => $order->used_coins ?? 0,
+                'coin_earned' => $order->coin_earned ?? 0,
+                'total_price' => $order->total_price,
+                'cart_details' => $restructuredCart, 
+            ];
+        });
+
+    return response()->json($orders);
+});
+
+
 Route::get('/admin/verify/{token}', [AdminAuthController::class, 'verify'])->name('admin.verify');
 Route::get('/verify-email/{token}', [CustomAuthController::class, 'verifyEmail'])->name('verify.email');
 
@@ -117,4 +163,6 @@ Route::get('/admin/orders/new', [AdminOrderController::class, 'getNewOrders']);
 
 Route::post('/admin/orders/{order}/mark-in-process', [AdminOrderController::class, 'markInProcess']);
 Route::post('/admin/orders/{order}/markCompleted', [AdminOrderController::class, 'markCompleted']);
+Route::post('/admin/orders/{order}/cancel', [AdminOrderController::class, 'cancelOrder']);
 Route::get('/admin/orders/unfinished', [AdminOrderController::class, 'showUnfinishedOrders'])->name('admin.orders.unfinished');
+

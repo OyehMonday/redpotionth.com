@@ -209,25 +209,24 @@
 
             if (order.in_process_by) {
                 actionHtml = `<span class="inprocessed">รับออเดอร์โดย ${order.admin_name}</span>`;
-                if (order.status == '4') {
-                    actionHtml += ` <span class="inprocessed">เติมโดย ${order.approved_by_name} </span>
-                        <button class="btn bcancel" onclick="cancelOrder(${order.id}, this)">ยกเลิก</button>
-                    `;
+                if (order.approved_by) {
+                    actionHtml += ` <span class="inprocessed">เติมโดย ${order.approved_by_name} </span>`;
                 } else {
-                    actionHtml += `
-                        <button class="btn inprocess" onclick="markOrderCompleted(${order.id}, this)">เติมแล้ว</button>
-                        <button class="btn bcancel" onclick="cancelOrder(${order.id}, this)">ยกเลิก</button>
-                    `;
+                    actionHtml += ` <button class="btn inprocess" onclick="markOrderCompleted(${order.id}, this)">เติมแล้ว</button>`;
                 }
             } else {
                 if (order.status == '3' || order.status == '2') {
-                    actionHtml = `
-                        <button class="btn inprocess" onclick="markOrderInProcess(${order.id}, this)">รับออเดอร์</button>
-                        <button class="btn bcancel" onclick="cancelOrder(${order.id}, this)">ยกเลิก</button>
-                    `;
+                    actionHtml = ` <button class="btn inprocess" onclick="markOrderInProcess(${order.id}, this)">รับออเดอร์</button>`;
                 } else {
-                    actionHtml = '<span>กำลังดำเนินการ</span>';
                 }
+            }
+
+            if (order.status == '99') {
+                actionHtml += `<span class="bcancelled" style="margin-left:3px;">ยกเลิกโดย ${order.canceled_by_name} </span>`;
+            }if (order.status == '2') {
+                actionHtml += ``;
+            }if (order.status == '3' || order.status == '4' || order.status == '11') {
+                actionHtml += `<button class="btn bcancel" style="margin-left:3px;" onclick="cancelOrder(${order.id}, this)">ยกเลิก</button>`;
             }
 
             return actionHtml;
@@ -330,6 +329,40 @@
                 }
             })
             .catch(error => console.error('Error updating order:', error));
+        }
+
+        function cancelOrder(orderId, buttonElement) {
+            if (!confirm("ต้องการยกเลิกคำสั่งซื้อนี้?")) return;
+
+            fetch(`/admin/orders/${orderId}/cancel`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': window.Laravel.csrfToken
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+
+                    const orderElement = buttonElement.closest('.order-card');
+                    if (orderElement) {
+                        orderElement.innerHTML = `
+                            <div class="order-header">
+                                <div>
+                                    <span class="order-title">หมายเลขคำสั่งซื้อ: #${data.order_id}</span><br>
+                                    <span class="order-subheader">ยกเลิก โดย ${data.canceled_by_name}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    alert("เกิดข้อผิดพลาด: " + data.message);
+                }
+            })
+            .catch(error => console.error('Error canceling order:', error));
         }
 
        

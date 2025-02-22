@@ -149,7 +149,6 @@ class CustomAuthController extends Controller
         }
     
         $sessionUser = Session::get('user');
-        
         $user = \App\Models\User::find($sessionUser->id);
     
         $orders = Order::where('user_id', $user->id)
@@ -161,10 +160,12 @@ class CustomAuthController extends Controller
                       });
             })
             ->latest()
+            ->limit(5) 
             ->get();
     
-        return view('dashboard', compact('orders', 'user')); 
+        return view('dashboard', compact('orders', 'user'));
     }
+    
 
     // public function dashboard()
     // {
@@ -172,19 +173,22 @@ class CustomAuthController extends Controller
     //         return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบ');
     //     }
     
-    //     $user = Session::get('user');
-    //     $orders = Order::where('user_id', $user->id)
-    //     ->where(function ($query) {
-    //         $query->where('status', '>', 1) 
-    //               ->where(function ($query) {
-    //                   $query->where('status', '!=', 2) 
-    //                         ->orWhere('created_at', '>=', now()->subHours(24)); 
-    //               });
-    //     })
-    //     ->latest()
-    //     ->get();
+    //     $sessionUser = Session::get('user');
+        
+    //     $user = \App\Models\User::find($sessionUser->id);
     
-    //     return view('dashboard', compact('orders'));
+    //     $orders = Order::where('user_id', $user->id)
+    //         ->where(function ($query) {
+    //             $query->where('status', '>', 1) 
+    //                   ->where(function ($query) {
+    //                       $query->where('status', '!=', 2) 
+    //                             ->orWhere('created_at', '>=', now()->subHours(24)); 
+    //                   });
+    //         })
+    //         ->latest()
+    //         ->get();
+    
+    //     return view('dashboard', compact('orders', 'user')); 
     // }    
 
     public function logout()

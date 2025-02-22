@@ -11,9 +11,26 @@
 
     <div class="main-wrapper">
         <div class="container">
-            <div class="section topup-section" style="text-align: center;">
-                <span class="order-title">คุณมี {{ number_format($user->coins ?? 0) }}<img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon"></span>
+
+            <div class="user-info-container">
+                <div class="coin-info">
+                    <span class="order-title">รายละเอียด Coin</span>
+                    <div class="order-title" style="padding-top:20px;">
+                        คุณมี: {{ number_format($user->coins ?? 0) }}
+                        <img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon">
+                    </div>
+                    <p class="order-subheader">(Coin จะถูกเพิ่มเมื่อคำสั่งซื้อสำเร็จ)</p>
+                </div>
+                
+                <div class="user-info">
+                    <span class="order-title">ข้อมูลสมาชิก</span>
+                    <div class="user-detail"><strong>รหัสสมาชิก :</strong> {{ str_pad($user->id, 8, '0', STR_PAD_LEFT) }}</div>
+                    <div class="user-detail"><strong>Username :</strong> {{ $user->username }}</div>
+                    <div class="user-detail"><strong>อีเมล :</strong> {{ $user->email }}</div>
+                    <div class="user-logout"><a href="{{ route('logout') }}">ออกจากระบบ</a></div>
+                </div>
             </div>
+
             <div class="section topup-section">
                 <h1>คำสั่งซื้อของคุณ</h1>
 
@@ -24,111 +41,14 @@
                 @if($orders->isEmpty())
                     <p>ยังไม่มีคำสั่งซื้อ</p>
                 @else
-                    <div class="orders-container">
+                    <div class="orders-container" id="ordersContainer">
                         @foreach($orders as $order)
-                            <div class="order-card">
-                                <div class="order-header">
-                                    <div>
-                                        <span class="order-title">หมายเลขคำสั่งซื้อ: #{{ $order->id }}</span><br>
-                                        <span class="order-subheader">วันที่สั่งซื้อ: {{ $order->created_at->format('d/m/Y H:i') }}</span>
-                                    </div>
-                                    <div class="order-status">
-                                        @if($order->status == '1')
-                                            <span class="status pending">รอชำระเงิน</span>
-                                        @elseif($order->status == '2')
-                                            <span class="status review">รอชำระเงิน</span>
-                                        @elseif($order->status == '3')
-                                            <span class="status review">รอตรวจสอบการชำระเงิน</span>
-                                        @elseif($order->status == '4')
-                                            <span class="status completed">ทำรายการสำเร็จ</span>
-                                        @elseif($order->status == '11')
-                                            <span class="status review">อยู่ระหว่างดำเนินการ</span>
-                                        @else
-                                            <span class="status cancelled">ระหว่างตรวจสอบ</span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div>
-                                @if($order)
-                                    @if(session('error'))
-                                        <div class="alert alert-danger">{{ session('error') }}</div>
-                                    @endif
-
-                                    @php
-                                        $cartDetails = json_decode($order->cart_details, true);
-                                    @endphp
-
-                                    <div class="order-summary">
-                                        @foreach($cartDetails as $game_id => $game)
-                                            <div class="dash-container">
-                                                <div class="cart-left">
-                                                    <div class="cart-gametitle">{{ $game['game_name'] }}</div>
-
-                                                    @php
-                                                        $gameModel = \App\Models\Game::find($game_id);
-                                                    @endphp
-
-                                                    @if($gameModel && !empty($gameModel->cover_image))
-                                                        <a href="{{ url('/games/' . $game_id . '/topup') }}">
-                                                            <img src="{{ asset('storage/' . $gameModel->cover_image) }}" class="cart-gamecover" alt="{{ $game['game_name'] }}">
-                                                        </a>
-                                                    @endif
-                                                </div>
-
-                                                <div class="cart-right">
-                                                    @foreach($game['packages'] as $uniqueId => $package)
-                                                        <div class="cart-item">
-                                                            <div class="cart-details">
-                                                                <div class="topupcard-title">แพค : {{ $package['name'] }}</div>
-                                                                <div class="topupcard-text">{{ $package['detail'] ?? '' }}</div>
-                                                                <div class="cart-price">
-                                                                    <s class="old-price">{{ number_format($package['full_price'], 0) }} บาท</s><br>
-                                                                    <strong class="new-price">ราคา {{ number_format($package['price'], 0) }} บาท</strong>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="chout-actions">ID ผู้เล่น : {{ $package['player_id'] ?? 'ไม่ระบุ' }}</div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        @endforeach  
-                                    </div>
-
-                                @else
-                                    <p>คำสั่งซื้อนี้ไม่พบ</p>
-                                @endif              
-                                </div>
-                                
-                                <div class="order-coins">
-                                    <div class="coin-section">
-                                        <div class="coin-item">
-                                            ใช้ไป {{ number_format($order->used_coins ?? 0) }}<img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon">
-                                        </div>
-                                        <div class="coin-item">
-                                            ได้รับ {{ number_format($order->coin_earned ?? 0) }}<img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="order-footer">
-                                @php
-                                    $finalAmount = max(0, $order->total_price - ($order->used_coins ?? 0));
-                                @endphp
-                                @if($order->status == '2')
-                                    <div class="order-body">
-                                        <p class="payamount">ยอดที่ต้องชำระ {{ number_format($finalAmount, 2) }} บาท</p>
-                                    </div>
-                                    <span><a href="{{ route('game.checkout.view', ['order_id' => $order->id]) }}" class="cart-btn" style="text-decoration: none;">ดำเนินการชำระเงิน</a></span>
-                                @else
-                                    <div class="order-body">
-                                        <p class="payamount">ยอดชำระ {{ number_format($finalAmount, 2) }} บาท</p>
-                                    </div>
-                                @endif                                    
-                                </div>
-                            </div>
+                            @include('partials.order_card', ['order' => $order])
                         @endforeach
+                    </div>
+
+                    <div id="loading" style="display: none; text-align: center; margin-top: 10px;">
+                        <p>กำลังโหลด...</p>
                     </div>
                 @endif
             </div>
@@ -136,11 +56,165 @@
     </div>
 
     <script>
-        function toggleMenu() {
-            const menu = document.getElementById("navbarMenu");
-            menu.classList.toggle("show");
+        let offset = 5; 
+        let isLoading = false;
+        
+        function loadMoreOrders() {
+            if (isLoading) return;
+            isLoading = true;
+            
+            document.getElementById("loading").style.display = "block"; 
+
+            fetch(`/load-more-orders?offset=${offset}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        offset += data.length; 
+                        let ordersContainer = document.getElementById("ordersContainer");
+
+                        data.forEach(order => {
+                            let finalAmount = Math.max(0, parseFloat(order.total_price || 0) - parseFloat(order.used_coins || 0));
+                            let orderHTML = `
+                                <div class="order-card">
+                                    <div class="order-header">
+                                        <div>
+                                            <span class="order-title">หมายเลขคำสั่งซื้อ: #${order.id}</span><br>
+                                            <span class="order-subheader">วันที่สั่งซื้อ: ${formatDate(order.created_at)}</span>
+                                        </div>
+                                        <div class="order-status">
+                                            <span class="status">${getStatusText(order.status)}</span>
+                                        </div>
+                                    </div>
+                                    <div class="order-summary">
+                                        ${generateCartDetails(order.cart_details)}
+                                    </div>  
+                                    
+                                    <div class="order-coins">
+                                        <div class="coin-section">
+                                            <div class="coin-item">
+                                                ใช้ไป ${numberFormat(order.used_coins)} 
+                                                <img src="/images/coin.png" alt="Coin" class="coin-icon">
+                                            </div>
+                                            <div class="coin-item">
+                                                ได้รับ ${numberFormat(order.coin_earned)} 
+                                                <img src="/images/coin.png" alt="Coin" class="coin-icon">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="order-footer">
+                                        <div class="order-body">
+                                            <p class="payamount">ยอด${order.status == 2 ? 'ที่ต้องชำระ' : 'ชำระ'} ${numberFormat(finalAmount, 2)} บาท</p>
+                                        </div>
+                                        ${order.status == 2 ? `<span><a href="/game/checkout/${order.id}" class="cart-btn" style="text-decoration: none;">ดำเนินการชำระเงิน</a></span>` : ''}
+                                    </div>                                                                      
+                                </div>
+                            `;
+                            ordersContainer.insertAdjacentHTML("beforeend", orderHTML);
+                        });
+                    } else {
+                        window.removeEventListener("scroll", handleScroll);
+                    }
+                    isLoading = false;
+                    document.getElementById("loading").style.display = "none"; 
+                })
+                .catch(error => {
+                    console.error("Error loading more orders:", error);
+                    isLoading = false;
+                });
         }
 
+        function generateCartDetails(cartDetails) {
+            let cartHTML = "";
+            Object.keys(cartDetails).forEach(gameId => {
+                let game = cartDetails[gameId];
+                cartHTML += `<div class="dash-container">
+                    <div class="cart-left">
+                        <div class="cart-gametitle">${game.game_name}</div>
+                        <a href="/games/${game.game_id}/topup">
+                            <img src="/storage/${game.cover_image}" class="cart-gamecover" alt="${game.game_name}">
+                        </a>
+                    </div>
+                    <div class="cart-right">`;
+                    if (Array.isArray(game.packages) && game.packages.length > 0) {
+                        game.packages.forEach(pack => {
+                            cartHTML += `<div class="cart-item">
+                                <div class="cart-details">
+                                    <div class="topupcard-title">แพค : ${pack.name || 'ไม่ระบุ'}</div>
+                                    <div class="topupcard-text">${pack.detail || ''}</div>
+                                    <div class="cart-price">
+                                        <s class="old-price">${numberFormat(parseFloat(pack.full_price || 0))} บาท</s><br>
+                                        <strong class="new-price">ราคา ${numberFormat(parseFloat(pack.price || 0))} บาท</strong>
+                                    </div>
+                                </div>
+                                <div class="chout-actions">ID ผู้เล่น : ${pack.player_id || 'ไม่ระบุ'}</div>
+                            </div>`;
+                        });
+                    } else {
+                        cartHTML += `<p>ไม่มีแพคเกจ</p>`;
+                    }
+                cartHTML += `</div></div>`;
+            });
+            return cartHTML;
+        }
+
+        function getStatusText(status) {
+            let statusClass = "cancelled";
+            let statusText = "สถานะ : ระหว่างตรวจสอบ"; 
+
+            if (status == '1') {
+                statusClass = "pending";
+                statusText = "สถานะ : รอชำระเงิน";
+            } else if (status == '2') {
+                statusClass = "review";
+                statusText = "สถานะ : รอชำระเงิน";
+            } else if (status == '3') {
+                statusClass = "review";
+                statusText = "สถานะ : รอตรวจสอบการชำระเงิน";
+            } else if (status == '4') {
+                statusClass = "completed";
+                statusText = "สถานะ : ทำรายการสำเร็จ";
+            } else if (status == '11') {
+                statusClass = "review";
+                statusText = "สถานะ : อยู่ระหว่างดำเนินการ";
+            } else if (status == '99') {
+                statusClass = "cancelled";
+                statusText = "สถานะ : ยกเลิก";
+            }
+
+            return `<span class="status ${statusClass}">${statusText}</span>`;
+        }
+
+
+        function formatDate(dateString) {
+            let formattedDateString = dateString.replace(" ", "T");
+
+            let date = new Date(formattedDateString);
+            if (isNaN(date.getTime())) {
+                console.warn("Invalid Date:", dateString);
+                return "ไม่สามารถระบุวันที่";
+            }
+
+            let day = String(date.getDate()).padStart(2, '0'); 
+            let month = String(date.getMonth() + 1).padStart(2, '0'); 
+            let year = date.getFullYear();
+            let hours = String(date.getHours()).padStart(2, '0'); 
+            let minutes = String(date.getMinutes()).padStart(2, '0');
+
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+
+        function numberFormat(num) {
+            return new Intl.NumberFormat('th-TH', { minimumFractionDigits: 0 }).format(num);
+        }
+
+        function handleScroll() {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+                loadMoreOrders();
+            }
+        }
+
+        window.addEventListener("scroll", handleScroll);
     </script>
     @include('footer')
 </body>

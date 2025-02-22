@@ -14,7 +14,7 @@ class AdminOrderController extends Controller
     public function index()
     {
         $orders = Order::with('inProcessBy') 
-                        ->whereIn('status', [2, 3, 4, 11])
+                        ->whereIn('status', [2, 3, 4, 11, 99])
                         ->orderBy('created_at', 'desc')
                         ->get();
     
@@ -112,7 +112,7 @@ class AdminOrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Order not found.'], 404);
             }
     
-            if (in_array($order->status, [2, 3, 11])) {
+            if (in_array($order->status, [2, 3, 11, 99])) {
                 $user = $order->user;
                 $coinsUsed = $order->used_coins ?? 0;
                 $coinsEarned = $order->coin_earned ?? 0;
@@ -187,10 +187,10 @@ class AdminOrderController extends Controller
         $offset = ($page - 1) * $perPage;
         $unfinishedOnly = $request->input('unfinished_only', false); 
     
-        $query = Order::with('user')->whereIn('status', [2, 3, 4, 11]);
+        $query = Order::with('user')->whereIn('status', [2, 3, 4, 11, 99]);
     
         if ($unfinishedOnly) {
-            $query->where('status', '!=', 4);
+            $query->whereNotIn('status', [4, 99]);
         }
     
         $unfinishedOrdersCount = Order::whereIn('status', [2, 3, 11])->count();
@@ -208,6 +208,10 @@ class AdminOrderController extends Controller
     
             $order->approved_by_name = $order->approved_by 
                 ? optional(Admin::find($order->approved_by))->name 
+                : null;
+    
+            $order->canceled_by_name = $order->canceled_by 
+                ? optional(Admin::find($order->canceled_by))->name 
                 : null;
         }
     
@@ -255,5 +259,49 @@ class AdminOrderController extends Controller
     //         'unfinished_orders' => $unfinishedOrdersCount,
     //     ]);
     // }   
+
+    public function cancelOrder($orderId)
+    {
+        try {
+            $order = Order::find($orderId);
+    
+            if (!$order) {
+                return response()->json(['success' => false, 'message' => 'Order not found.'], 404);
+            }
+    
+            $user = $order->user;
+            $coinsUsed = $order->used_coins ?? 0;
+            $coinsEarned = $order->coin_earned ?? 0;
+    
+            if ($user) {
+                $user->coins = max(0, $user->coins + $coinsUsed);
+                $user->save();
+            }
+    
+            CoinTransaction::create([
+                'user_id' => $user->id,
+                'coins_used' => -$coinsUsed,
+                'coin_earned' => -$coinsEarned,
+                'order_id' => $order->id,
+                'transaction_type' => 'cancellation',
+            ]);
+    
+            $admin = auth()->guard('admin')->user();
+            $order->status = 99;
+            $order->canceled_by = $admin->id;
+            $order->save();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Order has been canceled, and coins have been adjusted.',
+                'order_id' => $order->id,
+                'canceled_by_name' => $admin->name,
+            ]);
+    
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
+    
 
 }
