@@ -46,6 +46,7 @@ class GameController extends Controller
     {
         $request->validate([
             'title' => 'required|unique:games,title|max:255',
+            'description' => 'nullable|string',
             'game_category_id' => 'required|exists:game_categories,id',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'full_cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -74,6 +75,7 @@ class GameController extends Controller
     
         Game::create([
             'title' => $request->title,
+            'description' => $request->description,
             'game_category_id' => $request->game_category_id,
             'uid_image' => $uidImagePath,
             'uid_detail' => $request->uid_detail,
@@ -95,6 +97,7 @@ class GameController extends Controller
     {
         $request->validate([
             'title' => 'required|max:255|unique:games,title,' . $game->id,
+            'description' => 'nullable|string',
             'game_category_id' => 'required|exists:game_categories,id',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'full_cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -125,6 +128,7 @@ class GameController extends Controller
     
         $game->update([
             'title' => $request->title,
+            'description' => $request->description,
             'game_category_id' => $request->game_category_id,
             'uid_image' => $game->uid_image,
             'uid_detail' => $request->uid_detail,

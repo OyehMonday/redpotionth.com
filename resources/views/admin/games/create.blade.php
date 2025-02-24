@@ -22,7 +22,10 @@
                             <label>Game Title</label>
                             <input type="text" name="title" class="form-control" required>
                         </div>
-
+                        <div class="form-group">
+                            <label for="description">Game Description:</label>
+                            <textarea name="description" id="description" class="form-control"></textarea>
+                        </div>
                         <div class="form-group">
                             <label>Game Category</label>
                             <select name="game_category_id" class="form-control" required>

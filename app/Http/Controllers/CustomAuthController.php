@@ -52,7 +52,7 @@ class CustomAuthController extends Controller
     public function showSignUpForm()
     {
         if (Session::has('user')) {
-            return redirect()->route('landing.page'); 
+            return redirect()->route('dashboard'); 
         }        
         return view('signup');
     }
@@ -110,7 +110,7 @@ class CustomAuthController extends Controller
     public function showLoginForm()
     {
         if (Session::has('user')) {
-            return redirect()->route('landing.page'); 
+            return redirect()->route('dashboard'); 
         }
         return view('login');
     }

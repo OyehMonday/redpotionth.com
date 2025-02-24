@@ -11,14 +11,14 @@
 
     <div class="container">
         <div class="section topup-section">
-            <h1 style="margin-left: 0px;">เติมเกม {{ $game->title }}</h1>
+            <h1 style="margin-left: 0px; margin-bottom: 0px;">เติมเกม {{ $game->title }}</h1>
+            <div style="margin-left: 0px; margin-bottom: 5px;">{{ $game->description }}</div>
 
             <div>
                 <img src="{{ url('storage/' . $game->full_cover_image) }}" class="full-cover-image" alt="{{ $game->name }}">
             </div>
             <h2>เลือกแพ็กเกจที่ต้องการ เติมเงิน {{ $game->title }}</h2>
 
-            <!-- Package Selection -->
             <div class="topup-grid">
                 @foreach($packages as $package)
                     <div class="topupcard">

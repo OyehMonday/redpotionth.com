@@ -39,6 +39,10 @@
                             <label for="title">Game Title</label>
                             <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $game->title) }}" required>
                         </div>
+                        <div class="form-group">
+                            <label for="description">Game Description:</label>
+                            <textarea name="description" id="description" class="form-control">{{ old('description', $game->description ?? '') }}</textarea>
+                        </div>
 
                         <div class="form-group">
                             <label for="game_category_id">Game Category</label>
@@ -58,7 +62,6 @@
                                 <img src="{{ url('storage/' . $game->cover_image) }}" width="100" class="mt-2">
                             @endif
                         </div>
-
                         <div class="form-group">
                             <label for="full_cover_image">Full Cover Image</label>
                             <input type="file" name="full_cover_image" id="full_cover_image" class="form-control">

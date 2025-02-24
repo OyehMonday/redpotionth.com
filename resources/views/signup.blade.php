@@ -25,7 +25,7 @@
                 </div>
             @endif            
 
-            <form action="{{ route('custom.signup') }}" method="POST" class="login-form">
+            <form action="{{ route('custom.signup') }}" method="POST" class="login-form" onsubmit="return validateTerms()">
                 @csrf
                 <div class="form-group">
                     <label for="username" class="form-label">ชื่อผู้ใช้</label>
@@ -39,6 +39,15 @@
                     <label for="password" class="form-label">รหัสผ่าน</label>
                     <input type="password" id="password" name="password" class="form-input" required>
                 </div>
+
+                <div class="terms-container register-link">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                        ฉันยอมรับ 
+                        <a href="#" onclick="openTermsModal()">ข้อตกลงและเงื่อนไข</a>
+                    </label>
+                </div>
+
                 <button type="submit" class="btn btn-primary">สมัครสมาชิก</button>
             </form>
 
@@ -47,5 +56,46 @@
             </div>
         </div>
     </div>
+
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTermsModal()">&times;</span>
+            <h2>ข้อตกลงและเงื่อนไขการใช้บริการ</h2>
+            <p>เมื่อทำการสมัครสมาชิกกับ Red Potion คุณตกลงและยอมรับเงื่อนไขต่อไปนี้:</p>
+            <ul>
+                <li><strong>การใช้บริการ:</strong> ผู้ใช้ต้องให้ข้อมูลที่เป็นจริง และห้ามใช้บัญชีเพื่อกระทำการผิดกฎหมาย</li>
+                <li><strong>ความเป็นส่วนตัว:</strong> ข้อมูลส่วนตัวของคุณจะถูกเก็บรักษาอย่างปลอดภัย</li>
+                <li><strong>การชำระเงิน:</strong> สินค้าและบริการที่ซื้อแล้วจะไม่สามารถขอคืนเงินได้</li>
+                <li><strong>การเปลี่ยนแปลงเงื่อนไข:</strong> บริษัทมีสิทธิ์ในการเปลี่ยนแปลงข้อตกลงโดยไม่ต้องแจ้งล่วงหน้า</li>
+            </ul>
+            <p>กรุณาอ่านและทำความเข้าใจก่อนสมัครสมาชิก</p>
+        </div>
+    </div>
+
+    <script>
+        function validateTerms() {
+            let termsCheckbox = document.getElementById("terms");
+            if (!termsCheckbox.checked) {
+                alert("กรุณายอมรับข้อตกลงและเงื่อนไขก่อนสมัครสมาชิก");
+                return false;
+            }
+            return true;
+        }
+
+        function openTermsModal() {
+            document.getElementById("termsModal").style.display = "block";
+        }
+
+        function closeTermsModal() {
+            document.getElementById("termsModal").style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            let modal = document.getElementById("termsModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

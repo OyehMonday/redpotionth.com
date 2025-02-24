@@ -24,7 +24,6 @@
                 
                 <div class="user-info">
                     <span class="order-title">ข้อมูลสมาชิก</span>
-                    <div class="user-detail"><strong>รหัสสมาชิก :</strong> {{ str_pad($user->id, 8, '0', STR_PAD_LEFT) }}</div>
                     <div class="user-detail"><strong>Username :</strong> {{ $user->username }}</div>
                     <div class="user-detail"><strong>อีเมล :</strong> {{ $user->email }}</div>
                     <div class="user-logout"><a href="{{ route('logout') }}">ออกจากระบบ</a></div>
@@ -215,6 +214,11 @@
         }
 
         window.addEventListener("scroll", handleScroll);
+
+        function toggleMenu() {
+            const menu = document.getElementById("navbarMenu");
+            menu.classList.toggle("show");
+        }        
     </script>
     @include('footer')
 </body>

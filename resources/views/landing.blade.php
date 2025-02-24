@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Red Potion</title>
-    <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
 </head>
 <body>
-    <!-- Navigation Menu -->
     @include('navbar')
 
     <div class="main-wrapper">
         <div class="container">
 
-            <!-- Section 1: Game Selection -->
             <div class="section topup-section">
                 <h1>Red Potion รับเติมเกม</h1>
                 <p class="placeholder">บริการเติมเกม ผ่านทางระบบ UID เติมง่าย เข้าไว มีหลายเกมให้เลือก PUBG, Arena Breakout, Free Fire, ROV และเกมอื่นๆอีกมากมาย</p>
@@ -66,11 +63,10 @@
                                     $("#comment-container").append(commentHtml);
                                 });
 
-                                // Show "ดูรีวิวทั้งหมด" button after comments load
                                 $("#view-all-reviews").show();
                             } else {
                                 $("#comment-container").html('<p class="no-comments">ยังไม่มีรีวิวจากลูกค้า</p>');
-                                $("#view-all-reviews").hide(); // Hide if no comments
+                                $("#view-all-reviews").hide(); 
                             }
                         },
                         error: function(xhr, status, error) {
