@@ -165,4 +165,12 @@ Route::post('/admin/orders/{order}/mark-in-process', [AdminOrderController::clas
 Route::post('/admin/orders/{order}/markCompleted', [AdminOrderController::class, 'markCompleted']);
 Route::post('/admin/orders/{order}/cancel', [AdminOrderController::class, 'cancelOrder']);
 Route::get('/admin/orders/unfinished', [AdminOrderController::class, 'showUnfinishedOrders'])->name('admin.orders.unfinished');
+Route::get('/admin/orders/{order}/details', [AdminOrderController::class, 'showOrderDetails'])->name('admin.orders.details');
 
+Route::get('/privacy-policy', function () {
+    return view('privacy-policy');
+});
+
+Route::get('/return-policy', function () {
+    return view('return-policy');
+});

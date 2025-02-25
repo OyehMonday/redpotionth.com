@@ -303,5 +303,25 @@ class AdminOrderController extends Controller
         }
     }
     
+    public function showOrderDetails($orderId)
+    {
+        $order = Order::with('user')->find($orderId);
+
+        if (!$order) {
+            abort(404, 'Order not found');
+        }
+    
+        $admin = $order->in_process_by ? Admin::find($order->in_process_by) : null;
+        $approvedAdmin = $order->approved_by ? Admin::find($order->approved_by) : null;
+        $canceledAdmin = $order->canceled_by ? Admin::find($order->canceled_by) : null;
+    
+        $order->admin_name = $admin ? $admin->name : null;
+        $order->approved_by_name = $approvedAdmin ? $approvedAdmin->name : null;
+        $order->canceled_by_name = $canceledAdmin ? $canceledAdmin->name : null;
+    
+        return view('admin.orders/order-details', compact('order', 'admin'));
+    }
+    
+
 
 }

@@ -1230,6 +1230,27 @@ input[type="file"] {
   font-weight: 600;
 }
 
+.order-titlelink {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: white; 
+  text-decoration: none; 
+}
+
+.order-titlelink:hover {
+  text-decoration: underline;
+}
+
+.footerlink {
+  color: white; 
+  text-decoration: none; 
+}
+
+.footerlink:hover {
+  text-decoration: underline;
+  color: #4cafef;
+}
+
 .order-subheader{
   font-size: 0.9em;
   color: #ccc;
@@ -1443,7 +1464,6 @@ input:checked + .slider:before {
 }
 
 .social-icons {
-  margin-top: -15px;
   display: flex;
   justify-content: center;
   gap: 15px;

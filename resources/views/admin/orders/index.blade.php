@@ -102,7 +102,9 @@
                     orderElement.innerHTML = `
                         <div class="order-header">
                             <div>
-                                <span class="order-title">หมายเลขคำสั่งซื้อ: #${order.id}</span><br>
+                                <a href="/admin/orders/${order.id}/details" target="_blank" class="order-titlelink">
+                                    หมายเลขคำสั่งซื้อ: #${order.id}
+                                </a><br>
                                 <span class="order-subheader">วันที่สั่งซื้อ: ${new Date(order.created_at).toLocaleString()}</span><br>
                                 <span class="order-subheader">โดย ${order.user ? order.user.username : 'N/A'} อีเมล ${order.user ? order.user.email : 'N/A'}</span>
                             </div>
@@ -216,7 +218,7 @@
                 }
             } else {
                 if (order.status == '3' || order.status == '2') {
-                    actionHtml = ` <button class="btn inprocess" onclick="markOrderInProcess(${order.id}, this)">รับออเดอร์</button>`;
+                    actionHtml = ` <button class="btn inprocess" onclick="handleOrderAcknowledgement(${order.id}, this)">รับออเดอร์</button>`;
                 } else {
                 }
             }
@@ -230,6 +232,11 @@
             }
 
             return actionHtml;
+        }
+
+        function handleOrderAcknowledgement(orderId, buttonElement) {
+            markOrderInProcess(orderId, buttonElement);
+            window.open(`/admin/orders/${orderId}/details`, '_blank');
         }
 
         function getCartDetails(order) {
