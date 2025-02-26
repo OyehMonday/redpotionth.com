@@ -59,14 +59,14 @@
                             <label for="cover_image">Cover Image</label>
                             <input type="file" name="cover_image" id="cover_image" class="form-control">
                             @if ($game->cover_image)
-                                <img src="{{ url('storage/' . $game->cover_image) }}" width="100" class="mt-2">
+                                <img src="{{ url('images/' . $game->cover_image) }}" width="100" class="mt-2">
                             @endif
                         </div>
                         <div class="form-group">
                             <label for="full_cover_image">Full Cover Image</label>
                             <input type="file" name="full_cover_image" id="full_cover_image" class="form-control">
                             @if ($game->full_cover_image)
-                                <img src="{{ url('storage/' . $game->full_cover_image) }}" width="100" class="mt-2">
+                                <img src="{{ url('images/' . $game->full_cover_image) }}" width="100" class="mt-2">
                             @endif
                         </div>
 
@@ -79,7 +79,7 @@
                             <label for="uid_image">Player ID Guide Image</label>
                             <input type="file" class="form-control" id="uid_image" name="uid_image">
                             @if($game->uid_image)
-                                <img src="{{ url('storage/' . $game->uid_image) }}" class="img-preview" width="100">
+                                <img src="{{ url('images/' . $game->uid_image) }}" class="img-preview" width="100">
                             @endif
                         </div>                        
 

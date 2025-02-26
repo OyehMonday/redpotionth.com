@@ -14,7 +14,7 @@ class HomeController extends Controller
 
     public function index()
     {
-        $games = Game::orderBy('sort_order', 'asc')->take(5)->get(); 
+        $games = Game::orderBy('sort_order', 'asc')->take(12)->get(); 
         return view('landing', compact('games'));
     }
 }

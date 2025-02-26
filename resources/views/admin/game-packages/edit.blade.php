@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    @include('admin.navbar') <!-- Include navbar for consistency -->
+    @include('admin.navbar') 
 
     <div class="container mt-5">
         <div class="row">
@@ -57,7 +57,7 @@
                             <label for="cover_image">Package Cover Image</label>
                             @if ($package->cover_image)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $package->cover_image) }}" width="100">
+                                    <img src="{{ asset('images/' . $package->cover_image) }}" width="100">
                                 </div>
                             @endif
                             <input type="file" name="cover_image" id="cover_image" class="form-control" accept="image/*">

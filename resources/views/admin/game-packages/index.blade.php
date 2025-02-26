@@ -56,7 +56,7 @@
                                 <td class="handle">☰</td> <!-- Drag handle -->
                                 <td>
                                     @if ($package->cover_image)
-                                        <img src="{{ asset('storage/' . $package->cover_image) }}" width="50">
+                                        <img src="{{ asset('images/' . $package->cover_image) }}" width="50">
                                     @else
                                         <span>No Image</span>
                                     @endif

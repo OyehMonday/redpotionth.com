@@ -106,7 +106,9 @@
                                     หมายเลขคำสั่งซื้อ: #${order.id}
                                 </a><br>
                                 <span class="order-subheader">วันที่สั่งซื้อ: ${new Date(order.created_at).toLocaleString()}</span><br>
-                                <span class="order-subheader">โดย ${order.user ? order.user.username : 'N/A'} อีเมล ${order.user ? order.user.email : 'N/A'}</span>
+                                <span class="order-subheader">
+                                    โดย <a href="/admin/users/${order.user.id}/orders" target="_blank" class="user-link">${order.user ? order.user.username : 'N/A'}</a> 
+                                    อีเมล ${order.user ? order.user.email : 'N/A'}</span>
                             </div>
                             <div class="order-status">
                                 ${getOrderStatus(order)} 

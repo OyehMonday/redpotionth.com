@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Potion</title>
+    <title>Red Potion - บริการเติมเกม เติมง่าย เข้าไว มีหลายเกมให้เลือก PUBG, Arena Breakout, Free Fire, ROV</title>
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
 </head>
 <body>
@@ -12,8 +12,18 @@
     <div class="main-wrapper">
         <div class="container">
 
+            <!-- Section 1: Top Up -->
             <div class="section topup-section">
-                <h1>Red Potion รับเติมเกม</h1>
+                <div class="topup-header">
+                    <h1 class="topup-title">Red Potion รับเติมเกม</h1>
+                    
+                    <div class="topup-search">
+                        <form action="{{ route('games.search') }}" method="GET" class="topup-search">
+                            <input type="text" name="query" id="gameSearch" placeholder="ค้นหาเกม..." class="search-input">
+                            <button type="submit" class="search-button">ค้นหา</button>
+                        </form>
+                    </div>
+                </div>
                 <p class="placeholder">บริการเติมเกม ผ่านทางระบบ UID เติมง่าย เข้าไว มีหลายเกมให้เลือก PUBG, Arena Breakout, Free Fire, ROV และเกมอื่นๆอีกมากมาย</p>
                 <div class="game-grid">
                     @foreach($games as $game)
@@ -26,7 +36,11 @@
                         </div>
                     @endforeach
                 </div>
+                <div class="view-all-container">
+                    <a href="{{ route('games.all') }}" class="view-all-link">เกมทั้งหมด</a>
+                </div>
             </div>
+            
             <hr class="divider">
 
             <!-- Section 2: Review -->

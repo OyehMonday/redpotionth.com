@@ -2,23 +2,27 @@
 
 use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\PasswordResetController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Auth\AdminSignupController;
-use App\Http\Controllers\Admin\GameController;
-use App\Http\Controllers\Admin\GameCategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AllGameController;
 use App\Http\Controllers\GameTopupController;
 use App\Http\Controllers\GameCartController;
-use App\Http\Controllers\Admin\GamePackageController;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\FacebookCommentController;
 use App\Http\Controllers\PaymentController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use App\Services\LineNotificationService;
 use App\Http\Controllers\AdminOrderController;
+
+use App\Http\Controllers\Admin\GamePackageController;
+use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\GameCategoryController;
+
+use App\Http\Controllers\Auth\AdminSignupController;
+
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use App\Services\LineNotificationService;
 use App\Models\Order;
 use App\Models\Admin;
 
@@ -91,6 +95,8 @@ Route::get('/verify-email/{token}', [CustomAuthController::class, 'verifyEmail']
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/games', [AllGameController::class, 'index'])->name('games.all');
+
 Route::get('/games/{id}/topup', [GameTopupController::class, 'show'])->name('games.topup');
 Route::post('/games/cart/add', [GameCartController::class, 'addToCart'])->name('game.cart.add');
 
@@ -156,6 +162,7 @@ Route::get('admin/orders', [AdminOrderController::class, 'index'])->name('admin.
 Route::post('admin/orders/approve/{orderId}', [AdminOrderController::class, 'approvePayment'])->name('admin.orders.approve');
 Route::post('/admin/orders/{order}/mark-in-process', [AdminOrderController::class, 'markInProcess'])->name('admin.orders.markInProcess');
 Route::post('/admin/orders/{order}/markCompleted', [AdminOrderController::class, 'markCompleted'])->name('admin.orders.markCompleted');
+Route::get('/admin/users/{userId}/orders', [AdminOrderController::class, 'showUserOrders'])->name('admin.user.orders');
 
 Route::get('/fetch-facebook-comments', [FacebookCommentController::class, 'fetchComments'])->name('fetch.facebook.comments');
 
@@ -174,3 +181,5 @@ Route::get('/privacy-policy', function () {
 Route::get('/return-policy', function () {
     return view('return-policy');
 });
+
+Route::get('/search', [AllGameController::class, 'search'])->name('games.search');

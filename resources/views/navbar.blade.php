@@ -31,7 +31,7 @@
 
         <ul class="navbar-menu" id="navbarMenu">
             <li><a href="/">หน้าแรก</a></li>
-            <li><a href="#">เติมเกม</a></li>
+            <li><a href="{{ route('games.all') }}">เติมเกม</a></li>
 
             <li>
                 @if(Session::has('user'))

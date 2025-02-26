@@ -53,7 +53,7 @@
                                     <td class="handle">☰</td> <!-- Drag handle -->
                                     <td>
                                         @if ($game->cover_image)
-                                            <img src="{{ asset('storage/' . $game->cover_image) }}" width="50">
+                                            <img src="{{ asset('images/' . $game->cover_image) }}" width="50">
                                         @else
                                             <span>No Image</span>
                                         @endif

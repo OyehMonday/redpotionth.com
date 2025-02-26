@@ -42,15 +42,12 @@ class GamePackageController extends Controller
         ]);
     
         $coverImagePath = null;
-
-        // if ($request->hasFile('cover_image')) {
-        //     $coverImageFile = $request->file('cover_image');
-        //     $coverImageFilename = time() . '_' . $coverImageFile->getClientOriginalName();
-        //     $coverImageFile->move(public_path('package_covers'), $coverImageFilename);
-        //     $coverImagePath = 'package_covers/' . $coverImageFilename;
-        // }          
+    
         if ($request->hasFile('cover_image')) {
-            $coverImagePath = $request->file('cover_image')->store('package_covers', 'public');
+            $coverImageFile = $request->file('cover_image');
+            $coverImageFilename = time() . '_' . $coverImageFile->getClientOriginalName();
+            $coverImageFile->move(public_path('images/package_covers'), $coverImageFilename);
+            $coverImagePath = 'package_covers/' . $coverImageFilename;
         }
     
         $lastSortOrder = $game->packages()->max('sort_order') ?? 0;
@@ -65,7 +62,7 @@ class GamePackageController extends Controller
         ]);
     
         return redirect()->route('game-packages.index', $game)->with('success', 'Package added successfully.');
-    }     
+    }         
     
     public function edit(Game $game, GamePackage $package)
     {
@@ -83,10 +80,14 @@ class GamePackageController extends Controller
         ]);
     
         if ($request->hasFile('cover_image')) {
-            if ($package->cover_image) {
-                Storage::disk('public')->delete($package->cover_image);
+            if ($package->cover_image && file_exists(public_path('images/' . $package->cover_image))) {
+                unlink(public_path('images/' . $package->cover_image));
             }
-            $package->cover_image = $request->file('cover_image')->store('package_covers', 'public');
+    
+            $coverImageFile = $request->file('cover_image');
+            $coverImageFilename = time() . '_' . $coverImageFile->getClientOriginalName();
+            $coverImageFile->move(public_path('images/package_covers'), $coverImageFilename);
+            $package->cover_image = 'package_covers/' . $coverImageFilename;
         }
     
         $package->update([
@@ -99,11 +100,16 @@ class GamePackageController extends Controller
     
         return redirect()->route('game-packages.index', $game)->with('success', 'Package updated successfully.');
     }
-     
+    
 
     public function destroy(Game $game, GamePackage $package)
     {
+        if ($package->cover_image && file_exists(public_path('images/' . $package->cover_image))) {
+            unlink(public_path('images/' . $package->cover_image));
+        }
+    
         $package->delete();
         return redirect()->route('game-packages.index', $game)->with('success', 'Package deleted successfully.');
     }
+    
 }
