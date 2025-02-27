@@ -34,7 +34,7 @@
                         @foreach($games as $game)
                             <div class="game-card">
                                 <a href="{{ route('games.topup', $game->id) }}" class="topup-card">
-                                    <img src="{{ asset('storage/' . $game->cover_image) }}" alt="{{ $game->title }}" class="game-cover">
+                                    <img src="{{ asset('images/' . $game->cover_image) }}" alt="{{ $game->title }}" class="game-cover">
                                     <h3 class="game-title">{{ $game->title }}</h3>
                                     <div class="topup-button">เติมเงิน</div>
                                 </a>
@@ -45,7 +45,12 @@
             </div>
         </div>
     </div>
-
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("navbarMenu");
+            menu.classList.toggle("show");
+        }
+    </script>
     @include('footer')
 </body>
 </html>

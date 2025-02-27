@@ -1,3 +1,38 @@
+@php
+    use App\Models\BusinessHour;
+
+    $today = now()->format('l'); 
+    $currentTime = now()->format('H:i');
+
+    // Get today's business hours
+    $businessHour = BusinessHour::where('day', $today)->first();
+
+    // Check if store is open today
+    $isOpen = $businessHour && $businessHour->open_time && $businessHour->close_time 
+              && ($currentTime >= $businessHour->open_time && $currentTime < $businessHour->close_time);
+
+    // If store is closed, find next available open day
+    if (!$isOpen) {
+        // Get the next available open day
+        $nextOpenDay = BusinessHour::whereNotNull('open_time')
+                        ->whereNotNull('close_time')
+                        ->whereRaw("FIELD(day, 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
+                        ->where(function($query) use ($today, $currentTime) {
+                            $query->where('day', '>', $today)
+                                  ->orWhere(function($q) use ($today, $currentTime) {
+                                      $q->where('day', '=', $today)
+                                        ->where('open_time', '>', $currentTime);
+                                  });
+                        })
+                        ->orderByRaw("FIELD(day, 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
+                        ->first();
+
+        // Redirect if store is closed and there is a next open day
+        header("Location: " . url('/closed'));
+        exit();
+    }
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,7 +81,7 @@
 
                                     @if($gameModel && !empty($gameModel->cover_image))
                                         <a href="{{ url('/games/' . $game_id . '/topup') }}">
-                                            <img src="{{ asset('storage/' . $gameModel->cover_image) }}" class="cart-gamecover" alt="{{ $game['game_name'] }}">
+                                            <img src="{{ asset('images/' . $gameModel->cover_image) }}" class="cart-gamecover" alt="{{ $game['game_name'] }}">
                                         </a>
                                     @endif
 
@@ -107,7 +142,7 @@
 
                         <div class="file-input-container">
                             <label for="payment_slip" class="paymentslip-btn">แนบสลิปการชำระเงิน</label>
-                            <input type="file" name="payment_slip" id="payment_slip" accept="image/jpeg, image/png, application/pdf">
+                            <input type="file" name="payment_slip" id="payment_slip" accept="image/jpeg, image/png, application/pdf" class="hidden-file-input">
                             <span id="file-name">ยังไม่ได้เลือกไฟล์</span>
                         </div>
 

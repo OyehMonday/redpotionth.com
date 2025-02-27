@@ -43,6 +43,11 @@
             </div>
         </div>
     </div>
-
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("navbarMenu");
+            menu.classList.toggle("show");
+        }
+    </script>
 </body>
 </html>

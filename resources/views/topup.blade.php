@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
     <meta property="og:title" content="เติมเกม {{ $game->title }}">
     <meta property="og:description" content="{{ $game->description }}">
-    <meta property="og:image" content="{{ url('storage/' . $game->full_cover_image) }}">
+    <meta property="og:image" content="{{ url('images/' . $game->full_cover_image) }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="เติมเกม {{ $game->title }}">
     <meta name="twitter:description" content="{{ $game->description }}">
-    <meta name="twitter:image" content="{{ url('storage/' . $game->full_cover_image) }}">  
+    <meta name="twitter:image" content="{{ url('images/' . $game->full_cover_image) }}">  
 </head>
 <body class="dark-theme">
     @include('navbar')
@@ -34,7 +34,7 @@
             <div style="margin-left: 0px; margin-bottom: 5px;">{{ $game->description }}</div>
           
             <div>
-                <img src="{{ url('storage/' . $game->full_cover_image) }}" class="full-cover-image" alt="{{ $game->name }}">
+                <img src="{{ url('images/' . $game->full_cover_image) }}" class="full-cover-image" alt="{{ $game->name }}">
             </div>
             @if($game->category->name == 'Payment Link')
                 <div class="paymentlink">
@@ -50,7 +50,7 @@
                     @foreach($packages as $package)
                         <div class="topupcard">
                         @if(!empty($package->cover_image)) 
-                            <img src="{{ url('storage/' . $package->cover_image) }}" class="topupcard-img" alt="{{ $package->name }}">
+                            <img src="{{ url('images/' . $package->cover_image) }}" class="topupcard-img" alt="{{ $package->name }}">
                         @else
                             <div class="topupcard-img">
                                 <span style="font-size: 12px; color: #666;">No Image</span>

@@ -7,6 +7,7 @@
         <ul class="navbar-menu" id="navbarMenu">
             <li><a href="{{ route('games.index') }}">จัดการเกม</a></li>
             <li><a href="{{ route('admin.orders.index') }}">จัดการคำสั่งซื้อ</a></li>
+            <li><a href="{{ route('admin.business-hours.index') }}">จัดการเวลาเปิด-ปิด</a></li>
             <li>
                 @if(auth()->guard('admin')->check())  
                     

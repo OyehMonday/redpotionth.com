@@ -80,13 +80,13 @@
 
                                         @if($gameModel && !empty($gameModel->cover_image))
                                             <a href="{{ url('/games/' . $game_id . '/topup') }}">
-                                                <img src="{{ asset('storage/' . $gameModel->cover_image) }}" class="cart-gamecover" alt="{{ $game['game_name'] }}">
+                                                <img src="{{ asset('images/' . $gameModel->cover_image) }}" class="cart-gamecover" alt="{{ $game['game_name'] }}">
                                             </a>
                                         @endif
 
                                         @if($gameModel && !empty($gameModel->uid_image))
                                             <p style="margin-top:0px;">
-                                                <a href="javascript:void(0);" onclick="openLightbox('{{ asset('storage/' . $gameModel->uid_image) }}')" class="btn-info">
+                                                <a href="javascript:void(0);" onclick="openLightbox('{{ asset('images/' . $gameModel->uid_image) }}')" class="btn-info">
                                                     วิธีดู UID
                                                 </a>
                                             </p>

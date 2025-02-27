@@ -12,9 +12,10 @@ use App\Http\Controllers\FacebookCommentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AdminOrderController;
 
-use App\Http\Controllers\Admin\GamePackageController;
 use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\GamePackageController;
 use App\Http\Controllers\Admin\GameCategoryController;
+use App\Http\Controllers\Admin\BusinessHoursController;
 
 use App\Http\Controllers\Auth\AdminSignupController;
 
@@ -142,7 +143,9 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
         Route::resource('game-categories', GameCategoryController::class);
         Route::resource('games', GameController::class);
-        Route::post('/games/sort', [GameController::class, 'sort'])->name('games.sort');        
+        Route::post('/games/sort', [GameController::class, 'sort'])->name('games.sort');  
+        Route::get('/business-hours', [BusinessHoursController::class, 'index'])->name('admin.business-hours.index');
+        Route::post('/business-hours/update', [BusinessHoursController::class, 'update'])->name('admin.business-hours.update');      
     });
 });
 
@@ -183,3 +186,7 @@ Route::get('/return-policy', function () {
 });
 
 Route::get('/search', [AllGameController::class, 'search'])->name('games.search');
+
+Route::get('/closed', function () {
+    return view('closed');
+})->name('closed');

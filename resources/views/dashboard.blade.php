@@ -131,7 +131,7 @@
                     <div class="cart-left">
                         <div class="cart-gametitle">${game.game_name}</div>
                         <a href="/games/${game.game_id}/topup">
-                            <img src="/storage/${game.cover_image}" class="cart-gamecover" alt="${game.game_name}">
+                            <img src="/images/${game.cover_image}" class="cart-gamecover" alt="${game.game_name}">
                         </a>
                     </div>
                     <div class="cart-right">`;

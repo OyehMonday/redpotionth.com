@@ -1203,6 +1203,14 @@ body.dark-theme {
   max-width: 200px; 
 }
 
+.hidden-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
 
 .orders-container {
   display: flex;
@@ -1859,6 +1867,10 @@ input:checked + .slider:before {
   .user-info-container {
     flex-direction: column; 
     gap: 10px;
+  }
+  
+  .topup-search {
+    margin-bottom: 5px;
   }
 }
 

@@ -90,7 +90,7 @@
                             <div class="order-body">
                                 <p class="payamount">ยอดโอน {{ number_format($finalAmount, 2) }} บาท</p>
                                 @if($order->payment_slip)
-                                    <a href="{{ asset('storage/' . $order->payment_slip) }}" target="_blank" class="btn-info">ดูสลิป</a>
+                                    <a href="{{ asset('images/' . $order->payment_slip) }}" target="_blank" class="btn-info">ดูสลิป</a>
                                 @else
                                     <span>-</span>
                                 @endif
@@ -214,6 +214,10 @@
             .catch(error => console.error('Error completing order:', error));
         }
 
-    </script>
+        function toggleMenu() {
+            const menu = document.getElementById("navbarMenu");
+            menu.classList.toggle("show");
+        }
+    </script>    
 </body>
 </html>

@@ -290,7 +290,7 @@
             return `
                 <div class="order-body">
                     <p class="payamount">ยอดโอน ${new Intl.NumberFormat().format(finalAmount)} บาท</p>
-                    ${order.payment_slip ? `<a href="../storage/${order.payment_slip}" target="_blank" class="btn-info">ดูสลิป</a>` : '-'}
+                    ${order.payment_slip ? `<a href="../images/${order.payment_slip}" target="_blank" class="btn-info">ดูสลิป</a>` : '-'}
                 </div>
             `;
         }
@@ -374,7 +374,10 @@
             .catch(error => console.error('Error canceling order:', error));
         }
 
-       
-    </script>
+        function toggleMenu() {
+            const menu = document.getElementById("navbarMenu");
+            menu.classList.toggle("show");
+        }
+    </script>    
 </body>
 </html>

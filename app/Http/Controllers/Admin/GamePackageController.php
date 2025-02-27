@@ -46,7 +46,7 @@ class GamePackageController extends Controller
         if ($request->hasFile('cover_image')) {
             $coverImageFile = $request->file('cover_image');
             $coverImageFilename = time() . '_' . $coverImageFile->getClientOriginalName();
-            $coverImageFile->move(public_path('images/package_covers'), $coverImageFilename);
+            $coverImageFile->move(base_path('images/package_covers'), $coverImageFilename);
             $coverImagePath = 'package_covers/' . $coverImageFilename;
         }
     
@@ -80,13 +80,13 @@ class GamePackageController extends Controller
         ]);
     
         if ($request->hasFile('cover_image')) {
-            if ($package->cover_image && file_exists(public_path('images/' . $package->cover_image))) {
-                unlink(public_path('images/' . $package->cover_image));
+            if ($package->cover_image && file_exists(base_path('images/' . $package->cover_image))) {
+                unlink(base_path('images/' . $package->cover_image));
             }
     
             $coverImageFile = $request->file('cover_image');
             $coverImageFilename = time() . '_' . $coverImageFile->getClientOriginalName();
-            $coverImageFile->move(public_path('images/package_covers'), $coverImageFilename);
+            $coverImageFile->move(base_path('images/package_covers'), $coverImageFilename);
             $package->cover_image = 'package_covers/' . $coverImageFilename;
         }
     
@@ -104,12 +104,13 @@ class GamePackageController extends Controller
 
     public function destroy(Game $game, GamePackage $package)
     {
-        if ($package->cover_image && file_exists(public_path('images/' . $package->cover_image))) {
-            unlink(public_path('images/' . $package->cover_image));
+        if ($package->cover_image && file_exists(base_path('images/' . $package->cover_image))) {
+            unlink(base_path('images/' . $package->cover_image));
         }
     
         $package->delete();
         return redirect()->route('game-packages.index', $game)->with('success', 'Package deleted successfully.');
     }
+
     
 }

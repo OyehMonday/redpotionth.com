@@ -54,21 +54,21 @@ class GameController extends Controller
             $coverFile = $request->file('cover_image');
             $coverFileName = time() . '_' . $coverFile->getClientOriginalName(); 
             $coverPath = 'game_covers/' . $coverFileName;
-            $coverFile->move(public_path('images/game_covers'), $coverFileName);
+            $coverFile->move(base_path('images/game_covers'), $coverFileName);
         }
         
         if ($request->hasFile('full_cover_image')) {
             $fullCoverFile = $request->file('full_cover_image');
             $fullCoverFileName = time() . '_' . $fullCoverFile->getClientOriginalName(); 
             $fullCoverPath = 'game_full_covers/' . $fullCoverFileName;
-            $fullCoverFile->move(public_path('images/game_full_covers'), $fullCoverFileName);
+            $fullCoverFile->move(base_path('images/game_full_covers'), $fullCoverFileName);
         }
         
         if ($request->hasFile('uid_image')) {
             $uidImageFile = $request->file('uid_image');
             $uidImageFileName = time() . '_' . $uidImageFile->getClientOriginalName(); 
             $uidImagePath = 'uidimages/' . $uidImageFileName;
-            $uidImageFile->move(public_path('images/uidimages'), $uidImageFileName);
+            $uidImageFile->move(base_path('images/uidimages'), $uidImageFileName);
         }              
     
         Game::create([
@@ -105,40 +105,40 @@ class GameController extends Controller
         ]);
     
         if ($request->hasFile('cover_image')) {
-            if ($game->cover_image && file_exists(public_path('images/' . $game->cover_image))) {
-                unlink(public_path('images/' . $game->cover_image));
+            if ($game->cover_image && file_exists(base_path('images/' . $game->cover_image))) {
+                unlink(base_path('images/' . $game->cover_image));
             }
     
             $coverFile = $request->file('cover_image');
             $coverFileName = time() . '_' . $coverFile->getClientOriginalName(); 
             $coverPath = 'game_covers/' . $coverFileName;
-            $coverFile->move(public_path('images/game_covers'), $coverFileName);
+            $coverFile->move(base_path('images/game_covers'), $coverFileName);
     
             $game->cover_image = $coverPath;
         }
     
         if ($request->hasFile('full_cover_image')) {
-            if ($game->full_cover_image && file_exists(public_path('images/' . $game->full_cover_image))) {
-                unlink(public_path('images/' . $game->full_cover_image));
+            if ($game->full_cover_image && file_exists(base_path('images/' . $game->full_cover_image))) {
+                unlink(base_path('images/' . $game->full_cover_image));
             }
     
             $fullCoverFile = $request->file('full_cover_image');
             $fullCoverFileName = time() . '_' . $fullCoverFile->getClientOriginalName();
             $fullCoverPath = 'game_full_covers/' . $fullCoverFileName;
-            $fullCoverFile->move(public_path('images/game_full_covers'), $fullCoverFileName);
+            $fullCoverFile->move(base_path('images/game_full_covers'), $fullCoverFileName);
     
             $game->full_cover_image = $fullCoverPath;
         }
     
         if ($request->hasFile('uid_image')) {
-            if ($game->uid_image && file_exists(public_path('images/' . $game->uid_image))) {
-                unlink(public_path('images/' . $game->uid_image));
+            if ($game->uid_image && file_exists(base_path('images/' . $game->uid_image))) {
+                unlink(base_path('images/' . $game->uid_image));
             }
     
             $uidImageFile = $request->file('uid_image');
             $uidImageFileName = time() . '_' . $uidImageFile->getClientOriginalName();
             $uidImagePath = 'uidimages/' . $uidImageFileName;
-            $uidImageFile->move(public_path('images/uidimages'), $uidImageFileName);
+            $uidImageFile->move(base_path('images/uidimages'), $uidImageFileName);
     
             $game->uid_image = $uidImagePath;
         }
@@ -158,16 +158,16 @@ class GameController extends Controller
 
     public function destroy(Game $game)
     {
-        if ($game->cover_image && file_exists(public_path('images/' . $game->cover_image))) {
-            unlink(public_path('images/' . $game->cover_image));
+        if ($game->cover_image && file_exists(base_path('images/' . $game->cover_image))) {
+            unlink(base_path('images/' . $game->cover_image));
         }
     
-        if ($game->full_cover_image && file_exists(public_path('images/' . $game->full_cover_image))) {
-            unlink(public_path('images/' . $game->full_cover_image));
+        if ($game->full_cover_image && file_exists(base_path('images/' . $game->full_cover_image))) {
+            unlink(base_path('images/' . $game->full_cover_image));
         }
     
-        if ($game->uid_image && file_exists(public_path('images/' . $game->uid_image))) {
-            unlink(public_path('images/' . $game->uid_image));
+        if ($game->uid_image && file_exists(base_path('images/' . $game->uid_image))) {
+            unlink(base_path('images/' . $game->uid_image));
         }
     
         $game->delete();
