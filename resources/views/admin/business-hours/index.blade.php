@@ -1,3 +1,11 @@
+@php
+    $superAdminIds = explode(',', env('SUPER_ADMIN_IDS', '')); 
+    $superAdminIds = array_map('trim', $superAdminIds); 
+@endphp
+
+@if(!in_array(auth()->user()->id ?? 0, $superAdminIds))
+    <script>window.location.href = "/admin/orders";</script>
+@endif
 <!DOCTYPE html>
 <html lang="en">
 <head>

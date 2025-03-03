@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Notifications\AdminSignupVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Google_Client;
 use Google_Service_Gmail;
@@ -22,7 +23,22 @@ class AdminAuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
+            'cf-turnstile-response' => ['required'],
+        ], [
+            'cf-turnstile-response.required' => 'กรุณายืนยันว่าคุณไม่ใช่หุ่นยนต์',
         ]);
+    
+        $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+            'secret' => env('TURNSTILE_SECRET_KEY'),
+            'response' => $request->input('cf-turnstile-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        $responseData = $response->json();
+    
+        if (!$responseData['success']) {
+            return redirect()->back()->withErrors(['cf-turnstile-response' => 'Turnstile verification failed, please try again.'])->withInput();
+        }
     
         if (Auth::guard('admin')->attempt($request->only('email', 'password'))) {
             $admin = Auth::guard('admin')->user();
@@ -61,7 +77,22 @@ class AdminAuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:admins',
             'password' => 'required|string|min:8|confirmed',
+            'cf-turnstile-response' => ['required'],
+        ], [
+            'cf-turnstile-response.required' => 'กรุณายืนยันว่าคุณไม่ใช่หุ่นยนต์',
         ]);
+
+        $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+            'secret' => env('TURNSTILE_SECRET_KEY'),
+            'response' => $request->input('cf-turnstile-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        $responseData = $response->json();
+
+        if (!$responseData['success']) {
+            return redirect()->back()->withErrors(['cf-turnstile-response' => 'Turnstile verification failed, please try again.'])->withInput();
+        }       
     
         $verificationToken = Str::random(32);
     

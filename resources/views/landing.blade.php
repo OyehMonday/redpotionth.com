@@ -91,11 +91,65 @@
                     });
                 });
             </script>
+            
+            <!-- Section 3: Highlight -->
+            <div class="section topup-section">
+                <h1>แพคแนะนำ</h1>
+
+                <div class="highlighted-carousel">
+                    <button class="carousel-btn left" onclick="scrollCarousel('left')">&#10094;</button>
+                    <div class="carousel-wrapper">
+                        <div class="carousel-track">
+                            @foreach ($highlightedPackages as $package)
+                                <div class="carouselcard">
+                                    <h3 class="game-title">{{ $package->game->title ?? 'Unknown Game' }}</h3>
+                                    @if(!empty($package->game->cover_image)) 
+                                        <img src="{{ asset('images/' . $package->game->cover_image) }}" class="carousel-img" alt="{{ $package->game->title }}">
+                                    @else
+                                        <div class="topupcard-img">
+                                            <span style="font-size: 12px; color: #666;">No Image</span>
+                                        </div>
+                                    @endif
+                                    <div class="topupcard-body">
+                                        
+                                        <p class="topupcard-title">{{ $package->name }}</p>
+                                        <p class="topupcard-text">{{ $package->detail }}</p>
+                                        <p class="topupcard-price">
+                                            <s class="old-price">{{ number_format($package->full_price, 0) }} บาท</s> <br>
+                                            <strong class="new-price">{{ number_format($package->selling_price, 0) }} บาท</strong>
+                                        </p>
+                                        <form action="{{ route('game.cart.add') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="package_id" value="{{ $package->id }}">
+                                            <button type="submit" class="topupcard-btn">
+                                                <img src="{{ asset('images/cart.png') }}" class="cart-icon" alt="Cart"> เพิ่มใส่ตะกร้า
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <button class="carousel-btn right" onclick="scrollCarousel('right')">&#10095;</button>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
-
     <script>
+        function scrollCarousel(direction) {
+            const track = document.querySelector('.carousel-track');
+            const scrollAmount = document.querySelector('.carouselcard').offsetWidth * 3; 
+
+            if (direction === 'left') {
+                track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
         function toggleMenu() {
             const menu = document.getElementById("navbarMenu");
             menu.classList.toggle("show");

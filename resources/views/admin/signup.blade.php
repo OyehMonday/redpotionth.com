@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Signup</title>
     <link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <div class="main-wrapper">
@@ -34,7 +35,15 @@
                     <label for="password_confirmation" class="form-label">ยืนยันรหัสผ่าน</label>
                     <input type="password" id="password_confirmation" name="password_confirmation" class="form-input" required>
                 </div>
-
+                
+                <div class="form-group turnstile-container">
+                    <div class="cf-turnstile d-inline-block" data-sitekey="0x4AAAAAAA_UyLit626y-h40"></div>
+                </div>
+                @if ($errors->has('cf-turnstile-response'))
+                    <div class="turnstile-container">
+                        <span class="text-danger">{{ $errors->first('cf-turnstile-response') }}</span>
+                    </div>
+                @endif  
                 <button type="submit" class="btn btn-primary">สมัครสมาชิก</button>
             </form>
 

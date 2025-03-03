@@ -11,9 +11,9 @@ class GamePackage extends Model
 
     protected $fillable = ['game_id', 'name', 'full_price', 'selling_price', 'cover_image', 'detail', 'sort_order'];
 
-    // Relationship: A package belongs to a game
     public function game()
     {
-        return $this->belongsTo(Game::class);
+        return $this->belongsTo(Game::class, 'game_id', 'id'); 
     }
+    
 }

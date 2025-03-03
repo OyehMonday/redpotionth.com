@@ -5,9 +5,17 @@
         </a>
         <button class="navbar-toggle" onclick="toggleMenu()">☰</button>
         <ul class="navbar-menu" id="navbarMenu">
-            <li><a href="{{ route('games.index') }}">จัดการเกม</a></li>
-            <li><a href="{{ route('admin.orders.index') }}">จัดการคำสั่งซื้อ</a></li>
-            <li><a href="{{ route('admin.business-hours.index') }}">จัดการเวลาเปิด-ปิด</a></li>
+            @php
+                $superAdminIds = explode(',', env('SUPER_ADMIN_IDS', ''));
+                $superAdminIds = array_map('trim', $superAdminIds); 
+            @endphp
+
+            @if(in_array(auth()->user()->id ?? 0, $superAdminIds))
+                <li><a href="{{ route('games.index') }}">จัดการเกม</a></li>
+                <li><a href="{{ route('admin.game-packages.index') }}">แพคไฮไลท์</a></li>
+                <li><a href="{{ route('admin.business-hours.index') }}">เวลาเปิด-ปิด</a></li>
+            @endif
+            <li><a href="{{ route('admin.orders.index') }}">คำสั่งซื้อ</a></li>
             <li>
                 @if(auth()->guard('admin')->check())  
                     

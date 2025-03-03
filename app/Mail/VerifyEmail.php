@@ -20,7 +20,7 @@ class VerifyEmail extends Mailable
 
     public function build()
     {
-        return $this->subject('Verify Your Email Address')
+        return $this->subject('ยืนยันอีเมล เพื่อสมัครสมาชิกกับ Red Potion')
                     ->view('emails.verify-email');
     }
 }

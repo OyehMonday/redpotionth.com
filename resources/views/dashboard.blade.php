@@ -13,13 +13,14 @@
         <div class="container">
 
             <div class="user-info-container">
-                <div class="coin-info">
+                <div class="coin-info" style="padding-bottom:5px;">
                     <span class="order-title">รายละเอียด Coin</span>
-                    <div class="order-title" style="padding-top:20px;">
+                    <div class="order-title" style="padding-top:10px; padding-bottom:5px;">
                         คุณมี: {{ number_format($user->coins ?? 0) }}
                         <img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon">
                     </div>
-                    <p class="order-subheader">(Coin จะถูกเพิ่มเมื่อคำสั่งซื้อสำเร็จ)</p>
+                    <p class="order-subheader">ใช้เป็นส่วนลด 1 Coin = 1 บาท</p>
+                    <p class="order-subheader" style="margin:0px;">ทุก 100 บาทจะได้รับ 1 Coin (สูงสุด 50% ของยอดคำสั่งซื้อ)</p>
                 </div>
                 
                 <div class="user-info">

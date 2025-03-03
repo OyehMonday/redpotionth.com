@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\GamePackageController;
 use App\Http\Controllers\Admin\GameCategoryController;
 use App\Http\Controllers\Admin\BusinessHoursController;
+use App\Http\Controllers\Admin\AdminPackageController;
 
 use App\Http\Controllers\Auth\AdminSignupController;
 
@@ -145,9 +146,13 @@ Route::prefix('admin')->group(function () {
         Route::resource('games', GameController::class);
         Route::post('/games/sort', [GameController::class, 'sort'])->name('games.sort');  
         Route::get('/business-hours', [BusinessHoursController::class, 'index'])->name('admin.business-hours.index');
-        Route::post('/business-hours/update', [BusinessHoursController::class, 'update'])->name('admin.business-hours.update');      
+        Route::post('/business-hours/update', [BusinessHoursController::class, 'update'])->name('admin.business-hours.update');  
+        Route::get('/game-packages', [AdminPackageController::class, 'index'])->name('admin.game-packages.index');
+        Route::post('/game-packages/sort', [AdminPackageController::class, 'sort'])->name('admin.game-packages.sort'); 
+        Route::post('/game-packages/remove-highlight', [AdminPackageController::class, 'removeHighlight'])->name('admin.game-packages.removeHighlight');
     });
 });
+
 
 Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::resource('games', GameController::class);

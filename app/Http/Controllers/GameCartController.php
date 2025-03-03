@@ -20,6 +20,7 @@ class GameCartController extends Controller
         $package = GamePackage::findOrFail($request->package_id);
         $game = Game::findOrFail($package->game_id);
     
+        // If the user is NOT logged in, store in session
         if (!Session::has('user')) {
             $cart = session()->get('cart', []);
     
@@ -46,102 +47,256 @@ class GameCartController extends Controller
     
             session()->put('cart', $cart);
     
-            return redirect()->route('game.cart.view')->with('success', '');
+            return redirect()->route('game.cart.view')->with('success', 'สินค้าเพิ่มลงในตะกร้าแล้ว');
         }
     
+        // If user is logged in, update the order in the database
         $user = Session::get('user');
-        $existingOrder = Order::where('user_id', $user->id)->where('status', '1')->first();
     
-        if (!$existingOrder) {
-            $cartData = [
-                $game->id => [
-                    'game_name' => $game->title,
-                    'player_id' => '',
-                    'uid_detail' => $game->uid_detail,
-                    'packages' => []
-                ]
+        // 🛠 Find existing order with status '1' (active cart) OR '2' (checkout started)
+        $existingOrder = Order::where('user_id', $user->id)
+                              ->whereIn('status', ['1', '2']) 
+                              ->first();
+    
+        $cartData = [];
+    
+        if ($existingOrder) {
+            $cartData = json_decode($existingOrder->cart_details, true);
+        }
+    
+        if (!isset($cartData[$game->id])) {
+            $cartData[$game->id] = [
+                'game_name' => $game->title,
+                'player_id' => '',
+                'uid_detail' => $game->uid_detail,
+                'packages' => []
             ];
+        }
     
-            $uniqueId = uniqid($package->id . '_', true);
+        $uniqueId = uniqid($package->id . '_', true);
     
-            $cartData[$game->id]['packages'][$uniqueId] = [
-                'unique_id' => $uniqueId,
-                'package_id' => $package->id,
-                'name' => $package->name,
-                'detail' => $package->detail,
-                'price' => $package->selling_price,
-                'full_price' => $package->full_price,
-                'cover_image' => $package->cover_image
-            ];
+        $cartData[$game->id]['packages'][$uniqueId] = [
+            'unique_id' => $uniqueId,
+            'package_id' => $package->id,
+            'name' => $package->name,
+            'detail' => $package->detail,
+            'price' => $package->selling_price,
+            'full_price' => $package->full_price,
+            'cover_image' => $package->cover_image
+        ];
     
+        if ($existingOrder) {
+            // 🛠 If the order exists (status = 1 or 2), update it and set status to '1'
+            $existingOrder->update([
+                'cart_details' => json_encode($cartData),
+                'total_price' => collect($cartData)->pluck('packages')->flatten(1)->sum('price'),
+                'status' => '1' // Ensure it reverts back to '1'
+            ]);
+        } else {
+            // 🛠 If no order exists, create a new one
             $order = Order::create([
                 'user_id' => $user->id,
                 'cart_details' => json_encode($cartData),
                 'total_price' => $package->selling_price,
-                'status' => '1', 
+                'status' => '1',
             ]);
     
             session()->put('order_id', $order->id);
-        } else {
-            $cartData = json_decode($existingOrder->cart_details, true);
-    
-            if (!isset($cartData[$game->id])) {
-                $cartData[$game->id] = [
-                    'game_name' => $game->title,
-                    'player_id' => '',
-                    'uid_detail' => $game->uid_detail,
-                    'packages' => []
-                ];
-            }
-    
-            $uniqueId = uniqid($package->id . '_', true);
-    
-            $cartData[$game->id]['packages'][$uniqueId] = [
-                'unique_id' => $uniqueId,
-                'package_id' => $package->id,
-                'name' => $package->name,
-                'detail' => $package->detail,
-                'price' => $package->selling_price,
-                'full_price' => $package->full_price,
-                'cover_image' => $package->cover_image
-            ];
-    
-            $existingOrder->update([
-                'cart_details' => json_encode($cartData),
-                'total_price' => collect($cartData)->pluck('packages')->flatten(1)->sum('price'),
-            ]);
         }
     
-        return redirect()->route('game.cart.view')->with('success', '');
+        return redirect()->route('game.cart.view')->with('success', 'สินค้าเพิ่มลงในตะกร้าแล้ว');
     }
+    
+    
+    // public function addToCart(Request $request)
+    // {
+    //     $package = GamePackage::findOrFail($request->package_id);
+    //     $game = Game::findOrFail($package->game_id);
+    
+    //     if (!Session::has('user')) {
+    //         $cart = session()->get('cart', []);
+    
+    //         if (!isset($cart[$game->id])) {
+    //             $cart[$game->id] = [
+    //                 'game_name' => $game->title,
+    //                 'player_id' => '',
+    //                 'uid_detail' => $game->uid_detail,
+    //                 'packages' => []
+    //             ];
+    //         }
+    
+    //         $uniqueId = uniqid($package->id . '_', true);
+    
+    //         $cart[$game->id]['packages'][$uniqueId] = [
+    //             'unique_id' => $uniqueId,
+    //             'package_id' => $package->id,
+    //             'name' => $package->name,
+    //             'detail' => $package->detail,
+    //             'price' => $package->selling_price,
+    //             'full_price' => $package->full_price,
+    //             'cover_image' => $package->cover_image
+    //         ];
+    
+    //         session()->put('cart', $cart);
+    
+    //         return redirect()->route('game.cart.view')->with('success', '');
+    //     }
+    
+    //     $user = Session::get('user');
+    //     $existingOrder = Order::where('user_id', $user->id)->where('status', '1')->first();
+    
+    //     if (!$existingOrder) {
+    //         $cartData = [
+    //             $game->id => [
+    //                 'game_name' => $game->title,
+    //                 'player_id' => '',
+    //                 'uid_detail' => $game->uid_detail,
+    //                 'packages' => []
+    //             ]
+    //         ];
+    
+    //         $uniqueId = uniqid($package->id . '_', true);
+    
+    //         $cartData[$game->id]['packages'][$uniqueId] = [
+    //             'unique_id' => $uniqueId,
+    //             'package_id' => $package->id,
+    //             'name' => $package->name,
+    //             'detail' => $package->detail,
+    //             'price' => $package->selling_price,
+    //             'full_price' => $package->full_price,
+    //             'cover_image' => $package->cover_image
+    //         ];
+    
+    //         $order = Order::create([
+    //             'user_id' => $user->id,
+    //             'cart_details' => json_encode($cartData),
+    //             'total_price' => $package->selling_price,
+    //             'status' => '1', 
+    //         ]);
+    
+    //         session()->put('order_id', $order->id);
+    //     } else {
+    //         $cartData = json_decode($existingOrder->cart_details, true);
+    
+    //         if (!isset($cartData[$game->id])) {
+    //             $cartData[$game->id] = [
+    //                 'game_name' => $game->title,
+    //                 'player_id' => '',
+    //                 'uid_detail' => $game->uid_detail,
+    //                 'packages' => []
+    //             ];
+    //         }
+    
+    //         $uniqueId = uniqid($package->id . '_', true);
+    
+    //         $cartData[$game->id]['packages'][$uniqueId] = [
+    //             'unique_id' => $uniqueId,
+    //             'package_id' => $package->id,
+    //             'name' => $package->name,
+    //             'detail' => $package->detail,
+    //             'price' => $package->selling_price,
+    //             'full_price' => $package->full_price,
+    //             'cover_image' => $package->cover_image
+    //         ];
+    
+    //         $existingOrder->update([
+    //             'cart_details' => json_encode($cartData),
+    //             'total_price' => collect($cartData)->pluck('packages')->flatten(1)->sum('price'),
+    //         ]);
+    //     }
+    
+    //     return redirect()->route('game.cart.view')->with('success', '');
+    // }
 
     public function viewCart()
     {
+        $cart = [];
+
         if (!Session::has('user')) {
             $cart = session()->get('cart', []);
-            return view('cart', compact('cart'));
+        } else {
+            $user = Session::get('user');
+            $existingOrder = Order::where('user_id', $user->id)
+                                ->whereIn('status', ['1', '2']) // Fetch cart or checkout started orders
+                                ->first();
+
+            if ($existingOrder) {
+                $cart = json_decode($existingOrder->cart_details, true);
+
+                // 🛠 If order is in status '2' (checkout started), change it back to '1' (active cart)
+                if ($existingOrder->status == '2') {
+                    $existingOrder->update(['status' => '1']);
+                }
+            }
+
+            // Merge session cart into database cart if session has data
+            if (session()->has('cart') && !empty(session('cart'))) {
+                $sessionCart = session('cart', []);
+
+                foreach ($sessionCart as $game_id => $game) {
+                    if (!isset($cart[$game_id])) {
+                        $cart[$game_id] = $game;
+                    } else {
+                        foreach ($game['packages'] as $package_id => $package) {
+                            $cart[$game_id]['packages'][$package_id] = $package;
+                        }
+                    }
+                }
+
+                // Update order with new items
+                if ($existingOrder) {
+                    $existingOrder->update([
+                        'cart_details' => json_encode($cart),
+                        'total_price' => collect($cart)->pluck('packages')->flatten(1)->sum('price'),
+                        'status' => '1' // Ensure status stays '1' when adding more items
+                    ]);
+                } else {
+                    // Create a new order if one doesn't exist
+                    $order = Order::create([
+                        'user_id' => $user->id,
+                        'cart_details' => json_encode($cart),
+                        'total_price' => collect($cart)->pluck('packages')->flatten(1)->sum('price'),
+                        'status' => '1',
+                    ]);
+                    session()->put('order_id', $order->id);
+                }
+
+                // Clear session cart after merging to avoid conflicts
+                session()->forget('cart');
+            }
         }
-    
-        $user = Session::get('user');
-    
-        $order = Order::where('user_id', $user->id)
-                      ->where('status', '>=', 3)
-                      ->first();
-    
-        if ($order) {
-            session()->forget(['cart', 'order_id']);
-            return view('cart', ['cart' => []])->with('error', 'ไม่มีสินค้าในตะกร้า');
-        }
-    
-        $cart = session()->get('cart', []);
-    
-        if (empty($cart)) {
-            $this->loadCartFromDatabase();
-            $cart = session()->get('cart', []);
-        }
-    
+
         return view('cart', compact('cart'));
     }
+
+    // 3/3/2025 15.57
+    // public function viewCart()
+    // {
+    //     if (!Session::has('user')) {
+    //         $cart = session()->get('cart', []);
+    //         return view('cart', compact('cart'));
+    //     }
+    
+    //     $user = Session::get('user');
+    
+    //     $order = Order::where('user_id', $user->id)
+    //                   ->where('status', '>=', 3)
+    //                   ->first();
+    
+    //     if ($order) {
+    //         session()->forget(['cart', 'order_id']);
+    //         return view('cart', ['cart' => []])->with('error', 'ไม่มีสินค้าในตะกร้า');
+    //     }
+    
+    //     $cart = session()->get('cart', []);
+    
+    //     if (empty($cart)) {
+    //         $this->loadCartFromDatabase();
+    //         $cart = session()->get('cart', []);
+    //     }
+    
+    //     return view('cart', compact('cart'));
+    // }
     
 
     // public function viewCart()

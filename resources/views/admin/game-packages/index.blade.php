@@ -1,3 +1,11 @@
+@php
+    $superAdminIds = explode(',', env('SUPER_ADMIN_IDS', '')); 
+    $superAdminIds = array_map('trim', $superAdminIds); 
+@endphp
+
+@if(!in_array(auth()->user()->id ?? 0, $superAdminIds))
+    <script>window.location.href = "/admin/orders";</script>
+@endif
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,18 +15,15 @@
     <link href="{{ asset('css/style.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
 
-    <!-- jQuery & jQuery UI for Drag & Drop Sorting -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
     <style>
-        /* Style for the drag handle */
         .handle {
             cursor: grab;
             font-size: 20px;
         }
 
-        /* Highlight row when dragging */
         #sortable tr.ui-sortable-helper {
             background-color: #f8f9fa;
             border: 2px dashed #007bff;
@@ -27,13 +32,12 @@
 </head>
 <body>
 
-    @include('admin.navbar') <!-- Include the same navbar as /admin/dashboard -->
+    @include('admin.navbar') 
 
     <div class="container mt-5">
         <div class="row">
             <div class="col-12">
 
-                <!-- Manage Packages Section -->
                 <div class="border p-5">
                     <h2>Manage Packages for {{ $game->title }}</h2>
 
@@ -41,7 +45,7 @@
                     <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Sort</th> <!-- Drag handle -->
+                            <th>Sort</th>
                             <th>Package Cover</th>
                             <th>Package Name</th>
                             <th>Details</th>
@@ -53,7 +57,7 @@
                     <tbody id="sortable">
                         @foreach ($packages as $package)
                             <tr data-id="{{ $package->id }}">
-                                <td class="handle">☰</td> <!-- Drag handle -->
+                                <td class="handle">☰</td>
                                 <td>
                                     @if ($package->cover_image)
                                         <img src="{{ asset('images/' . $package->cover_image) }}" width="50">
@@ -90,7 +94,6 @@
         </div>
     </div>
 
-    <!-- JavaScript for Drag & Drop Sorting -->
     <script>
         $(document).ready(function() {
             $("#sortable").sortable({

@@ -1641,6 +1641,109 @@ input:checked + .slider:before {
   background-color: #0056b3;
 }
 
+.highlighted-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.highlighted-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+/* Carousel */
+.highlighted-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.carousel-wrapper {
+  overflow: hidden;
+  flex: 1;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carouselcard {
+  flex: 0 0 calc(20% - 10px); 
+  max-width: calc(20% - 10px);
+  overflow: hidden;
+  text-align: center;
+  padding: 10px;
+  background: #1B2A41; 
+  padding: 10px 12px 10px 10px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  border: 2px solid #334E68; 
+}
+
+.carousel-img{
+  width: 70%;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 2px solid #2E4A66; 
+}
+
+.carousel-btn {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 3px 10px 10px 10px;
+  cursor: pointer;
+  font-size: 24px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.carousel-btn.left { left: 5px; }
+.carousel-btn.right { right: 5px; }
+
+.carousel-btn:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.turnstile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.uid-button {
+  display: inline-block;
+  padding: 3px 15px;
+  background-color: #007bff; 
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.uid-button:hover {
+  background-color: #0056b3; 
+}
+
 @media (max-width: 1024px) {
   .allgame-grid {
     grid-template-columns: repeat(4, 1fr);
@@ -1650,9 +1753,19 @@ input:checked + .slider:before {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px; 
   }
+  .carouselcard { flex: 0 0 calc(33.33% - 10px); max-width: calc(33.33% - 10px); }
+  .cart-gamecover {
+    width: 120px;
+  }
 }
 
 @media (max-width: 768px) {
+  .uid-button{
+    margin-left: 25px;
+  }
+  .cart-gamecover {
+    width: 170px;
+  }
   .container {
       padding: 5px; 
   }
@@ -1660,6 +1773,9 @@ input:checked + .slider:before {
   .topup-section {
     padding: 10px;
   }
+  
+  .carouselcard { flex: 0 0 calc(50% - 10px); max-width: calc(50% - 10px); }
+
   .game-grid {
     grid-template-columns: repeat(2, 1fr);
       gap: 10px; 

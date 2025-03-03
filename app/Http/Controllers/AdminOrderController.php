@@ -86,13 +86,13 @@ class AdminOrderController extends Controller
         $offset = ($page - 1) * $perPage;
         $unfinishedOnly = $request->input('unfinished_only', false); 
     
-        $query = Order::with('user')->whereIn('status', [2, 3, 4, 11, 99]);
+        $query = Order::with('user')->whereIn('status', [3, 4, 11, 99]);
     
         if ($unfinishedOnly) {
-            $query->whereNotIn('status', [4, 99]);
+            $query->whereNotIn('status', [2, 4, 99]);
         }
     
-        $unfinishedOrdersCount = Order::whereIn('status', [2, 3, 11])->count();
+        $unfinishedOrdersCount = Order::whereIn('status', [3, 11])->count();
         $totalOrders = $query->count(); 
     
         $orders = $query->orderBy('created_at', 'desc')

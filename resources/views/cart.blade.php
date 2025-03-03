@@ -34,6 +34,7 @@
     <div class="main-wrapper">
         <div class="container">
             <div class="section topup-section">
+
                 <h1>ตะกร้าสินค้า</h1>
                 @if(empty($cart) || count($cart) == 0)
                     <p class="placeholder"></p>
@@ -47,19 +48,20 @@
 
                 @php
                     $cart = session('cart', []);
-                    $user = null; 
+                    $user = null;
 
                     if (Session::has('user')) {
                         $user = Session::get('user');
                         $existingOrder = \App\Models\Order::where('user_id', $user->id)
-                                                        ->whereIn('status', ['1', '2']) 
+                                                        ->whereIn('status', ['1', '2'])
                                                         ->first();
-                        if ($existingOrder && empty($cart)) {
+
+                        if ($existingOrder) {
                             $cart = json_decode($existingOrder->cart_details, true);
-                            session()->put('cart', $cart);
                         }
                     }
                 @endphp
+
 
                 @if(empty($cart) || count($cart) == 0)
                     <p style="padding:50px 0;">ยังไม่มีสินค้าในตะกร้า</p>
@@ -86,7 +88,7 @@
 
                                         @if($gameModel && !empty($gameModel->uid_image))
                                             <p style="margin-top:0px;">
-                                                <a href="javascript:void(0);" onclick="openLightbox('{{ asset('images/' . $gameModel->uid_image) }}')" class="btn-info">
+                                                <a href="javascript:void(0);" onclick="openLightbox('{{ asset('images/' . $gameModel->uid_image) }}')" class="btn-info  uid-button">
                                                     วิธีดู UID
                                                 </a>
                                             </p>
