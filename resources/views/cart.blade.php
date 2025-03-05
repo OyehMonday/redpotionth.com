@@ -184,6 +184,27 @@
                                 <p class="payamount">ยอดที่ต้องชำระ <span id="final-amount">{{ number_format($totalAmount - $coinsToUse, 2) }}</span> บาท<br></p>
                                 <p class="cart-coin">คุณจะได้รับ <span id="earned-coins">{{ $earnedCoins }}</span><img src="{{ asset('images/coin.png') }}" alt="Coin" class="coin-icon"></p>
                                 <p><button type="submit" class="cart-btn">ชำระเงิน</button></p>
+                                @if($businessHours)
+                                    @php
+                                        $openTime = \Carbon\Carbon::parse($businessHours->open_time);
+                                        $closeTime = \Carbon\Carbon::parse($businessHours->close_time);
+                                        $lastPaymentTime = (clone $closeTime)->subMinutes(15);
+
+                                        $isOpen24Hours = ($businessHours->open_time == '00:00:00' && $businessHours->close_time == '23:59:00');
+                                    @endphp
+
+                                    <p class="placeholder" style="text-align: center; margin-top:20px;">
+                                        @if($isOpen24Hours)
+                                        @else
+                                            ร้านเปิดให้บริการเวลา {{ $openTime->format('h:i A') }} 
+                                            ถึง {{ $closeTime->format('h:i A') }}<br>
+                                            กรุณาแจ้งชำระเงินก่อนเวลา {{ $lastPaymentTime->format('h:i A') }}
+                                        @endif
+                                    </p>
+                                @else
+                                    <p></p>
+                                @endif
+
                             </div>
                         </div>
                     </form>

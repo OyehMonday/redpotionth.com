@@ -108,33 +108,35 @@
     </div>
 
     @php
+    use Carbon\Carbon;
     function getAdminActionPHP($order) {
-    $actionHtml = '';
+        $actionHtml = '';
+        $approveAt = $order->payment_approved_at ? Carbon::parse($order->payment_approved_at)->format('d M Y H:i:s') : 'ไม่ระบุ';
 
-    if ($order->in_process_by) {
-        $actionHtml = '<span class="inprocessed">รับออเดอร์โดย ' . ($order->admin_name ?? 'ไม่ระบุ') . '</span>';
-        
-        if ($order->approved_by) {
-            $actionHtml .= ' <span class="inprocessed">เติมโดย ' . ($order->approved_by_name ?? 'ไม่ระบุ') . '</span>';
+        if ($order->in_process_by) {
+            $actionHtml = '<span class="inprocessed">รับออเดอร์โดย ' . ($order->admin_name ?? 'ไม่ระบุ') . '</span>';
+            
+            if ($order->approved_by) {
+                $actionHtml .= ' <span class="inprocessed" title="เติมเมื่อ: ' . $approveAt . '">เติมโดย ' . ($order->approved_by_name ?? 'ไม่ระบุ') . '</span>';
+            } else {
+                $actionHtml .= ' <button class="btn inprocess" onclick="markOrderCompleted(' . $order->id . ', this)">เติมแล้ว</button>';
+            }
         } else {
-            $actionHtml .= ' <button class="btn inprocess" onclick="markOrderCompleted(' . $order->id . ', this)">เติมแล้ว</button>';
+            if ($order->status == 3 || $order->status == 2) {
+                $actionHtml .= ' <button class="btn inprocess" onclick="markOrderInProcess(' . $order->id . ', this)">รับออเดอร์</button>';
+            }
         }
-    } else {
-        if ($order->status == 3 || $order->status == 2) {
-            $actionHtml .= ' <button class="btn inprocess" onclick="markOrderInProcess(' . $order->id . ', this)">รับออเดอร์</button>';
+
+        if ($order->status == 99) {
+            $actionHtml .= '<span class="bcancelled" style="margin-left:3px;">ยกเลิกโดย ' . ($order->canceled_by_name ?? 'ไม่ระบุ') . '</span>';
         }
-    }
+        
+        if ($order->status == 3 || $order->status == 4 || $order->status == 11) {
+            $actionHtml .= ' <button class="btn bcancel" style="margin-left:3px;" onclick="cancelOrder(' . $order->id . ', this)">ยกเลิก</button>';
+        }
 
-    if ($order->status == 99) {
-        $actionHtml .= '<span class="bcancelled" style="margin-left:3px;">ยกเลิกโดย ' . ($order->canceled_by_name ?? 'ไม่ระบุ') . '</span>';
+        return $actionHtml;
     }
-    
-    if ($order->status == 3 || $order->status == 4 || $order->status == 11) {
-        $actionHtml .= ' <button class="btn bcancel" style="margin-left:3px;" onclick="cancelOrder(' . $order->id . ', this)">ยกเลิก</button>';
-    }
-
-    return $actionHtml;
-}
 
     function getOrderStatus($status) {
         switch ($status) {

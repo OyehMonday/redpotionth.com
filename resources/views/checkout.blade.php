@@ -9,14 +9,17 @@
 
     $isOpen = false;
 
-    if ($businessHour && $businessHour->open_time && $businessHour->close_time) {
-        // Check if closing time is past midnight (next day)
-        if ($businessHour->close_time < $businessHour->open_time) {
-            // Store is open if current time is greater than open_time OR it's before close_time (past midnight case)
-            $isOpen = ($currentTime >= $businessHour->open_time || $currentTime < $businessHour->close_time);
-        } else {
-            // Normal open-close logic (same day)
-            $isOpen = ($currentTime >= $businessHour->open_time && $currentTime < $businessHour->close_time);
+    if ($businessHour) {
+        if ($businessHour->open_time == '00:00:00' && $businessHour->close_time == '23:59:00') {
+            // If open_time is 00:00 and close_time is 23:59, the shop is open 24/7
+            $isOpen = true;
+        } elseif ($businessHour->open_time && $businessHour->close_time) {
+            // Check if closing time is past midnight (next day)
+            if ($businessHour->close_time < $businessHour->open_time) {
+                $isOpen = ($currentTime >= $businessHour->open_time || $currentTime < $businessHour->close_time);
+            } else {
+                $isOpen = ($currentTime >= $businessHour->open_time && $currentTime < $businessHour->close_time);
+            }
         }
     }
 

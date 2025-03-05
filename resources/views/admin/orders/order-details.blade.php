@@ -33,7 +33,7 @@
                             <div>
                                 <span class="order-title">หมายเลขคำสั่งซื้อ: #{{ $order->id }}</span><br>
                                 <span class="order-subheader">วันที่สั่งซื้อ: {{ $order->created_at->format('n/j/Y, g:i:s A') }}</span><br>
-                                <span class="order-subheader">โดย {{ $order->user->username ?? 'N/A' }} อีเมล {{ $order->user->email ?? 'N/A' }}</span>
+                                <span class="order-subheader">โดย <a href="/admin/users/{{ $order->user->id}}/orders" target="_blank" class="user-link">{{ $order->user->username ?? 'N/A' }}</a> อีเมล {{ $order->user->email ?? 'N/A' }}</span>
                             </div>
                             <div class="order-status">
                                 {!! getOrderStatus($order->status) !!} 
@@ -114,14 +114,15 @@
             default: return '<span class="status cancelled">กรุณาติดต่อแอดมิน</span>';
         }
     }
-
+    use Carbon\Carbon;
     function getAdminActionPHP($order) {
         $actionHtml = '';
+        $approveAt = $order->payment_approved_at ? Carbon::parse($order->payment_approved_at)->format('d M Y H:i:s') : 'ไม่ระบุ';
 
         if ($order->in_process_by) {
             $actionHtml = '<span class="inprocessed">รับออเดอร์โดย ' . ($order->admin_name ?? 'ไม่ระบุ') . '</span>';
             if ($order->approved_by) {
-                $actionHtml .= ' <span class="inprocessed">เติมโดย ' . ($order->approved_by_name ?? 'ไม่ระบุ') . '</span>';
+                $actionHtml .= ' <span class="inprocessed" title="เติมเมื่อ: ' . $approveAt . '">เติมโดย ' . ($order->approved_by_name ?? 'ไม่ระบุ') . '</span>';
             } else {
                 $actionHtml .= ' <button class="btn inprocess" onclick="markOrderCompleted(' . $order->id . ', this)">เติมแล้ว</button>';
             }

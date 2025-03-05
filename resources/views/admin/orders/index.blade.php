@@ -208,13 +208,28 @@
             return statusHtml;
         }
 
+        function formatDateTime(datetime) {
+            if (!datetime) return "N/A"; 
+
+            const date = new Date(datetime);
+            return date.toLocaleString("th-TH", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            });
+        }
+
         function getAdminAction(order) {
             let actionHtml = '';
-
+            
             if (order.in_process_by) {
                 actionHtml = `<span class="inprocessed">รับออเดอร์โดย ${order.admin_name}</span>`;
                 if (order.approved_by) {
-                    actionHtml += ` <span class="inprocessed">เติมโดย ${order.approved_by_name} </span>`;
+                    actionHtml += ` <span class="inprocessed" title="เติมเมื่อ: ${formatDateTime(order.payment_approved_at)}">เติมโดย ${order.approved_by_name} </span>`;
                 } else {
                     actionHtml += ` <button class="btn inprocess" onclick="markOrderCompleted(${order.id}, this)">เติมแล้ว</button>`;
                 }
@@ -287,13 +302,23 @@
 
         function getPaymentSlip(order) {
             let finalAmount = Math.max(0, order.total_price - (order.used_coins || 0));
+
+            let warningMessage = '';
+                if (order.referror == 1) {
+                    warningMessage = `<p class="warning-message" style="color: red; font-weight: bold;">สลิปอาจซ้ำ</p>`;
+                } else if (order.referror == 2) {
+                    warningMessage = `<p class="warning-message" style="color: red; font-weight: bold;">สลิปไม่มี QR ตรวจสอบไม่ได้</p>`;
+                }
+
             return `
                 <div class="order-body">
                     <p class="payamount">ยอดโอน ${new Intl.NumberFormat().format(finalAmount)} บาท</p>
                     ${order.payment_slip ? `<a href="../images/${order.payment_slip}" target="_blank" class="btn-info">ดูสลิป</a>` : '-'}
+                    ${warningMessage}
                 </div>
             `;
         }
+
 
         function markOrderInProcess(orderId, buttonElement) {
             fetch(`/admin/orders/${orderId}/mark-in-process`, {

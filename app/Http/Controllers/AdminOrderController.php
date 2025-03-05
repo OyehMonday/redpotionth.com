@@ -138,7 +138,7 @@ class AdminOrderController extends Controller
             $coinsEarned = $order->coin_earned ?? 0;
     
             if ($user) {
-                $user->coins = max(0, $user->coins + $coinsUsed);
+                $user->coins = max(0, $user->coins + $coinsUsed-$coinsEarned);
                 $user->save();
             }
     

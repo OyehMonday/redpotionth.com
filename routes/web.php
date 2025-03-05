@@ -195,3 +195,8 @@ Route::get('/search', [AllGameController::class, 'search'])->name('games.search'
 Route::get('/closed', function () {
     return view('closed');
 })->name('closed');
+
+Route::get('/contactus', function () {
+    $carouselGames = \App\Models\Game::orderBy('sort_order', 'asc')->limit(5)->get();
+    return view('contactus', compact('carouselGames'));
+})->name('contactus');

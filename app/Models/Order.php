@@ -16,6 +16,9 @@ class Order extends Model
         'used_coins',
         'coin_earned',
         'payment_slip',
+        'refslip',
+        'refqr',
+        'in_process_by',
         'status',
         'in_process_by',
     ];

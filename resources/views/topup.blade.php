@@ -1,3 +1,40 @@
+<?php
+use Illuminate\Support\Facades\Http;
+
+// Function to get IP
+function getUserIP() {
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        return $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+    } else {
+        return $_SERVER['REMOTE_ADDR'];
+    }
+}
+
+// Get user IP
+$userIP = getUserIP();
+
+// Get IP details
+$ipResponse = Http::get("https://ipinfo.io/{$userIP}/json");
+$ipData = $ipResponse->json();
+$country = $ipData['country'] ?? 'UNKNOWN'; 
+$asn = $ipData['org'] ?? 'UNKNOWN'; 
+
+// Game ID 5: Allow only Thailand IPs
+// if ($game->id == 5 && $country !== 'TH') {
+//     echo "<script>alert('Your IP is not in Thailand. Redirecting to Game ID 10...'); window.location.href = '".route('topup', ['game_id' => 10])."';</script>";
+//     exit;
+// }
+
+// // Game ID 10: Allow only non-Thai IPs
+// if ($gameId == 10 && $country === 'TH' && !$vpnDetected) {
+//     echo "<script>alert('Your IP is in Thailand. Redirecting to Game ID 5...'); window.location.href = '".route('topup', ['game_id' => 5])."';</script>";
+//     exit;
+// }
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,6 +73,22 @@
             <div>
                 <img src="{{ url('images/' . $game->full_cover_image) }}" class="full-cover-image" alt="{{ $game->name }}">
             </div>
+            @if ($game->id == 5 && $country !== 'TH')
+                <div class="topup-alert">
+                    ⚠️ ระบบตรวจสอบพบว่าคุณอาจจะต้องเติม 
+                    <a href="{{ route('games.topup', ['id' => 32]) }}" class="topup-link">PUBG Mobile (ต่างประเทศ)</a> ⚠️
+                    <br><span class="topup-alertsub">ส่งไอดีมาตรวจสอบ ได้ก่อนที่ Line <a href="https://lin.ee/tHJwLONc" class="topup-link">@redpotionth</a></span>
+                </div>
+            @endif
+
+            @if ($game->id == 32 && $country === 'TH')
+                <div class="topup-alert">
+                    ⚠️ ระบบตรวจสอบพบว่าคุณอาจจะสามารถเติม
+                    <a href="{{ route('games.topup', ['id' => 5]) }}" class="topup-link">PUBG Mobile (ไอดีไทย)</a> ได้ เพื่อราคาที่ดีขึ้น ⚠️
+                    <br><span class="topup-alertsub">ส่งไอดีมาตรวจสอบ ได้ก่อนที่ Line <a href="https://lin.ee/tHJwLONc" class="topup-link">@redpotionth</a></span>
+                </div>
+            @endif
+
             @if($game->category->name == 'Payment Link')
                 <div class="paymentlink">
                     กรุณาติดต่อเรา เพื่อดำเนินการเติม<br>

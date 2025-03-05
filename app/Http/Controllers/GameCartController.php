@@ -11,6 +11,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Log; 
 use App\Services\LineNotificationService;
 use Illuminate\Support\Facades\Storage;
+use App\Services\PaymentSlipService;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class GameCartController extends Controller
 {
@@ -228,8 +232,14 @@ class GameCartController extends Controller
                     $existingOrder->update(['status' => '1']);
                 }
             }
+            
+            $today = Carbon::now()->format('l'); 
+            $businessHours = DB::table('business_hours')
+                                ->where('day', $today)
+                                ->first();
 
-            // Merge session cart into database cart if session has data
+            return view('cart', compact('cart', 'businessHours'));            
+
             if (session()->has('cart') && !empty(session('cart'))) {
                 $sessionCart = session('cart', []);
 
@@ -417,63 +427,6 @@ class GameCartController extends Controller
     
         return redirect()->route('game.cart.view')->with('success', 'ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
     }    
-
-    // public function removeFromCart(Request $request)
-    // {
-    //     $game_id = $request->game_id;
-    //     $package_id = $request->package_id;
-    
-    //     if (!Session::has('user')) {
-    //         $cart = session()->get('cart', []);
-    //         if (isset($cart[$game_id]['packages'][$package_id])) {
-    //             unset($cart[$game_id]['packages'][$package_id]);
-    
-    //             if (empty($cart[$game_id]['packages'])) {
-    //                 unset($cart[$game_id]);
-    //             }
-    
-    //             session()->put('cart', $cart);
-    //         }
-    
-    //         return redirect()->route('game.cart.view')->with('success', 'ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
-    //     }
-    
-    //     $user = Session::get('user');
-    //     $cart = session()->get('cart', []);
-    
-    //     if (isset($cart[$game_id]['packages'][$package_id])) {
-    //         unset($cart[$game_id]['packages'][$package_id]);
-    
-    //         if (empty($cart[$game_id]['packages'])) {
-    //             unset($cart[$game_id]);
-    //         }
-    
-    //         session()->put('cart', $cart);
-    //     }
-    
-    //     $existingOrder = Order::where('user_id', $user->id)
-    //                           ->where('status', '1')
-    //                           ->first();
-    
-    //     if ($existingOrder) {
-    //         $existingCart = json_decode($existingOrder->cart_details, true);
-    
-    //         if (isset($existingCart[$game_id]['packages'][$package_id])) {
-    //             unset($existingCart[$game_id]['packages'][$package_id]);
-    
-    //             if (empty($existingCart[$game_id]['packages'])) {
-    //                 unset($existingCart[$game_id]);
-    //             }
-    
-    //             $existingOrder->update([
-    //                 'cart_details' => json_encode($existingCart),
-    //                 'total_price' => collect($existingCart)->pluck('packages')->flatten(1)->sum('price'),
-    //             ]);
-    //         }
-    //     }
-    
-    //     return redirect()->route('game.cart.view')->with('success', 'ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
-    // }    
     
     public function clearCart()
     {
@@ -532,65 +485,6 @@ class GameCartController extends Controller
     
         return redirect()->route('game.checkout.view', ['order_id' => session('order_id')]);
     }
-    
-
-    // public function checkout(Request $request)
-    // {
-    //     if (!Session::has('user')) {
-    //         session()->put('url.intended', route('game.checkout'));
-    //         return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน');
-    //     }
-    
-    //     $cart = session()->get('cart', []);
-    
-    //     if (!empty($cart)) {
-    //         Order::where('user_id', Session::get('user')->id)
-    //             ->where('status', '1') 
-    //             ->delete();
-    //     } else {
-    //         $this->loadCartFromDatabase();
-    //         $cart = session()->get('cart', []);
-    //     }
-    
-    //     if (empty($cart)) {
-    //         return redirect()->route('game.cart.view')->with('error', 'ตะกร้าสินค้าของคุณว่างเปล่า');
-    //     }
-    
-    //     $updatedCart = [];
-    //     foreach ($cart as $game_id => $game) {
-    //         foreach ($game['packages'] as $package_id => $package) {
-    //             $gamePackage = GamePackage::find($package_id);
-    //             if ($gamePackage) {
-    //                 $updatedCart[$game_id]['game_name'] = $game['game_name'];
-    //                 $updatedCart[$game_id]['packages'][$package_id] = [
-    //                     'name' => $gamePackage->name,
-    //                     'full_price' => $gamePackage->full_price ?? null, 
-    //                     'price' => $gamePackage->selling_price,
-    //                     'player_id' => $package['player_id'],
-    //                 ];
-    //             }
-    //         }
-    //     }
-    
-    //     session()->put('cart', $updatedCart);
-    //     $user = Session::get('user');
-    //     $totalPrice = collect($updatedCart)->pluck('packages')->flatten(1)->sum('price');
-    //     $useCoins = session()->get('use_coins', 0);
-    
-    //     $coinsToUse = $request->has('use_coins') && $request->input('use_coins') == 1 ? min($coinsAvailable, $maxDiscount) : 0;
-    //     $finalAmount = $totalPrice - $coinsToUse;
-
-    //     $order = Order::create([
-    //         'user_id' => Session::get('user')->id,
-    //         'cart_details' => json_encode($updatedCart),
-    //         'total_price' => $totalPrice,
-    //         'used_coins' => $coinsToUse,
-    //         'status' => '2', 
-    //     ]);
-    //     session()->put('order_id', $order->id);
-    
-    //     return redirect()->route('game.checkout.view', ['order_id' => session('order_id')]);
-    // }
 
     public function loadCartFromDatabase()
     {
@@ -634,6 +528,65 @@ class GameCartController extends Controller
         return view('checkout', compact('order', 'totalAmount', 'usedCoins', 'finalAmount'));
 
     }     
+    // 04/03/2024 working code
+    // public function confirmPayment(Request $request, $order_id)
+    // {
+    //     if (!Session::has('user')) {
+    //         return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนแนบสลิปการชำระเงิน');
+    //     }
+    
+    //     $request->validate([
+    //         'payment_slip' => 'required|mimes:jpeg,png,pdf|max:2048',
+    //     ]);
+    
+    //     $order = Order::where('id', $order_id)
+    //                   ->where('user_id', Session::get('user')->id)
+    //                   ->where('status', '2') 
+    //                   ->first();
+    
+    //     if (!$order) {
+    //         return redirect()->route('game.cart.view')->with('error', 'ไม่พบคำสั่งซื้อนี้');
+    //     }
+    
+    //     if ($order->used_coins > 0) {
+    //         User::where('id', Session::get('user')->id)->decrement('coins', $order->used_coins);
+    //     }
+    
+    //     $year = date('Y');
+    //     $month = date('m');
+    //     $folderPath = base_path("images/payments/{$year}/{$month}"); 
+    
+    //     if (!file_exists($folderPath)) {
+    //         mkdir($folderPath, 0777, true); 
+    //     }
+    
+    //     $fileName = time() . '_' . $request->file('payment_slip')->getClientOriginalName(); 
+    
+    //     $request->file('payment_slip')->move($folderPath, $fileName);
+    
+    //     $filePath = "payments/{$year}/{$month}/" . $fileName;
+    
+    //     $order->update([
+    //         'payment_slip' => $filePath,
+    //         'status' => '3', 
+    //     ]);
+    
+    //     $lineService = new LineNotificationService();
+    //     $slipUrl = url('images/' . str_replace(base_path('images/'), '', $filePath)); 
+    
+    //     $message = "มี Order ใหม่ !!\n\n".
+    //                "🛒 หมายเลขคำสั่งซื้อ: {$order->id}\n".
+    //                "👤 ผู้ซื้อ: " . Session::get('user')->username . "\n".
+    //                "💰 ยอดโอน: {$order->total_price} บาท\n".
+    //                "📸 สลิป: $slipUrl";
+    
+    //     $lineService->sendMessage($message);
+    
+    //     session()->forget(['cart', 'order_id']);
+        
+    //     return redirect()->route('dashboard')->with('success', 'ได้รับคำสั่งซื้อแล้ว');
+    // }
+
     
     public function confirmPayment(Request $request, $order_id)
     {
@@ -663,82 +616,51 @@ class GameCartController extends Controller
         $folderPath = base_path("images/payments/{$year}/{$month}"); 
     
         if (!file_exists($folderPath)) {
-            mkdir($folderPath, 0777, true); 
+            mkdir($folderPath, 0777, true);
         }
+
+        $randomFileName = Str::random(12);
+
+        $extension = $request->file('payment_slip')->getClientOriginalExtension();
     
-        $fileName = time() . '_' . $request->file('payment_slip')->getClientOriginalName(); 
+        $fileName = $randomFileName . '.' . $extension;
     
         $request->file('payment_slip')->move($folderPath, $fileName);
-    
-        $filePath = "payments/{$year}/{$month}/" . $fileName;
+        $filePathStore = "payments/{$year}/{$month}/" . $fileName;
+        $filePath = "images/payments/{$year}/{$month}/" . $fileName;
+
+        $paymentService = new PaymentSlipService();
+        $qrResult = $paymentService->storeQRCodeData($order_id, base_path('images/' . $filePathStore));
     
         $order->update([
-            'payment_slip' => $filePath,
-            'status' => '3', 
+            'payment_slip' => $filePathStore,
+            'status' => '3',
+            'refqr' => $qrResult['refqr'],  
+            'referror' => $qrResult['referror'],
         ]);
     
         $lineService = new LineNotificationService();
-        $slipUrl = url('images/' . str_replace(base_path('images/'), '', $filePath)); 
+        $slipUrl = url('images/' . $filePathStore);
+
+        $errorMessage = "";
+        if ($qrResult['referror'] == 1) {
+            $errorMessage = "⚠️ สลิปอาจซ้ำ";
+        } elseif ($qrResult['referror'] == 2) {
+            $errorMessage = "⚠️ สลิปไม่มี QR ตรวจสอบไม่ได้";
+        }        
     
         $message = "มี Order ใหม่ !!\n\n".
                    "🛒 หมายเลขคำสั่งซื้อ: {$order->id}\n".
                    "👤 ผู้ซื้อ: " . Session::get('user')->username . "\n".
                    "💰 ยอดโอน: {$order->total_price} บาท\n".
-                   "📸 สลิป: $slipUrl";
+                   "📸 สลิป: $slipUrl\n".
+                   ($errorMessage ? "{$errorMessage}\n" : "");
     
         $lineService->sendMessage($message);
     
         session()->forget(['cart', 'order_id']);
-        
+    
         return redirect()->route('dashboard')->with('success', 'ได้รับคำสั่งซื้อแล้ว');
     }
-    
 
-    // public function confirmPayment(Request $request, $order_id)
-    // {
-    //     if (!Session::has('user')) {
-    //         return redirect()->route('custom.login.form')->with('error', 'กรุณาเข้าสู่ระบบก่อนแนบสลิปการชำระเงิน');
-    //     }
-    
-    //     $request->validate([
-    //         'payment_slip' => 'required|mimes:jpeg,png,pdf|max:2048',
-    //     ]);
-    
-    //     $order = Order::where('id', $order_id)
-    //                   ->where('user_id', Session::get('user')->id)
-    //                   ->where('status', '2') 
-    //                   ->first();
-    
-    //     if (!$order) {
-    //         return redirect()->route('game.cart.view')->with('error', 'ไม่พบคำสั่งซื้อนี้');
-    //     }
-    
-    //     if ($order->used_coins > 0) {
-    //         User::where('id', Session::get('user')->id)->decrement('coins', $order->used_coins);
-    //     }
-    
-    //     $filePath = $request->file('payment_slip')->store('payments', 'public');
-    
-    //     $order->update([
-    //         'payment_slip' => $filePath,
-    //         'status' => '3', 
-    //     ]);
-    
-    //     $lineService = new LineNotificationService();
-    //     $slipUrl = url("images/$filePath");
-    
-    //     $message = "มี Order ใหม่ !!\n\n".
-    //                "🛒 หมายเลขคำสั่งซื้อ: {$order->id}\n".
-    //                "👤 ผู้ซื้อ: " . Session::get('user')->username . "\n".
-    //                "💰 ยอดโอน: {$order->total_price} บาท\n".
-    //                "📸 สลิป: $slipUrl";
-    
-    //     $lineService->sendMessage($message);
-    
-    //     session()->forget(['cart', 'order_id']);
-    
-    //     return redirect()->route('dashboard')->with('success', 'ได้รับคำสั่งซื้อแล้ว');
-    // }
-    
-    
 }

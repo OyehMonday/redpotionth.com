@@ -10,12 +10,14 @@
                 $superAdminIds = array_map('trim', $superAdminIds); 
             @endphp
 
-            @if(in_array(auth()->user()->id ?? 0, $superAdminIds))
+            @if(in_array(auth()->guard('admin')->user()->id ?? 0, $superAdminIds))
                 <li><a href="{{ route('games.index') }}">จัดการเกม</a></li>
                 <li><a href="{{ route('admin.game-packages.index') }}">แพคไฮไลท์</a></li>
                 <li><a href="{{ route('admin.business-hours.index') }}">เวลาเปิด-ปิด</a></li>
-            @endif
+                <li><a href="{{ route('admin.orders.index') }}">คำสั่งซื้อ</a></li>
+            @else
             <li><a href="{{ route('admin.orders.index') }}">คำสั่งซื้อ</a></li>
+            @endif
             <li>
                 @if(auth()->guard('admin')->check())  
                     

@@ -10,11 +10,11 @@
             @elseif($order->status == '2')
                 <span class="status review">สถานะ : รอชำระเงิน</span>
             @elseif($order->status == '3')
-                <span class="status review">สถานะ : รอตรวจสอบการชำระเงิน</span>
+                <span class="status review">สถานะ : รอตรวจสอบการชำระเงิน</span><div style="text-align: right; margin-top:5px; font-size: 0.9em;">หากรอเกิน 20 นาที <a href="{{ route('contactus') }}" class="user-link">ติดต่อเรา</a></div>
             @elseif($order->status == '4')
                 <span class="status completed">สถานะ : ทำรายการสำเร็จ</span>
             @elseif($order->status == '11')
-                <span class="status review">สถานะ : อยู่ระหว่างดำเนินการ</span>
+                <span class="status review">สถานะ : อยู่ระหว่างดำเนินการ</span><div style="text-align: right; margin-top:5px; font-size: 0.9em;">หากรอเกิน 20 นาที <a href="{{ route('contactus') }}" class="user-link">ติดต่อเรา</a></div>
             @elseif($order->status == '99')
                 <span class="status cancelled">สถานะ : ยกเลิก</span>
             @else

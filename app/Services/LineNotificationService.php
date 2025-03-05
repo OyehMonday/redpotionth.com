@@ -13,6 +13,7 @@ class LineNotificationService
     {
         $this->accessToken = env('LINE_ACCESS_TOKEN');
         $this->groupId = env('LINE_GROUP_ID');
+        $this->adminUserId = env('LINE_ADMIN_USER_ID');
     }
 
     public function sendMessage($message)
@@ -51,4 +52,5 @@ class LineNotificationService
             ],
         ]);
     }
+    
 }

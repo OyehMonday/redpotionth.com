@@ -171,18 +171,19 @@
             } else if (status == '3') {
                 statusClass = "review";
                 statusText = "สถานะ : รอตรวจสอบการชำระเงิน";
+                statusExceed = 'หากรอเกิน 20 นาที <a href="/contactus" class="user-link">ติดต่อเรา</a>';
             } else if (status == '4') {
                 statusClass = "completed";
                 statusText = "สถานะ : ทำรายการสำเร็จ";
             } else if (status == '11') {
                 statusClass = "review";
                 statusText = "สถานะ : อยู่ระหว่างดำเนินการ";
+                statusExceed = 'หากรอเกิน 20 นาที <a href="/contactus" class="user-link">ติดต่อเรา</a>';
             } else if (status == '99') {
                 statusClass = "cancelled";
                 statusText = "สถานะ : ยกเลิก";
             }
-
-            return `<span class="status ${statusClass}">${statusText}</span>`;
+            return `<span class="status ${statusClass}">${statusText}</span><div style="text-align: right; margin-top:5px;">${statusExceed}</div>`;
         }
 
 
